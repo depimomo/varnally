@@ -7,12 +7,19 @@ You are an expert personal color analyst.
 Your task is to analyze a photo of a person's bare face and determine their seasonal color palette.
 You must be strict and accurate.
 
-Analyze the following:
+CRITICAL VALIDATION:
+Before analyzing, you MUST verify if the photo is suitable. A photo is INVALID if:
+1. No human face is clearly detected.
+2. The lighting is too dark, too bright (blown out), or has a strong colorful tint (e.g., blue, red, or neon lights) that would distort color perception.
+3. The person is wearing heavy makeup that hides their natural skin undertone.
+
+If the photo is invalid, set "isValid" to false and provide a helpful "errorMessage" in the JSON.
+Otherwise, set "isValid" to true and perform the full analysis:
 1. Skin Undertone: (Cool, Warm, or Neutral)
 2. Eye Color: (Natural eye color)
 3. Hair Root Color: (Natural hair color from roots)
 
-Based on these, classify them into one of these strict categories:
+Classify them into one of these strict categories:
 - Winter (Bright, True, or Dark)
 - Spring (Bright, True, or Light)
 - Summer (Cool, True, or Soft)
@@ -31,7 +38,7 @@ export async function analyzeColor(imageBuffer: ArrayBuffer, mimeType: string) {
   );
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-2.0-flash",
     contents: [
       {
         parts: [
@@ -51,6 +58,8 @@ export async function analyzeColor(imageBuffer: ArrayBuffer, mimeType: string) {
       responseSchema: {
         type: Type.OBJECT,
         properties: {
+          isValid: { type: Type.BOOLEAN, description: "Whether the photo is suitable for analysis" },
+          errorMessage: { type: Type.STRING, description: "Helpful error message if isValid is false (e.g., 'Lighting is too dark', 'No face detected')" },
           season: { type: Type.STRING, description: "Strict category: Winter, Spring, Summer, or Autumn" },
           subType: { type: Type.STRING, description: "Sub-type: Bright, True, Dark, Light, Soft, or Cool" },
           bestColors: {
@@ -82,7 +91,7 @@ export async function analyzeColor(imageBuffer: ArrayBuffer, mimeType: string) {
           eyeColor: { type: Type.STRING },
           hairColor: { type: Type.STRING }
         },
-        required: ["season", "subType", "bestColors", "avoidColors", "jewelry", "skinUndertone", "eyeColor", "hairColor"]
+        required: ["isValid", "season", "subType", "bestColors", "avoidColors", "jewelry", "skinUndertone", "eyeColor", "hairColor"]
       }
     }
   });

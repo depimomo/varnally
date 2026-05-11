@@ -71,6 +71,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [result, setResult] = useState<Analysis | null>(null);
@@ -122,6 +123,7 @@ export default function App() {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
       setResult(null);
+      setAnalysisError(null);
     }
   };
 
@@ -129,19 +131,25 @@ export default function App() {
     if (!selectedFile) return;
 
     setAnalyzing(true);
+    setAnalysisError(null);
     try {
       const buffer = await selectedFile.arrayBuffer();
       const analysisResult = await analyzeColor(buffer, selectedFile.type);
       
+      if (analysisResult.isValid === false) {
+        setAnalysisError(analysisResult.errorMessage || "This photo doesn't seem suitable for color analysis. Please ensure your face is clear and the lighting is natural.");
+        return;
+      }
+
       const newAnalysis: Analysis = {
         ...analysisResult,
         userId: user?.uid || 'anonymous',
-        createdAt: new Date().toISOString(), // local for now, if signed in will use serverTimestamp on save
+        createdAt: new Date().toISOString(),
       };
       
       setResult(newAnalysis);
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Analysis failed");
+      setAnalysisError(error instanceof Error ? error.message : "Analysis failed unexpectedly. Please try again.");
     } finally {
       setAnalyzing(false);
     }
@@ -188,7 +196,7 @@ export default function App() {
           <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center text-white shadow-lg">
             <Sparkles size={18} />
           </div>
-          <span className="font-display font-bold text-xl tracking-tight">Colorify AI</span>
+          <span className="font-display font-bold text-xl tracking-tight">Varnally</span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -267,7 +275,7 @@ export default function App() {
                         </div>
                       </div>
                       <div className="flex gap-2 mb-6">
-                        {item.bestColors.slice(0, 5).map((color, idx) => (
+                        {(item.bestColors || []).slice(0, 5).map((color, idx) => (
                           <div key={idx} className="w-8 h-8 rounded-full shadow-sm" style={{ backgroundColor: color.hex }} title={color.name} />
                         ))}
                       </div>
@@ -378,7 +386,7 @@ export default function App() {
                       Best Colors to Wear
                     </h2>
                     <div className="grid grid-cols-5 gap-4">
-                      {result.bestColors.map((color, idx) => (
+                      {(result.bestColors || []).map((color, idx) => (
                         <ColorSwatch key={idx} color={color} />
                       ))}
                     </div>
@@ -390,7 +398,7 @@ export default function App() {
                       Colors to Avoid
                     </h2>
                     <div className="grid grid-cols-5 gap-4">
-                      {result.avoidColors.map((color, idx) => (
+                      {(result.avoidColors || []).map((color, idx) => (
                         <ColorSwatch key={idx} color={color} />
                       ))}
                     </div>
@@ -408,10 +416,10 @@ export default function App() {
             >
               <div className="text-center max-w-2xl mx-auto space-y-4">
                 <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight leading-none text-gray-900">
-                  Find your <span className="text-brand-primary">perfect</span> palette.
+                  Your true colors, <span className="text-brand-primary">your best ally.</span>
                 </h1>
                 <p className="text-lg text-gray-500 font-medium">
-                  Upload a photo of your bare face in natural light. Our AI analyst will reveal your seasonal color profile.
+                  Trends fade, but your natural harmony is timeless. Simply upload a bare-face selfie, and let our magic map out a style that love you back.
                 </p>
               </div>
 
@@ -440,9 +448,57 @@ export default function App() {
                   <div className="space-y-6">
                     <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white relative group">
                       <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                      
+                      {/* Scanning Animation */}
+                      {analyzing && (
+                        <div className="absolute inset-0 pointer-events-none z-10">
+                          {/* Corner Brackets */}
+                          <div className="absolute top-12 left-12 w-12 h-12 border-t-4 border-l-4 border-white/60 rounded-tl-2xl" />
+                          <div className="absolute top-12 right-12 w-12 h-12 border-t-4 border-r-4 border-white/60 rounded-tr-2xl" />
+                          <div className="absolute bottom-12 left-12 w-12 h-12 border-b-4 border-l-4 border-white/60 rounded-bl-2xl" />
+                          <div className="absolute bottom-12 right-12 w-12 h-12 border-b-4 border-r-4 border-white/60 rounded-br-2xl" />
+
+                          {/* Geometric Mesh Overlay */}
+                          <svg className="absolute inset-0 w-full h-full text-white/30" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <motion.g
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: [0.2, 0.5, 0.2] }}
+                              transition={{ repeat: Infinity, duration: 2 }}
+                            >
+                              {/* Central Face Mesh Nodes */}
+                              <circle cx="50" cy="30" r="0.8" fill="currentColor" /> {/* Forehead */}
+                              <circle cx="35" cy="45" r="0.8" fill="currentColor" /> {/* L Eye */}
+                              <circle cx="65" cy="45" r="0.8" fill="currentColor" /> {/* R Eye */}
+                              <circle cx="50" cy="55" r="0.8" fill="currentColor" /> {/* Nose Tip */}
+                              <circle cx="40" cy="75" r="0.8" fill="currentColor" /> {/* L Jaw */}
+                              <circle cx="60" cy="75" r="0.8" fill="currentColor" /> {/* R Jaw */}
+                              <circle cx="50" cy="85" r="0.8" fill="currentColor" /> {/* Chin */}
+                              
+                              {/* Mesh Lines */}
+                              <path d="M50 30 L35 45 L50 55 L65 45 Z" fill="none" stroke="currentColor" strokeWidth="0.2" />
+                              <path d="M35 45 L40 75 L50 85 L60 75 L65 45" fill="none" stroke="currentColor" strokeWidth="0.2" />
+                              <path d="M50 55 L40 75 M50 55 L60 75" fill="none" stroke="currentColor" strokeWidth="0.2" />
+                              <path d="M50 30 L50 55" fill="none" stroke="currentColor" strokeWidth="0.2" />
+                            </motion.g>
+                          </svg>
+
+                          {/* Scan Line & Trailing Gradient */}
+                          <motion.div 
+                            initial={{ top: '-10%' }}
+                            animate={{ top: '110%' }}
+                            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+                            className="absolute left-0 right-0 h-1/2 bg-gradient-to-b from-transparent via-transparent to-brand-primary/30"
+                          >
+                            <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-brand-primary shadow-[0_0_25px_rgba(255,138,101,0.9)]" />
+                            {/* Blue secondary glow like in the image */}
+                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-secondary/40 blur-md translate-y-1" />
+                          </motion.div>
+                        </div>
+                      )}
+
                       <button 
                         onClick={reset}
-                        className="absolute top-6 right-6 p-3 bg-red-500 text-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-6 right-6 p-3 bg-red-500 text-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-20"
                         title="Remove photo"
                       >
                         <Trash2 size={20} />
@@ -462,10 +518,20 @@ export default function App() {
                       ) : (
                         <>
                           <Sparkles size={24} className="text-brand-primary" />
-                          Start AI Analysis
+                          {analysisError ? "Try Again" : "Start AI Analysis"}
                         </>
                       )}
                     </button>
+
+                    {analysisError && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-4 bg-red-50 border border-red-100 rounded-2xl text-center"
+                      >
+                        <p className="text-sm text-red-600 font-medium">{analysisError}</p>
+                      </motion.div>
+                    )}
                   </div>
                 )}
               </div>
