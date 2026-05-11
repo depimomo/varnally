@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Analysis": {
+      "title": "Color Analysis",
+      "description": "Result of a personal color analysis",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "season": { "type": "string", "enum": ["Winter", "Spring", "Summer", "Autumn"] },
+        "subType": { "type": "string", "enum": ["Bright", "True", "Dark", "Light", "Soft", "Cool"] },
+        "bestColors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hex": { "type": "string" },
+              "name": { "type": "string" }
+            }
+          }
+        },
+        "avoidColors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hex": { "type": "string" },
+              "name": { "type": "string" }
+            }
+          }
+        },
+        "jewelry": { "type": "string", "enum": ["Gold", "Silver"] },
+        "skinUndertone": { "type": "string" },
+        "eyeColor": { "type": "string" },
+        "hairColor": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "season", "subType", "bestColors", "avoidColors", "jewelry", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "analyses/{analysisId}": {
+      "schema": "Analysis",
+      "description": "Color analysis records"
+    }
+  }
+}
