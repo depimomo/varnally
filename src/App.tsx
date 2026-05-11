@@ -102,7 +102,7 @@ export default function App() {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Analysis));
+      const docs = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Analysis));
       setHistory(docs);
     }, (error) => {
       handleFirestoreError(error, OperationType.LIST, 'analyses');
@@ -139,6 +139,45 @@ export default function App() {
     setAnalysisError(null);
     try {
       const buffer = await selectedFile.arrayBuffer();
+      
+      // Generate a small thumbnail to store in Firestore
+      const generateThumbnail = (file: File): Promise<string> => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const MAX_WIDTH = 150;
+              const MAX_HEIGHT = 150;
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height) {
+                if (width > MAX_WIDTH) {
+                  height *= MAX_WIDTH / width;
+                  width = MAX_WIDTH;
+                }
+              } else {
+                if (height > MAX_HEIGHT) {
+                  width *= MAX_HEIGHT / height;
+                  height = MAX_HEIGHT;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx?.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.src = e.target?.result as string;
+          };
+          reader.readAsDataURL(file);
+        });
+      };
+
+      const thumbnailUrl = await generateThumbnail(selectedFile);
       const analysisResult = await analyzeColor(buffer, selectedFile.type);
       
       if (analysisResult.isValid === false) {
@@ -149,6 +188,7 @@ export default function App() {
       const newAnalysis: Analysis = {
         ...analysisResult,
         userId: user?.uid || 'anonymous',
+        imageUrl: thumbnailUrl,
         createdAt: new Date().toISOString(),
       };
       
@@ -178,12 +218,24 @@ export default function App() {
     }
   };
 
+  const getFaceShapeImage = (shape: string) => {
+    const normalized = shape.toLowerCase().split(' ')[0];
+    return `/face-shape/face_${normalized}.png`;
+  };
+
   const deleteAnalysis = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this analysis?")) return;
+    console.log("Attempting to delete analysis with ID:", id);
+    if (!id) {
+      console.error("No ID provided to deleteAnalysis");
+      return;
+    }
+    
     try {
       await deleteDoc(doc(db, 'analyses', id));
+      console.log("Delete successful for ID:", id);
     } catch (error) {
-      handleFirestoreError(error, OperationType.DELETE, `analyses/${id}`);
+      console.error("Delete failed for ID:", id, error);
+      alert("Delete failed. You may not have permission to delete this record.");
     }
   };
 
@@ -249,7 +301,7 @@ export default function App() {
                 <button onClick={() => setShowHistory(false)} className="p-2 hover:bg-gray-100 rounded-full">
                   <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-3xl font-display font-bold">Saved Palettes</h1>
+                <h1 className="text-3xl font-display font-bold">Saved Varna</h1>
               </div>
 
               {history.length === 0 ? (
@@ -265,18 +317,27 @@ export default function App() {
                       className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm hover:shadow-md transition-all group relative"
                     >
                       <button 
-                        onClick={() => deleteAnalysis(item.id!)}
-                        className="absolute top-4 right-4 p-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          e.preventDefault();
+                          deleteAnalysis(item.id!); 
+                        }}
+                        className="absolute top-2 right-2 p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all z-30 bg-white shadow-sm rounded-full border border-gray-100"
+                        title="Delete analysis"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={14} />
                       </button>
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <h3 className="font-display font-bold text-xl">{item.season}</h3>
-                          <p className="text-gray-500 text-sm font-medium">{item.subType}</p>
-                        </div>
-                        <div className="px-3 py-1 bg-brand-primary/10 text-brand-primary text-xs font-bold rounded-full uppercase tracking-wider">
-                          AI Analyzed
+                      <div className="flex items-center gap-4 mb-4">
+                        {item.imageUrl && (
+                          <div className="w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-black/5 shrink-0">
+                            <img src={item.imageUrl} alt="Thumbnail" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] mb-0.5">Color Archetype</p>
+                          <h3 className="font-display font-bold text-lg truncate leading-tight">
+                            {archetypes.color_archetypes[item.season]?.[`${item.subType} ${item.season}`]?.nickname || item.season}
+                          </h3>
                         </div>
                       </div>
                       <div className="flex gap-2 mb-6">
@@ -406,14 +467,43 @@ export default function App() {
                 {/* Right Column: Palette & Best/Worst */}
                 <div className="lg:col-span-8 space-y-8">
                   {/* Face Architecture Card */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden"
+                  >
+                    <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
+                      <div className="w-48 h-48 bg-neutral-50 rounded-[2rem] flex items-center justify-center p-4 border border-black/[0.03] shrink-0">
+                        <img 
+                          src={getFaceShapeImage(result.faceShape)} 
+                          alt={`${result.faceShape} face shape illustration`}
+                          className="w-full h-full object-contain opacity-80"
+                        />
+                      </div>
+                      <div className="flex-1 space-y-4">
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-black text-brand-secondary uppercase tracking-[0.2em]">Face Architecture</p>
+                          <h2 className="text-3xl font-display font-black text-gray-900">{result.faceShape}</h2>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Analysis</p>
+                          <p className="text-gray-600 leading-relaxed italic">
+                            "{result.faceShapeDescription}"
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Glasses Recommendation Card */}
                   {glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations] && (
                     <motion.div 
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-white p-8 rounded-[2.5rem] border border-brand-secondary/20 shadow-xl shadow-brand-secondary/5 overflow-hidden relative"
+                      className="bg-brand-secondary/5 p-8 rounded-[2.5rem] border border-brand-secondary/20 shadow-sm overflow-hidden relative"
                     >
                       <div className="absolute top-0 right-0 p-8 text-brand-secondary/10">
-                        <Glasses size={120} />
+                        <Glasses size={80} />
                       </div>
 
                       <div className="relative z-10 space-y-6">
@@ -421,26 +511,19 @@ export default function App() {
                           <div className="w-10 h-10 bg-brand-secondary rounded-2xl flex items-center justify-center text-white">
                             <Glasses size={20} />
                           </div>
-                          <div>
-                            <h2 className="text-xl font-display font-bold text-gray-900">Face Architecture</h2>
-                            <p className="text-xs font-bold text-brand-secondary uppercase tracking-[0.2em]">{result.faceShape}</p>
-                          </div>
+                          <h2 className="text-xl font-display font-bold text-gray-900">Style & Frames</h2>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                           <div className="space-y-4">
                             <div>
-                              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Analysis</p>
-                              <p className="text-sm text-gray-700 leading-relaxed">{result.faceShapeDescription}</p>
-                            </div>
-                            <div>
                               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Style Goal</p>
-                              <p className="text-sm font-medium text-gray-900">{glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations].style_goal}</p>
+                              <p className="text-sm font-medium text-gray-900 leading-relaxed">
+                                {glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations].style_goal}
+                              </p>
                             </div>
-                          </div>
-
-                          <div className="bg-neutral-50 p-6 rounded-3xl space-y-4">
-                            <div>
+                            
+                            <div className="pt-2">
                               <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest mb-3 flex items-center gap-2">
                                 <Check size={12} />
                                 Best Frames
@@ -453,9 +536,27 @@ export default function App() {
                                 ))}
                               </div>
                             </div>
-                            <div className="pt-2">
+                          </div>
+
+                          <div className="space-y-4">
+                            <div>
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                <Trash2 size={12} className="text-red-400" />
+                                Frames to Avoid
+                              </p>
+                              <ul className="space-y-2">
+                                {glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations].frames_to_avoid.map((frame, idx) => (
+                                  <li key={idx} className="text-xs text-gray-500 flex items-start gap-2">
+                                    <span className="w-1 h-1 rounded-full bg-red-300 mt-1.5 shrink-0" />
+                                    {frame}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            <div className="bg-white/50 p-4 rounded-2xl border border-brand-secondary/5">
                               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 italic">Pro Tip</p>
-                              <p className="text-[11px] text-gray-500 leading-tight">
+                              <p className="text-[11px] text-gray-600 leading-snug">
                                 {glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations].pro_tip}
                               </p>
                             </div>
