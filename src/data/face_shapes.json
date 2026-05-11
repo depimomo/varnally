@@ -1,0 +1,43 @@
+{
+  "face_architecture": {
+    "metrics_required": [
+      "face_length",
+      "forehead_width",
+      "cheekbone_width",
+      "jawline_width",
+      "lower_face_angle"
+    ],
+    "shapes": {
+      "Oval": {
+        "shape_name": "Oval",
+        "description": "The face length is greater than the width, with a gently rounded jawline.",
+        "measurement_logic": "(face_length > cheekbone_width) AND (forehead_width > jawline_width) AND (lower_face_angle == 'rounded')"
+      },
+      "Round": {
+        "shape_name": "Round",
+        "description": "The face length and cheekbone width are roughly equal, with soft, curved angles.",
+        "measurement_logic": "(face_length ≈ cheekbone_width) AND (forehead_width ≈ jawline_width) AND (lower_face_angle == 'rounded')"
+      },
+      "Square": {
+        "shape_name": "Square",
+        "description": "All measurements are fairly similar, featuring a sharp, strong jawline.",
+        "measurement_logic": "(face_length ≈ cheekbone_width) AND (forehead_width ≈ jawline_width) AND (lower_face_angle == 'sharp/squared')"
+      },
+      "Oblong": {
+        "shape_name": "Oblong / Rectangle",
+        "description": "The face length is the largest measurement, with the forehead, cheekbones, and jawline being similar in width.",
+        "measurement_logic": "(face_length > maximum(forehead_width, cheekbone_width, jawline_width)) AND (forehead_width ≈ cheekbone_width ≈ jawline_width)"
+      },
+      "Heart": {
+        "shape_name": "Heart",
+        "description": "The forehead is the widest part of the face, tapering down to a narrow, pointed chin.",
+        "measurement_logic": "(forehead_width > cheekbone_width) AND (cheekbone_width > jawline_width) AND (lower_face_angle == 'tapered/pointy')"
+      },
+      "Diamond": {
+        "shape_name": "Diamond",
+        "description": "The cheekbones are the widest part of the face, with a narrower forehead and a pointed chin.",
+        "measurement_logic": "(cheekbone_width > forehead_width) AND (cheekbone_width > jawline_width) AND (lower_face_angle == 'tapered/pointy')"
+      }
+    }
+  }
+}

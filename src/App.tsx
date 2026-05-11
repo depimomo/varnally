@@ -10,7 +10,8 @@ import {
   User as UserIcon,
   LogOut,
   Trash2,
-  Check
+  Check,
+  Glasses
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -34,6 +35,7 @@ import {
 import { auth, db, handleFirestoreError, OperationType } from './lib/firebase';
 import { analyzeColor } from './services/gemini';
 import archetypes from './data/archetypes.json';
+import glassesData from './data/glasses.json';
 
 // --- Types ---
 interface ColorInfo {
@@ -49,6 +51,8 @@ interface Analysis {
   bestColors: ColorInfo[];
   avoidColors: ColorInfo[];
   jewelry: 'Gold' | 'Silver';
+  faceShape: string;
+  faceShapeDescription: string;
   skinUndertone: string;
   eyeColor: string;
   hairColor: string;
@@ -401,6 +405,66 @@ export default function App() {
 
                 {/* Right Column: Palette & Best/Worst */}
                 <div className="lg:col-span-8 space-y-8">
+                  {/* Face Architecture Card */}
+                  {glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations] && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-white p-8 rounded-[2.5rem] border border-brand-secondary/20 shadow-xl shadow-brand-secondary/5 overflow-hidden relative"
+                    >
+                      <div className="absolute top-0 right-0 p-8 text-brand-secondary/10">
+                        <Glasses size={120} />
+                      </div>
+
+                      <div className="relative z-10 space-y-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-brand-secondary rounded-2xl flex items-center justify-center text-white">
+                            <Glasses size={20} />
+                          </div>
+                          <div>
+                            <h2 className="text-xl font-display font-bold text-gray-900">Face Architecture</h2>
+                            <p className="text-xs font-bold text-brand-secondary uppercase tracking-[0.2em]">{result.faceShape}</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          <div className="space-y-4">
+                            <div>
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Analysis</p>
+                              <p className="text-sm text-gray-700 leading-relaxed">{result.faceShapeDescription}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Style Goal</p>
+                              <p className="text-sm font-medium text-gray-900">{glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations].style_goal}</p>
+                            </div>
+                          </div>
+
+                          <div className="bg-neutral-50 p-6 rounded-3xl space-y-4">
+                            <div>
+                              <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest mb-3 flex items-center gap-2">
+                                <Check size={12} />
+                                Best Frames
+                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                {glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations].best_frames.map((frame, idx) => (
+                                  <span key={idx} className="px-3 py-1.5 bg-white border border-brand-secondary/10 rounded-xl text-xs font-bold text-gray-700 shadow-sm">
+                                    {frame}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="pt-2">
+                              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 italic">Pro Tip</p>
+                              <p className="text-[11px] text-gray-500 leading-tight">
+                                {glassesData.glasses_recommendations[result.faceShape as keyof typeof glassesData.glasses_recommendations].pro_tip}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
                   <div className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden">
                     <h2 className="text-xl font-display font-bold flex items-center gap-2 mb-8 text-gray-900">
                       <Check className="text-green-500" />

@@ -22,6 +22,8 @@
         "imageUrl": { "type": "string" },
         "season": { "type": "string", "enum": ["Winter", "Spring", "Summer", "Autumn"] },
         "subType": { "type": "string", "enum": ["Bright", "True", "Dark", "Light", "Soft", "Cool"] },
+        "faceShape": { "type": "string" },
+        "faceShapeDescription": { "type": "string" },
         "bestColors": {
           "type": "array",
           "items": {
@@ -48,7 +50,7 @@
         "hairColor": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["userId", "season", "subType", "bestColors", "avoidColors", "jewelry", "createdAt"]
+      "required": ["userId", "season", "subType", "bestColors", "avoidColors", "jewelry", "faceShape", "createdAt"]
     }
   },
   "firestore": {
