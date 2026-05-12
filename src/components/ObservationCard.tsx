@@ -1,0 +1,36 @@
+import React from 'react';
+
+interface ObservationCardProps {
+  skinUndertone: string;
+  eyeColor: string;
+  hairColor: string;
+}
+
+export const ObservationCard: React.FC<ObservationCardProps> = ({ skinUndertone, eyeColor, hairColor }) => (
+  <div className="bg-white p-6 rounded-[2rem] border border-black/5 shadow-sm space-y-4">
+    <h3 className="font-display font-bold text-gray-900 border-b border-gray-100 pb-3">Observations</h3>
+    <div className="space-y-4">
+      <div className="flex items-start gap-3">
+        <div className="w-2 h-2 rounded-full bg-brand-primary mt-2" />
+        <div>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Skin Undertone</p>
+          <p className="text-sm font-medium text-gray-700">{skinUndertone}</p>
+        </div>
+      </div>
+      <div className="flex items-start gap-3">
+        <div className="w-2 h-2 rounded-full bg-blue-400 mt-2" />
+        <div>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Eye Color</p>
+          <p className="text-sm font-medium text-gray-700">{eyeColor}</p>
+        </div>
+      </div>
+      <div className="flex items-start gap-3">
+        <div className="w-2 h-2 rounded-full bg-amber-800 mt-2" />
+        <div>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Hair Color</p>
+          <p className="text-sm font-medium text-gray-700">{hairColor}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
