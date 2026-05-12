@@ -18,11 +18,11 @@ export const FaceArchitectureCard: React.FC<FaceArchitectureCardProps> = ({
     className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden"
   >
     <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
-      <div className="w-48 h-48 bg-neutral-50 rounded-[2rem] flex items-center justify-center p-4 border border-black/[0.03] shrink-0">
+      <div className="w-48 h-48 rounded-[2rem] overflow-hidden shrink-0">
         <img 
           src={imageUrl} 
           alt={`${faceShape} face shape illustration`}
-          className="w-full h-full object-contain opacity-80"
+          className="w-full h-full object-cover"
         />
       </div>
       <div className="flex-1 space-y-4">
