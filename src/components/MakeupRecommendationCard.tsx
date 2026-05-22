@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Eye, Heart, Sparkles } from 'lucide-react';
 import makeupPresetsData from '../data/makeup_presets.json';
+import { MakeupSection } from './MakeupSection';
 
 interface ColorSpec {
   hex: string;
@@ -38,7 +39,9 @@ export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> =
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150 pb-5">
         <div className="space-y-1">
-          <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">Expert Cosmetics Map</p>
+          <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
+            Expert Cosmetics Map
+          </p>
           <h2 className="text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
             <Sparkles className="text-brand-primary animate-pulse" size={22} />
             Your Suitable Makeup Artistry
@@ -51,135 +54,47 @@ export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> =
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         
-        {/* 1. Foundation & Base Frame */}
-        <div id="makeup-base-section" className="bg-neutral-50/50 p-6 rounded-3xl border border-neutral-100 flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest font-mono">STEP 1: BASE FOUNDATION</p>
-            <h3 className="text-base font-bold text-gray-850">Skin Shade & Finish Blueprint</h3>
-            <p className="text-xs text-gray-600 leading-relaxed font-medium">
-              {makeupDetails.foundationDescription}
-            </p>
-          </div>
-          
-          <div className="space-y-3">
-            <p className="text-[10px] font-black text-gray-450 uppercase tracking-widest">Recommended Skin Reference Swatches</p>
-            <div className="grid grid-cols-3 gap-3">
-              {makeupDetails.foundationSwatches.map((swatch, idx) => (
-                <div key={idx} className="flex flex-col items-center p-2.5 bg-white border border-neutral-100 rounded-2xl shadow-sm space-y-2">
-                  <div 
-                    className="w-10 h-10 rounded-full border border-black/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]"
-                    style={{ backgroundColor: swatch.hex }}
-                  />
-                  <div className="text-center">
-                    <p className="text-[10px] font-bold text-gray-800 line-clamp-1">{swatch.name}</p>
-                    <p className="text-[8px] font-mono text-gray-400 font-bold uppercase">{swatch.hex}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* Step 1: Base Foundation Section */}
+        <MakeupSection
+          id="makeup-base-section"
+          stepLabel="STEP 1: BASE FOUNDATION"
+          title="Skin Shade & Finish Blueprint"
+          description={makeupDetails.foundationDescription}
+          swatches={makeupDetails.foundationSwatches}
+          type="foundation"
+        />
 
-        {/* 2. Lipstick Frame */}
-        <div id="makeup-lipstick-section" className="bg-neutral-50/50 p-6 rounded-3xl border border-neutral-100 flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest font-mono">STEP 2: LIP ARTISTRY</p>
-            <h3 className="text-base font-bold text-gray-850">3 Handpicked Suitable Lipsticks</h3>
-            <p className="text-xs text-gray-600 leading-relaxed font-medium">
-              Accentuate yours with distinct intensity levels. Recommended finishes include hydrating cream lipsticks, light glossy stains, or vibrant liquid velvets.
-            </p>
-          </div>
+        {/* Step 2: Lips Selection Section */}
+        <MakeupSection
+          id="makeup-lipstick-section"
+          stepLabel="STEP 2: LIP ARTISTRY"
+          title="3 Handpicked Suitable Lipsticks"
+          description="Accentuate yours with distinct intensity levels. Recommended finishes include hydrating cream lipsticks, light glossy stains, or vibrant liquid velvets."
+          swatches={makeupDetails.lipColors}
+          type="lip"
+        />
 
-          <div className="grid grid-cols-3 gap-3">
-            {makeupDetails.lipColors.map((lip, idx) => (
-              <div key={idx} className="flex flex-col items-center p-2.5 bg-white border border-neutral-100 rounded-2xl shadow-sm space-y-2">
-                <div className="w-10 h-10 rounded-full relative overflow-hidden border border-black/5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]">
-                  {/* Styled like a real lip swipe color block with dual gradient */}
-                  <div 
-                    className="absolute inset-0"
-                    style={{ 
-                      background: `linear-gradient(135deg, ${lip.hex} 0%, ${lip.hex}dd 100%)`
-                    }}
-                  />
-                  <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/10" />
-                </div>
-                <div className="text-center w-full">
-                  <p className="text-[10px] font-bold text-gray-800 line-clamp-1 h-3.5 leading-none">{lip.name}</p>
-                  <p className="text-[8px] font-mono text-gray-400 font-bold uppercase mt-1">{lip.hex}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Step 3: Eyeshadow Pans Section */}
+        <MakeupSection
+          id="makeup-eyeshadow-section"
+          stepLabel="STEP 3: EYE DEFINE"
+          title="3 Harmonious Eyeshadow Pans"
+          description="Create exquisite dimensions using customized gradients that make your natural base color pop instantly."
+          swatches={makeupDetails.eyeshadows}
+          type="eyeshadow"
+          icon={<Eye size={12} />}
+        />
 
-        {/* 3. Eyeshadow Frame */}
-        <div id="makeup-eyeshadow-section" className="bg-neutral-50/50 p-6 rounded-3xl border border-neutral-100 flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-1">
-              <Eye size={12} className="text-brand-primary" />
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest font-mono">STEP 3: EYE DEFINE</p>
-            </div>
-            <h3 className="text-base font-bold text-gray-850">3 Harmonious Eyeshadow Pans</h3>
-            <p className="text-xs text-gray-600 leading-relaxed font-medium">
-              Create exquisite dimensions using customized gradients that make your natural base color pop instantly.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            {makeupDetails.eyeshadows.map((eye, idx) => (
-              <div key={idx} className="flex flex-col items-center p-2.5 bg-white border border-neutral-100 rounded-2xl shadow-sm space-y-2">
-                <div className="w-10 h-10 rounded-full relative overflow-hidden border border-black/10 shadow-[inset_0_2px_5px_rgba(0,0,0,0.15)] flex items-center justify-center p-0.5" style={{ background: '#222' }}>
-                  {/* Realistic eyeshadow pan look */}
-                  <div 
-                    className="w-full h-full rounded-full transition-transform"
-                    style={{ 
-                      background: `radial-gradient(circle at 35% 35%, ${eye.hex}eb 0%, ${eye.hex} 80%, #000 120%)`,
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.4)'
-                    }}
-                  />
-                </div>
-                <div className="text-center w-full">
-                  <p className="text-[10px] font-bold text-gray-800 line-clamp-1 h-3.5 leading-none">{eye.name}</p>
-                  <p className="text-[8px] font-mono text-gray-400 font-bold uppercase mt-1">{eye.hex}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 4. Blush On Frame */}
-        <div id="makeup-blush-section" className="bg-neutral-50/50 p-6 rounded-3xl border border-neutral-100 flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-1">
-              <Heart size={12} className="text-brand-primary" />
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest font-mono">STEP 4: BLUSH & FLUSH</p>
-            </div>
-            <h3 className="text-base font-bold text-gray-850">3 Radiating Cheek Blushers</h3>
-            <p className="text-xs text-gray-600 leading-relaxed font-medium">
-              Soft dustings of warm apricot, cool berry, or silky rose blushers to shape and contour your natural bone structures.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            {makeupDetails.blushes.map((blush, idx) => (
-              <div key={idx} className="flex flex-col items-center p-2.5 bg-white border border-neutral-100 rounded-2xl shadow-sm space-y-2">
-                <div className="w-10 h-10 rounded-full relative overflow-hidden flex items-center justify-center">
-                  {/* Soft powder-buff appearance with radial blur styling */}
-                  <div 
-                    className="w-8 h-8 rounded-full blur-[2px] opacity-90"
-                    style={{ 
-                      background: `radial-gradient(circle, ${blush.hex} 0%, ${blush.hex}dd 70%, transparent 100%)`
-                    }}
-                  />
-                </div>
-                <div className="text-center w-full">
-                  <p className="text-[10px] font-bold text-gray-800 line-clamp-1 h-3.5 leading-none">{blush.name}</p>
-                  <p className="text-[8px] font-mono text-gray-400 font-bold uppercase mt-1">{blush.hex}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Step 4: Cheek Blush Section */}
+        <MakeupSection
+          id="makeup-blush-section"
+          stepLabel="STEP 4: BLUSH & FLUSH"
+          title="3 Radiating Cheek Blushers"
+          description="Soft dustings of warm apricot, cool berry, or silky rose blushers to shape and contour your natural bone structures."
+          swatches={makeupDetails.blushes}
+          type="blush"
+          icon={<Heart size={12} />}
+        />
 
       </div>
     </motion.div>
