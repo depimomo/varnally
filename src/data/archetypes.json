@@ -4,24 +4,24 @@
       "Bright Winter": {
         "nickname": "The Aurora",
         "description": "Striking and unforgettable. You thrive in high-contrast, vivid jewel tones that mirror a neon sky. Your presence is magnetic and clear.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["0099DC","0066AE","57307F", "842684","C31163","E65C97","E3D700","008E60","007D5B","016C58"]
       },
       "True Winter": {
         "nickname": "The Glacier",
         "description": "Absolute and striking. You possess an icy, crisp elegance. Stark, cool tones illuminate your sharp and sophisticated natural contrast.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["BFDFEC","325EA5","2D4281","2F3359","714990","B34488","941D31","01372A","004737", "016E57"]
       },
       "Dark Winter": {
         "nickname": "The Eclipse",
         "description": "Mysterious and deeply captivating. You look your best wrapped in rich, cool shadows and intense, luxurious depths.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["4B225C","D3C91C","A91E1B","BC1741","8B1932","41261B","033114","016132","0E5066","352F77"]
       }
     },
     "Spring": {
       "Light Spring": {
         "nickname": "The Dawn",
         "description": "Delicate, fresh, and full of promise. You glow in airy, pastel-warm colors that capture the first soft light of day.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["F7E140","EEB19C","E54F5A","E98875","8E5A8B","72BCE1","8CCAC8","97C586","B5C83B","E0DA2E"]
       },
       "True Spring": {
         "nickname": "The Meadow",
@@ -31,41 +31,41 @@
       "Bright Spring": {
         "nickname": "The Sunrise",
         "description": "Clear, intense, and awakening. You effortlessly carry the most vivid, warm colors, bringing a bold and joyful energy wherever you go.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["017E5C","00A09E","0178BC","85398C","C7135A","DC0814","E2510E","F7E602","E4E82C","04993F"]
       }
     },
     "Summer": {
       "Light Summer": {
         "nickname": "The Seafoam",
         "description": "Gentle, airy, and refreshing. Your cool, delicate coloring is perfectly complemented by soft, powdery tones that feel like a gentle ocean breeze.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["C9D78A","EFE874","EDA4C2","C75086","C8A7C8","9283BA","5B85BE","B4DAE5","85C8D8","6CB77F"]
       },
       "True Summer": {
         "nickname": "The Twilight",
         "description": "Serene, cool, and elegant. You possess a calm beauty that is beautifully enhanced by dusty, muted cool tones like lavender and slate.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["38B3AE","81C8DE","1F80B5","2A5A7E","324D62","AA90BD","8D5489","A94790","557871","40A49A"]
       },
       "Soft Summer": {
         "nickname": "The Haze",
         "description": "Enigmatic and softly blended. Your muted coloring is effortlessly chic, finding its perfect harmony in gentle, gray-tinted cool colors.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["CFA192","EEE997","BBC48F","89A688","405574","66748E","996B99","9F78AD","744C4A","9F6468"]
       }
     },
     "Autumn": {
       "Soft Autumn": {
         "nickname": "The Dune",
         "description": "Earthy, muted, and incredibly stylish. You radiate a calm, grounded warmth that looks stunning in gentle, toasted neutrals.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["F4BD60","BE9448","656F3B","284A53","617177","673331","814C48","8A543A","BC5A37","C67943"]
       },
       "True Autumn": {
         "nickname": "The Harvest",
         "description": "Rich, golden, and abundant. You carry the warmth of changing seasons perfectly, glowing in toasted, vibrant earth tones.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["A38F1E","B97A19","D5A004","DE7A0A","C53F19","B4181B","7F2E11","7C162C","278A76","377E32"]
       },
       "Dark Autumn": {
         "nickname": "The Sunset",
         "description": "Deep, warm, and intense. You have a smoldering natural contrast that carries the heaviest, richest autumn colors with absolute grace.",
-        "border": ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"]
+        "border": ["692534","E8AE1F","A72317","BA3818","831F12","652E19","26421C","445F24","028881","005D65"]
       }
     }
   }
