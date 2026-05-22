@@ -45,7 +45,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Left Column: Photo & Details */}
       <div className="lg:col-span-4 space-y-6">
-        <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
+        <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-white">
           <img 
             src={result.cleanedImageUrl || previewUrl || result.imageUrl || ''} 
             alt="Analyzed face" 

@@ -149,7 +149,7 @@ export async function regenerateIdPhoto(imageBuffer: ArrayBuffer, mimeType: stri
             },
           },
           {
-            text: "Isolate the person's face, neck, and hair from this photo. Keep their expression, gaze and facial features perfectly identical. Place this face and neck centered on a plain solid white background. Replace their clothing with a simple plain solid white round crew-neck t-shirt. It should look exactly like a clean, professionally shot biometric ID photo or passport photo. Output ONLY the edited image.",
+            text: "Isolate the person's face, neck, and hair from this photo. Keep their expression, gaze, and facial features perfectly identical. Place this face and neck centered on a plain solid white background. Replace their clothing with a simple plain solid white round crew-neck t-shirt. It should look exactly like a clean, professionally shot biometric ID photo or passport photo. Output ONLY the edited image.",
           },
         ],
       },
