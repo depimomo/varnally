@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Sparkles, Trash2, Check } from 'lucide-react';
 import { Analysis } from '../types';
 import archetypes from '../data/archetypes.json';
-import { ColorSwatch } from './ColorSwatch';
+import { ColorDrape } from './ColorDrape';
 import { ObservationCard } from './ObservationCard';
 import { FaceArchitectureCard } from './FaceArchitectureCard';
 import { GlassesRecommendationCard } from './GlassesRecommendationCard';
@@ -47,7 +47,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
       <div className="lg:col-span-4 space-y-6">
         <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
           <img 
-            src={previewUrl || result.imageUrl || ''} 
+            src={result.cleanedImageUrl || previewUrl || result.imageUrl || ''} 
             alt="Analyzed face" 
             className="w-full h-full object-cover" 
           />
@@ -108,26 +108,26 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
 
         <GlassesRecommendationCard faceShape={result.faceShape} />
 
-        <div className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden">
-          <h2 className="text-xl font-display font-bold flex items-center gap-2 mb-8 text-gray-900">
+        <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden">
+          <h2 className="text-xl font-display font-medium flex items-center gap-2 mb-6 text-gray-900">
             <Check className="text-green-500" />
             Best Colors to Wear
           </h2>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {(result.bestColors || []).map((color, idx) => (
-              <ColorSwatch key={idx} color={color} />
+              <ColorDrape key={idx} color={color} imageUrl={result.cleanedImageUrl || previewUrl || result.imageUrl || null} />
             ))}
           </div>
         </div>
 
-        <div className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm">
-          <h2 className="text-xl font-display font-bold flex items-center gap-2 mb-8 text-gray-900">
+        <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden">
+          <h2 className="text-xl font-display font-medium flex items-center gap-2 mb-6 text-gray-900">
             <Trash2 className="text-red-500" size={20} />
             Colors to Avoid
           </h2>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {(result.avoidColors || []).map((color, idx) => (
-              <ColorSwatch key={idx} color={color} />
+              <ColorDrape key={idx} color={color} imageUrl={result.cleanedImageUrl || previewUrl || result.imageUrl || null} />
             ))}
           </div>
         </div>

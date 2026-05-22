@@ -19,7 +19,7 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from './lib/firebase';
-import { analyzeColor } from './services/gemini';
+import { analyzeColor, regenerateIdPhoto } from './services/gemini';
 import { Analysis } from './types';
 import { Header } from './components/Header';
 import { HistoryList } from './components/HistoryList';
@@ -131,7 +131,14 @@ export default function App() {
       };
 
       const thumbnailUrl = await generateThumbnail(selectedFile);
-      const analysisResult = await analyzeColor(buffer, selectedFile.type);
+      
+      const [analysisResult, cleanedImageUrl] = await Promise.all([
+        analyzeColor(buffer, selectedFile.type),
+        regenerateIdPhoto(buffer, selectedFile.type).catch(err => {
+          console.warn("Could not regenerate ID photo passport portrait, falling back:", err);
+          return null;
+        })
+      ]);
       
       if (analysisResult.isValid === false) {
         setAnalysisError(analysisResult.errorMessage || "This photo doesn't seem suitable for color analysis. Please ensure your face is clear and the lighting is natural.");
@@ -142,6 +149,7 @@ export default function App() {
         ...analysisResult,
         userId: user?.uid || 'anonymous',
         imageUrl: thumbnailUrl,
+        cleanedImageUrl: cleanedImageUrl || previewUrl || undefined,
         createdAt: new Date().toISOString(),
       };
       

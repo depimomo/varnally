@@ -1,6 +1,13 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+  httpOptions: {
+    headers: {
+      'User-Agent': 'aistudio-build',
+    }
+  }
+});
 
 const SYSTEM_PROMPT = `
 You are an expert personal color analyst and a precise facial geometrician. 
@@ -51,7 +58,7 @@ export async function analyzeColor(imageBuffer: ArrayBuffer, mimeType: string) {
   );
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-3.5-flash",
     contents: [
       {
         parts: [
@@ -120,4 +127,43 @@ export async function analyzeColor(imageBuffer: ArrayBuffer, mimeType: string) {
     console.error("Failed to parse Gemini response:", text);
     throw new Error("Could not analyze color. Please try again with a clearer photo.");
   }
+}
+
+export async function regenerateIdPhoto(imageBuffer: ArrayBuffer, mimeType: string): Promise<string> {
+  const base64Data = btoa(
+    new Uint8Array(imageBuffer).reduce(
+      (data, byte) => data + String.fromCharCode(byte),
+      ""
+    )
+  );
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash-image',
+    contents: [
+      {
+        parts: [
+          {
+            inlineData: {
+              data: base64Data,
+              mimeType,
+            },
+          },
+          {
+            text: "Isolate the person's face, neck, and hair from this photo. Keep their expression, gaze and facial features perfectly identical. Place this face and neck centered on a plain solid white background. Replace their clothing with a simple plain solid white round crew-neck t-shirt. It should look exactly like a clean, professionally shot biometric ID photo or passport photo. Output ONLY the edited image.",
+          },
+        ],
+      },
+    ],
+  });
+
+  const parts = response.candidates?.[0]?.content?.parts;
+  if (parts) {
+    for (const part of parts) {
+      if (part.inlineData?.data) {
+        return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
+      }
+    }
+  }
+
+  throw new Error("No image data returned from image editing model");
 }

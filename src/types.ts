@@ -17,5 +17,6 @@ export interface Analysis {
   eyeColor: string;
   hairColor: string;
   imageUrl?: string;
+  cleanedImageUrl?: string;
   createdAt: any;
 }

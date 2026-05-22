@@ -2,5 +2,5 @@
   "name": "Varnally",
   "description": "Personal color analysis app using AI vision to determine your seasonal palette from a bare face photo.",
   "requestFramePermissions": ["camera"],
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
