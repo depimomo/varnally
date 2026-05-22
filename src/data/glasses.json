@@ -4,13 +4,13 @@
       "style_goal": "Maintain natural balance without disrupting facial symmetry.",
       "best_frames": [
         "Rectangular",
-        "Geometric shapes",
-        "Top-heavy frames (Clubmasters)",
-        "Aviators"
+        "Geometric",
+        "Top-heavy"
       ],
       "frames_to_avoid": [
-        "Oversized frames that cover too much of the face",
-        "Frames that are too narrow"
+        "Oversized",
+        "Narrow",
+        "Round"
       ],
       "pro_tip": "Choose frames that are as wide as (or slightly wider than) the broadest part of the face."
     },
@@ -19,13 +19,12 @@
       "best_frames": [
         "Rectangular",
         "Square",
-        "Cat-eye (Upswept)",
-        "Wayfarers"
+        "Cat-eye"
       ],
       "frames_to_avoid": [
-        "Small, round frames",
-        "Rimless frames",
-        "Circular shapes"
+        "Round",
+        "Rimless",
+        "Circular"
       ],
       "pro_tip": "Bold, angular lines help break up the face's roundness and add much-needed contrast."
     },
@@ -34,43 +33,40 @@
       "best_frames": [
         "Round",
         "Oval",
-        "Thin wire frames",
-        "Rimless styles"
+        "Rimless"
       ],
       "frames_to_avoid": [
-        "Boxy or rectangular frames",
-        "Sharp geometric shapes",
-        "Heavy bottom frames"
+        "Boxy",
+        "Sharp geometric",
+        "Heavy bottom"
       ],
       "pro_tip": "Choose frames that sit high on the bridge of the nose to elongate the appearance of the face."
     },
     "Oblong": {
       "style_goal": "Add width and break up the vertical length of the face.",
       "best_frames": [
-        "Oversized frames",
-        "Tall frames with decorative temples",
+        "Oversized",
         "Wayfarers",
-        "Square shapes"
+        "Square"
       ],
       "frames_to_avoid": [
-        "Small, narrow frames",
-        "Short rectangular shapes",
-        "Rimless frames"
+        "Narrow",
+        "Short rectangular",
+        "Rimless"
       ],
       "pro_tip": "Look for frames with 'tall' lenses and a low bridge to create a horizontal emphasis."
     },
     "Heart": {
       "style_goal": "Minimize the width of the forehead and balance the narrow chin.",
       "best_frames": [
-        "Bottom-heavy frames",
-        "Rimless or light-colored frames",
-        "Oval",
-        "Low-set temples"
+        "Bottom-heavy",
+        "Rimless",
+        "Oval"
       ],
       "frames_to_avoid": [
-        "Top-heavy frames",
+        "Top-heavy",
         "Decorative browlines",
-        "Oversized styles that draw attention upward"
+        "Oversized"
       ],
       "pro_tip": "Frames that are wider at the bottom help add visual 'weight' to the lower half of the face."
     },
@@ -79,13 +75,12 @@
       "best_frames": [
         "Cat-eye",
         "Oval",
-        "Browline frames (Clubmasters)",
-        "Rimless styles"
+        "Browline"
       ],
       "frames_to_avoid": [
-        "Narrow, rectangular frames",
-        "Frames with sharp angles",
-        "Boxy shapes"
+        "Rectangular",
+        "Sharp geometric",
+        "Boxy"
       ],
       "pro_tip": "Focus on styles that highlight the eyes and browline to balance out prominent cheekbones."
     }
