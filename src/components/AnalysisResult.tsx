@@ -7,6 +7,7 @@ import { ColorDrape } from './ColorDrape';
 import { ObservationCard } from './ObservationCard';
 import { FaceArchitectureCard } from './FaceArchitectureCard';
 import { GlassesRecommendationCard } from './GlassesRecommendationCard';
+import { MakeupRecommendationCard } from './MakeupRecommendationCard';
 import { ResultHeader } from './ResultHeader';
 
 interface AnalysisResultProps {
@@ -169,6 +170,12 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
               ))}
             </div>
           </div>
+
+          <MakeupRecommendationCard 
+            season={result.season} 
+            subType={result.subType} 
+          />
+
           <FaceArchitectureCard
             faceShape={result.faceShape}
             faceShapeDescription={result.faceShapeDescription}
