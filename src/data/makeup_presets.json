@@ -1,0 +1,290 @@
+{
+  "Bright Winter": {
+    "finish": "Crisp Satin / Semi-Matte",
+    "foundationDescription": "Neutral or slightly cool undertone base. Clean finish with high luminosity, avoiding heavy golden or warm yellow tones.",
+    "foundationSwatches": [
+      { "name": "Fair Alabaster", "hex": "#FFEBE0" },
+      { "name": "Medium Rosy Beige", "hex": "#E9C0A9" },
+      { "name": "Deep Rich Cocoa", "hex": "#6D4432" }
+    ],
+    "lipColors": [
+      { "hex": "#BD1B24", "name": "Aurora Crimson" },
+      { "hex": "#E6195E", "name": "Vivid Fuchsia" },
+      { "hex": "#8A1C47", "name": "Electric Plum" }
+    ],
+    "eyeshadows": [
+      { "hex": "#D3D3D3", "name": "Icy Silver Shimmer" },
+      { "hex": "#3A3B3C", "name": "Charcoal Smoke" },
+      { "hex": "#7851A9", "name": "Electric Violet" }
+    ],
+    "blushes": [
+      { "hex": "#F34A81", "name": "Hot Orchid Pink" },
+      { "hex": "#FF8CA3", "name": "Vibrant Rosé" },
+      { "hex": "#DF73FF", "name": "Delicate Lavender" }
+    ]
+  },
+  "True Winter": {
+    "finish": "Classic Velvet Matte",
+    "foundationDescription": "Distinctly cool-undertone bases with soft rose, pink, or neutral porcelain undertones. Steer clear of peach or copper filters.",
+    "foundationSwatches": [
+      { "name": "Cool Porcelain", "hex": "#FFF0EB" },
+      { "name": "Soft Cool Tan", "hex": "#D8A388" },
+      { "name": "Dark Cool Espresso", "hex": "#523326" }
+    ],
+    "lipColors": [
+      { "hex": "#D2143A", "name": "True Ruby" },
+      { "hex": "#3B101E", "name": "Midnight Black Cherry" },
+      { "hex": "#A94A70", "name": "Crimson Berry" }
+    ],
+    "eyeshadows": [
+      { "hex": "#FFFFFF", "name": "Crisp Snow White" },
+      { "hex": "#4B4E53", "name": "Gunmetal Slate" },
+      { "hex": "#562C5B", "name": "Deep Royal Plum" }
+    ],
+    "blushes": [
+      { "hex": "#FC80A5", "name": "Icy Bubblegum" },
+      { "hex": "#C71585", "name": "Amethyst Berry" },
+      { "hex": "#E05A7D", "name": "Cold Rose" }
+    ]
+  },
+  "Dark Winter": {
+    "finish": "Rich Satin-Matte",
+    "foundationDescription": "Neutral-cool bases, deep and rich. High pigment density that anchors the dynamic contrast of winter eyes and hair.",
+    "foundationSwatches": [
+      { "name": "Rosy Alabaster", "hex": "#FCE5DB" },
+      { "name": "Rich Tan-Neutral", "hex": "#C68E6B" },
+      { "name": "Dark Roasted Espresso", "hex": "#43251D" }
+    ],
+    "lipColors": [
+      { "hex": "#7E0D21", "name": "Deep Garnet" },
+      { "hex": "#4E0C1B", "name": "Bordeaux Merlot" },
+      { "hex": "#9E3C5B", "name": "Mulberry Rose" }
+    ],
+    "eyeshadows": [
+      { "hex": "#8A7F8D", "name": "Plum Taupe" },
+      { "hex": "#1C2E3C", "name": "Deep Navy Velvet" },
+      { "hex": "#1A1110", "name": "Obsidian Black" }
+    ],
+    "blushes": [
+      { "hex": "#B85A75", "name": "Smoky Plum" },
+      { "hex": "#913840", "name": "Deep Cabernet" },
+      { "hex": "#D56D8D", "name": "Cranberry Dust" }
+    ]
+  },
+  "Light Spring": {
+    "finish": "Dewy & Sun-Kissed Gloss",
+    "foundationDescription": "Lightweight, sheer, warm ivory and peachy golden undertones. Satin finish with continuous natural hydration.",
+    "foundationSwatches": [
+      { "name": "Light Peach Ivory", "hex": "#FFF5ED" },
+      { "name": "Warm Honey Medium", "hex": "#E8B291" },
+      { "name": "Toasted Warm Caramel", "hex": "#AA7A5B" }
+    ],
+    "lipColors": [
+      { "hex": "#F39A86", "name": "Sheer Coral Peach" },
+      { "hex": "#E07A5F", "name": "Warm Apricot Nude" },
+      { "hex": "#FF8F94", "name": "Sweet Melon Pink" }
+    ],
+    "eyeshadows": [
+      { "hex": "#F9EBCE", "name": "Soft Vanilla Gold" },
+      { "hex": "#DFB394", "name": "Peach Blossom Pearlescent" },
+      { "hex": "#B78A62", "name": "Warm Honeywood" }
+    ],
+    "blushes": [
+      { "hex": "#FFB09C", "name": "Peach Apricot Pulp" },
+      { "hex": "#FFA3B1", "name": "Sweet Hibiscus" },
+      { "hex": "#FFD4AE", "name": "Creamy Cantaloupe" }
+    ]
+  },
+  "True Spring": {
+    "finish": "Fresh Radiant Glow",
+    "foundationDescription": "Highly golden, yellow, or warm peach undertone foundations. Best accompanied by a high-shine highlighting finish.",
+    "foundationSwatches": [
+      { "name": "Warm Buttercream", "hex": "#FFF2E2" },
+      { "name": "Golden Honey Medium", "hex": "#DEA173" },
+      { "name": "Warm Golden Walnut", "hex": "#885C42" }
+    ],
+    "lipColors": [
+      { "hex": "#FF471A", "name": "Bright Tomato Red" },
+      { "hex": "#F08080", "name": "Fresh Coral Punch" },
+      { "hex": "#FF8C00", "name": "Warm Orange Nectar" }
+    ],
+    "eyeshadows": [
+      { "hex": "#ECCB99", "name": "Shimmering Apricot Champagne" },
+      { "hex": "#C78E36", "name": "Antique Warm Amber" },
+      { "hex": "#825026", "name": "Spicy Nutmeg" }
+    ],
+    "blushes": [
+      { "hex": "#FF7F50", "name": "Vivid Coral Glaze" },
+      { "hex": "#F4A460", "name": "Warm Sandy Sandalwood" },
+      { "hex": "#E9967A", "name": "Fresh Papaya Blush" }
+    ]
+  },
+  "Bright Spring": {
+    "finish": "Glossy & High Contrast Satin",
+    "foundationDescription": "Clear, vibrant, and warm golden finishes. Avoid matte, chalky, or heavy cool foundations.",
+    "foundationSwatches": [
+      { "name": "Golden Alabaster", "hex": "#FFEEDD" },
+      { "name": "Amber Tan Medium", "hex": "#DFA070" },
+      { "name": "Deep Warm Chestnut", "hex": "#794E34" }
+    ],
+    "lipColors": [
+      { "hex": "#FF1493", "name": "Neon Coral Fuchsia" },
+      { "hex": "#FF3300", "name": "Vibrant Poppy Red" },
+      { "hex": "#FF6666", "name": "Electric Watermelon" }
+    ],
+    "eyeshadows": [
+      { "hex": "#FFD700", "name": "Bright Lemon Gold Sparkle" },
+      { "hex": "#40E0D0", "name": "Teal Lagoon Accents" },
+      { "hex": "#C19A6B", "name": "Sparkling Bronze" }
+    ],
+    "blushes": [
+      { "hex": "#FF3E96", "name": "Wild Carnation" },
+      { "hex": "#FF8243", "name": "Zesty Tangerine Sheer" },
+      { "hex": "#EE9A49", "name": "Sweet Orange Blossom" }
+    ]
+  },
+  "Light Summer": {
+    "finish": "Dewy / Luminous Sheer",
+    "foundationDescription": "Lightest cool-pink base tones. Ensure base is light, breathable, and matching delicate light indicators.",
+    "foundationSwatches": [
+      { "name": "Light Rosy Pearl", "hex": "#FFF3FE" },
+      { "name": "Rosy Beige Medium", "hex": "#E9CFC5" },
+      { "name": "Light Cool Ebony", "hex": "#7E5D50" }
+    ],
+    "lipColors": [
+      { "hex": "#EA96A3", "name": "Rosewater Pink" },
+      { "hex": "#E5A0B7", "name": "Light Pastel Mauve" },
+      { "hex": "#DC8093", "name": "Strawberry Mist" }
+    ],
+    "eyeshadows": [
+      { "hex": "#EADAED", "name": "Frosted Orchid" },
+      { "hex": "#96A9C5", "name": "Powder Blue Haze" },
+      { "hex": "#A89A9C", "name": "Pearl Slate Grey" }
+    ],
+    "blushes": [
+      { "hex": "#FFAEB9", "name": "Pastel Sweet Pea" },
+      { "hex": "#EEA2AD", "name": "Soft Wild Orchid" },
+      { "hex": "#D6B4CD", "name": "Light Lavender Frost" }
+    ]
+  },
+  "True Summer": {
+    "finish": "Satin Silk Finish",
+    "foundationDescription": "Distinctly cool-undertone bases with soft cool-olive or rosy-beige undertones. Keep the focus light and powdery.",
+    "foundationSwatches": [
+      { "name": "Cool Alabaster", "hex": "#FFEDE8" },
+      { "name": "Cool Pecan-Beige", "hex": "#CD9D82" },
+      { "name": "Deep Cool Cocoa", "hex": "#624135" }
+    ],
+    "lipColors": [
+      { "hex": "#CD5C5C", "name": "English Classic Rose" },
+      { "hex": "#AA4A44", "name": "Raspberry Splash" },
+      { "hex": "#AF6E79", "name": "Satin Vintage Mauve" }
+    ],
+    "eyeshadows": [
+      { "hex": "#CBC6CF", "name": "Silver Heather Lavender" },
+      { "hex": "#778899", "name": "Soft Charcoal Slate" },
+      { "hex": "#5C525F", "name": "Amethyst Smoke" }
+    ],
+    "blushes": [
+      { "hex": "#DDA0DD", "name": "Petal Plum Orchid" },
+      { "hex": "#FA8072", "name": "Muted Cool Salmon Pink" },
+      { "hex": "#DB8C9B", "name": "Cottage Peony" }
+    ]
+  },
+  "Soft Summer": {
+    "finish": "Muted Velvet / Soft Satin",
+    "foundationDescription": "Neutral-cool bases with soft hazel, pink-grey, or beige undertones. Satin-matte avoids shiny highlights.",
+    "foundationSwatches": [
+      { "name": "Muted Ivory Neutral", "hex": "#FFF0EB" },
+      { "name": "Blended Neutral Beige", "hex": "#CDA48C" },
+      { "name": "Dark Neutral Walnut", "hex": "#584236" }
+    ],
+    "lipColors": [
+      { "hex": "#C08081", "name": "Smoky Rosewood" },
+      { "hex": "#8A6872", "name": "Cranberry Fog" },
+      { "hex": "#9F7A8E", "name": "Muted Lilac Taupe" }
+    ],
+    "eyeshadows": [
+      { "hex": "#B8AD9E", "name": "Stone Grey Taupe" },
+      { "hex": "#7A6B63", "name": "Blended Cocoa Haze" },
+      { "hex": "#808A91", "name": "Soft Spruce Pine" }
+    ],
+    "blushes": [
+      { "hex": "#C78C9E", "name": "Smoked Rose Dust" },
+      { "hex": "#B284BE", "name": "Warm Lavender Mist" },
+      { "hex": "#E9967A", "name": "Soft Sand Pink" }
+    ]
+  },
+  "Soft Autumn": {
+    "finish": "Velvet Soft Matte / Earthy Aura",
+    "foundationDescription": "Muted warm-neutral tones, highly blended warm olive or toasted amber. Needs ultra-blendable silk finishes.",
+    "foundationSwatches": [
+      { "name": "Toasted Neutral Fair", "hex": "#FFEFE4" },
+      { "name": "Muted Butterscotch Medium", "hex": "#CFA085" },
+      { "name": "Earthy Warm Mahogany", "hex": "#613D2D" }
+    ],
+    "lipColors": [
+      { "hex": "#D68D6E", "name": "Toasted Apricot Nude" },
+      { "hex": "#C57B69", "name": "Warm Maple Milk" },
+      { "hex": "#AD6D5E", "name": "Smoked Terra Cotta" }
+    ],
+    "eyeshadows": [
+      { "hex": "#D2B48C", "name": "Soft Antique Gold" },
+      { "hex": "#8FBC8F", "name": "Earthy Sage Green" },
+      { "hex": "#A0522D", "name": "Dry Pecan Shell" }
+    ],
+    "blushes": [
+      { "hex": "#E9967A", "name": "Nude Apricot Bark" },
+      { "hex": "#D2691E", "name": "Toasted Hazelnut" },
+      { "hex": "#CD5C5C", "name": "Soft Auburn Spice" }
+    ]
+  },
+  "True Autumn": {
+    "finish": "Earthy Satin",
+    "foundationDescription": "Golden bronze, rich yellow sand, and golden olive bases. Fully embraces full warmth; avoid light cool pink foundations.",
+    "foundationSwatches": [
+      { "name": "Full Golden Honey", "hex": "#FFE7CC" },
+      { "name": "Bronze Tan Medium", "hex": "#C68C60" },
+      { "name": "Dark Roasted Tan-Gold", "hex": "#563A21" }
+    ],
+    "lipColors": [
+      { "hex": "#A0522D", "name": "Terracotta Clay" },
+      { "hex": "#8B4513", "name": "Rich Cinnamon Spice" },
+      { "hex": "#CD853F", "name": "Copper Apricot Glaze" }
+    ],
+    "eyeshadows": [
+      { "hex": "#E5C158", "name": "Rich Forest Olive/Gold" },
+      { "hex": "#556B2F", "name": "Deep Autumn Moss Green" },
+      { "hex": "#8E5132", "name": "Roasted Pumpkin Shell" }
+    ],
+    "blushes": [
+      { "hex": "#E2725B", "name": "Vivid Paprika Dust" },
+      { "hex": "#BC4F30", "name": "Burnt Ochre Red" },
+      { "hex": "#D1A056", "name": "Antique Bronze" }
+    ]
+  },
+  "Dark Autumn": {
+    "finish": "Deep Satin / Velvet Glam",
+    "foundationDescription": "Deep rich warm, strong amber & golden olive undertones. Matte finishes balanced by highly pigmented contours.",
+    "foundationSwatches": [
+      { "name": "Earthy Honey Fair", "hex": "#FFEAD4" },
+      { "name": "Warm Coffee Medium", "hex": "#BE865E" },
+      { "name": "Dark Warm Cocoa", "hex": "#462817" }
+    ],
+    "lipColors": [
+      { "hex": "#800000", "name": "Eclipse Maroon" },
+      { "hex": "#802213", "name": "Spicy Maple Chestnut" },
+      { "hex": "#8B0000", "name": "Burnt Dark Brick Red" }
+    ],
+    "eyeshadows": [
+      { "hex": "#8B5A2B", "name": "Gilded Caramel Bronze" },
+      { "hex": "#2E5043", "name": "Midnight Forest Teal" },
+      { "hex": "#3D2B1F", "name": "Toasted Espresso Beans" }
+    ],
+    "blushes": [
+      { "hex": "#B35B47", "name": "Spiced Wine Blush" },
+      { "hex": "#A05128", "name": "Deep Mahogany Gold" },
+      { "hex": "#8B2500", "name": "Burnt Sienna" }
+    ]
+  }
+}
