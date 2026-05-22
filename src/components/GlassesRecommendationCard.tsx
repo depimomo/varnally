@@ -9,11 +9,11 @@ interface GlassesRecommendationCardProps {
 
 export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps> = ({ faceShape }) => {
   const recommendations = (glassesData.glasses_recommendations as any)[faceShape];
-  
+
   if (!recommendations) return null;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       id="glasses-recommendation-card"
@@ -38,7 +38,7 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
 
         {/* Content Layout */}
         <div className="space-y-6">
-          
+
           {/* Top Section: Style Goal */}
           <div id="glasses-style-goal-box" className="bg-neutral-50 border border-gray-100 p-5 rounded-2xl">
             <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest mb-1 font-mono">Visual Styling Objective</p>
@@ -49,29 +49,18 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
 
           {/* New Horizontal Section: Best Frame Illustration (Centered below Style Goal) */}
           <div className="flex justify-center w-full">
-            <motion.div
-              whileHover={{ y: -2 }}
-              transition={{ duration: 0.2 }}
-              id="glasses-illustration-container"
-              className="bg-white w-full max-w-[400px] min-h-[440px] flex flex-col items-center justify-between relative overflow-hidden"
-            >
-              <div className="absolute top-2 right-2 text-[8px] font-black text-gray-450 uppercase tracking-widest font-mono">
-                Face Match: {faceShape}
-              </div>
-
-              {/* Seamless vertical image showcase with no border and no drop-shadow */}
-              <div className="w-full flex-1 flex items-center justify-center p-0 relative my-2">
-                <img
-                  id="recommended-glasses-img"
-                  src={`/glasses/glasses_${faceShape.toLowerCase()}.png`}
-                  alt={`${faceShape} Face Shape Recommended Glasses`}
-                  className="w-auto h-auto max-h-[520px] object-contain transition-transform duration-300"
-                  onError={(e) => {
-                    console.warn(`Glasses asset at /glasses/glasses_${faceShape.toLowerCase()}.png could not be loaded`);
-                  }}
-                />
-              </div>
-            </motion.div>
+            {/* Seamless vertical image showcase with no border and no drop-shadow */}
+            <div className="w-full flex-1 flex items-center justify-center p-0 relative my-2">
+              <img
+                id="recommended-glasses-img"
+                src={`/glasses/glasses_${faceShape.toLowerCase()}.png`}
+                alt={`${faceShape} Face Shape Recommended Glasses`}
+                className="w-auto h-auto max-h-[520px] object-contain transition-transform duration-300"
+                onError={(e) => {
+                  console.warn(`Glasses asset at /glasses/glasses_${faceShape.toLowerCase()}.png could not be loaded`);
+                }}
+              />
+            </div>
           </div>
 
           {/* Recommendations Lists */}
@@ -84,8 +73,8 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
               </p>
               <div className="flex flex-col gap-2">
                 {recommendations.best_frames.map((frame: string, idx: number) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className="px-4 py-2 bg-white border border-brand-secondary/10 hover:border-brand-secondary/25 shadow-sm rounded-xl text-xs font-bold text-gray-700 flex items-center gap-2 transition-all"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-brand-secondary" />
@@ -103,8 +92,8 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
               </p>
               <div className="flex flex-col gap-2">
                 {recommendations.frames_to_avoid.map((frame: string, idx: number) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className="px-4 py-2 bg-red-50/40 border border-red-100 hover:border-red-200 shadow-sm rounded-xl text-xs font-bold text-gray-600 flex items-center gap-2 transition-all"
                   >
                     <span className="w-1.5 h-[1.5px] bg-red-400" />

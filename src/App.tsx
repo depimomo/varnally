@@ -47,7 +47,26 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      // Load local history for guest users
+      const localData = localStorage.getItem('varnally_history');
+      if (localData) {
+        try {
+          const parsed = JSON.parse(localData);
+          if (Array.isArray(parsed)) {
+            setHistory(parsed);
+          } else {
+            setHistory([]);
+          }
+        } catch (e) {
+          console.error(e);
+          setHistory([]);
+        }
+      } else {
+        setHistory([]);
+      }
+      return;
+    }
 
     const q = query(
       collection(db, 'analyses'),
@@ -130,9 +149,43 @@ export default function App() {
         });
       };
 
+      const compressImageUrl = (url: string, maxDim: number = 350, quality: number = 0.70): Promise<string> => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxDim) {
+                height *= maxDim / width;
+                width = maxDim;
+              }
+            } else {
+              if (height > maxDim) {
+                width *= maxDim / height;
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = () => {
+            resolve(url);
+          };
+          img.src = url;
+        });
+      };
+
       const thumbnailUrl = await generateThumbnail(selectedFile);
       
-      const [analysisResult, cleanedImageUrl] = await Promise.all([
+      const [analysisResult, rawCleanedImageUrl] = await Promise.all([
         analyzeColor(buffer, selectedFile.type),
         regenerateIdPhoto(buffer, selectedFile.type).catch(err => {
           console.warn("Could not regenerate ID photo passport portrait, falling back:", err);
@@ -145,11 +198,19 @@ export default function App() {
         return;
       }
 
+      // Dynamic lightweight photo persistence (under 30KB) using canvas compression
+      let finalCleanedUrl: string | undefined = undefined;
+      if (rawCleanedImageUrl) {
+        finalCleanedUrl = await compressImageUrl(rawCleanedImageUrl, 350, 0.70);
+      } else if (previewUrl) {
+        finalCleanedUrl = await compressImageUrl(previewUrl, 350, 0.70);
+      }
+
       const newAnalysis: Analysis = {
         ...analysisResult,
         userId: user?.uid || 'anonymous',
         imageUrl: thumbnailUrl,
-        cleanedImageUrl: cleanedImageUrl || previewUrl || undefined,
+        cleanedImageUrl: finalCleanedUrl || undefined,
         createdAt: new Date().toISOString(),
       };
       
@@ -162,18 +223,62 @@ export default function App() {
   };
 
   const saveToHistory = async () => {
-    if (!user || !result) return;
+    if (!result) return;
     
     setLoading(true);
     try {
-      await addDoc(collection(db, 'analyses'), {
-        ...result,
-        userId: user.uid,
-        createdAt: serverTimestamp(),
-      });
-      alert("Analysis saved to your history!");
+      if (user) {
+        // Enforce exactly 5 values for bestColors and avoidColors to fully satisfy Firestore rules configuration
+        const trimmedBestColors = (result.bestColors || []).slice(0, 5);
+        while (trimmedBestColors.length < 5) {
+          trimmedBestColors.push({ hex: "#FFFFFF", name: "Off White" });
+        }
+        const trimmedAvoidColors = (result.avoidColors || []).slice(0, 5);
+        while (trimmedAvoidColors.length < 5) {
+          trimmedAvoidColors.push({ hex: "#000000", name: "Black" });
+        }
+
+        const validResult = {
+          ...result,
+          bestColors: trimmedBestColors,
+          avoidColors: trimmedAvoidColors,
+          userId: user.uid,
+          createdAt: serverTimestamp(),
+        };
+
+        await addDoc(collection(db, 'analyses'), validResult);
+        alert("Color analysis successfully saved to your cloud profile!");
+      } else {
+        // Save to localStorage for robust offline/guest usage
+        const localData = localStorage.getItem('varnally_history');
+        let currentLocalHistory: Analysis[] = [];
+        if (localData) {
+          try {
+            const parsed = JSON.parse(localData);
+            if (Array.isArray(parsed)) {
+              currentLocalHistory = parsed;
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        const localId = result.id || `local_${Date.now()}`;
+        const newLocalItem: Analysis = {
+          ...result,
+          id: localId,
+          userId: 'anonymous',
+          createdAt: new Date().toISOString(),
+        };
+
+        const updatedHistory = [newLocalItem, ...currentLocalHistory];
+        localStorage.setItem('varnally_history', JSON.stringify(updatedHistory));
+        setHistory(updatedHistory);
+        alert("Saved to your local history! (Sign in with Google to back up your results on the cloud)");
+      }
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, 'analyses');
+      console.error(error);
+      alert("Failed to save. Try signing in with Google to save securely on the cloud.");
     } finally {
       setLoading(false);
     }
@@ -186,7 +291,23 @@ export default function App() {
 
   const deleteAnalysis = async (id: string) => {
     try {
-      await deleteDoc(doc(db, 'analyses', id));
+      if (user && !id.startsWith('local_')) {
+        await deleteDoc(doc(db, 'analyses', id));
+      } else {
+        const localData = localStorage.getItem('varnally_history');
+        if (localData) {
+          try {
+            const parsed = JSON.parse(localData);
+            if (Array.isArray(parsed)) {
+              const updated = parsed.filter((item: any) => item.id !== id);
+              localStorage.setItem('varnally_history', JSON.stringify(updated));
+              setHistory(updated);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
     } catch (error) {
       console.error("Delete failed for ID:", id, error);
     }
@@ -210,7 +331,7 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      <main className="pt-24 pb-12 px-4 md:px-8 max-w-4xl mx-auto flex-1 w-full">
+      <main className="pt-24 pb-12 px-4 md:px-8 max-w-[80%] mx-auto flex-1 w-full">
         <AnimatePresence mode="wait">
           {showHistory ? (
             <HistoryList 

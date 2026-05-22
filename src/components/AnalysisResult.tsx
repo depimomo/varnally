@@ -28,34 +28,34 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
   onSave,
   getFaceShapeImage
 }) => (
-  <motion.div 
+  <motion.div
     key="result"
     initial={{ opacity: 0, scale: 0.95 }}
     animate={{ opacity: 1, scale: 1 }}
     exit={{ opacity: 0, scale: 1.05 }}
     className="space-y-8"
   >
-    <ResultHeader 
-      isLoading={loading} 
-      canSave={!!user && !result.id} 
-      onBack={onBack} 
-      onSave={onSave} 
+    <ResultHeader
+      isLoading={loading}
+      canSave={!result.id}
+      onBack={onBack}
+      onSave={onSave}
     />
 
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Left Column: Photo & Details */}
       <div className="lg:col-span-4 space-y-6">
         <div className="aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-white">
-          <img 
-            src={result.cleanedImageUrl || previewUrl || result.imageUrl || ''} 
-            alt="Analyzed face" 
-            className="w-full h-full object-cover" 
+          <img
+            src={result.cleanedImageUrl || previewUrl || result.imageUrl || ''}
+            alt="Analyzed face"
+            className="w-full h-full object-cover"
           />
         </div>
 
         {/* Your Varna Section */}
         {(archetypes.color_archetypes as any)[result.season]?.[`${result.subType} ${result.season}`] && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-gradient-to-br from-brand-primary to-brand-primary/80 p-8 rounded-[2rem] shadow-xl shadow-brand-primary/20 text-white relative overflow-hidden"
@@ -63,13 +63,13 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
             <div className="absolute -right-4 -top-4 opacity-20">
               <Sparkles size={100} />
             </div>
-            
+
             <div className="relative z-10 space-y-4">
               <div className="flex items-center gap-2 text-white/90">
                 <Sparkles size={18} />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em]">Your Varna</span>
               </div>
-              
+
               <div>
                 <h3 className="text-3xl font-display font-black leading-tight">
                   {(archetypes.color_archetypes as any)[result.season][`${result.subType} ${result.season}`].nickname}
@@ -90,24 +90,16 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
             </div>
           </motion.div>
         )}
-        
-        <ObservationCard 
-          skinUndertone={result.skinUndertone} 
-          eyeColor={result.eyeColor} 
-          hairColor={result.hairColor} 
+
+        <ObservationCard
+          skinUndertone={result.skinUndertone}
+          eyeColor={result.eyeColor}
+          hairColor={result.hairColor}
         />
       </div>
 
       {/* Right Column: Palette & Best/Worst */}
       <div className="lg:col-span-8 space-y-8">
-        <FaceArchitectureCard 
-          faceShape={result.faceShape} 
-          faceShapeDescription={result.faceShapeDescription} 
-          imageUrl={getFaceShapeImage(result.faceShape)} 
-        />
-
-        <GlassesRecommendationCard faceShape={result.faceShape} />
-
         <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden">
           <h2 className="text-xl font-display font-medium flex items-center gap-2 mb-6 text-gray-900">
             <Check className="text-green-500" />
@@ -131,6 +123,13 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
             ))}
           </div>
         </div>
+        <FaceArchitectureCard
+          faceShape={result.faceShape}
+          faceShapeDescription={result.faceShapeDescription}
+          imageUrl={getFaceShapeImage(result.faceShape)}
+        />
+
+        <GlassesRecommendationCard faceShape={result.faceShape} />
       </div>
     </div>
   </motion.div>
