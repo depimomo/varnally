@@ -149,7 +149,7 @@ export async function regenerateIdPhoto(imageBuffer: ArrayBuffer, mimeType: stri
             },
           },
           {
-            text: "Isolate the person's face, neck, and hair from this photo. Keep their expression, gaze, and facial features perfectly identical. Place this face and neck centered on a plain solid white background. Replace their clothing with a simple plain solid white round crew-neck t-shirt. It should look exactly like a clean, professionally shot biometric ID photo or passport photo. Output ONLY the edited image.",
+            text: "Analyze the input photo and regenerate a clean biometric ID or passport photo:\n1. Isolate the person. Keep their expression, gaze, and facial features perfectly identical.\n2. If the person in the input photo is wearing a hijab (headscarf):\n   - Keep the hijab perfectly intact.\n   - Ensure that absolutely no hair and no neck are visible.\n   - Change the hijab's color to a clean, solid, solid-toned black.\n   - Maintain the neatness and shape of the hijab.\n3. If the person is NOT wearing a hijab:\n   - Isolate the person's face, neck, and hair.\n   - Replace their clothing with a simple plain solid white round crew-neck t-shirt.\n4. Place the person centered on a plain, solid white background.\n5. It must look like a clean, professionally shot biometric ID or passport photo.\n6. Output ONLY the edited, regenerated image.",
           },
         ],
       },
