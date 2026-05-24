@@ -17,7 +17,7 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       id="glasses-recommendation-card"
-      className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden"
+      className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-gray-100 shadow-none sm:shadow-sm relative overflow-hidden"
     >
       {/* Decorative Background Icon */}
       <div className="absolute -top-6 -right-6 text-gray-100 pointer-events-none">

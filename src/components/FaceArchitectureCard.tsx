@@ -15,7 +15,7 @@ export const FaceArchitectureCard: React.FC<FaceArchitectureCardProps> = ({
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden"
+    className="bg-transparent sm:bg-white p-0 sm:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm overflow-hidden"
   >
     <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
       <div className="w-48 h-48 rounded-[2rem] overflow-hidden shrink-0">

@@ -147,7 +147,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
 
         {/* Right Column: Palette & Best/Worst */}
         <div className="lg:col-span-8 space-y-8">
-          <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden">
+          <div className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm overflow-hidden">
             <h2 className="text-xl font-display font-medium flex items-center gap-2 mb-6 text-gray-900">
               <Check className="text-green-500" />
               Best Colors to Wear
@@ -159,7 +159,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
             </div>
           </div>
 
-          <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-black/5 shadow-sm overflow-hidden">
+          <div className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm overflow-hidden">
             <h2 className="text-xl font-display font-medium flex items-center gap-2 mb-6 text-gray-900">
               <Trash2 className="text-red-500" size={20} />
               Colors to Avoid

@@ -7,7 +7,7 @@ interface ObservationCardProps {
 }
 
 export const ObservationCard: React.FC<ObservationCardProps> = ({ skinUndertone, eyeColor, hairColor }) => (
-  <div className="bg-white p-6 rounded-[2rem] border border-black/5 shadow-sm space-y-4">
+  <div className="bg-transparent sm:bg-white p-0 sm:p-6 rounded-none sm:rounded-[2rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm space-y-4">
     <h3 className="font-display font-bold text-gray-900 border-b border-gray-100 pb-3">Observations</h3>
     <div className="space-y-4">
       <div className="flex items-start gap-3">

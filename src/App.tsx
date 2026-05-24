@@ -331,7 +331,7 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      <main className="pt-24 pb-12 px-4 md:px-8 max-w-[80%] mx-auto flex-1 w-full">
+      <main className="pt-24 pb-12 px-3 sm:px-6 md:px-8 w-full max-w-full md:max-w-[85%] lg:max-w-7xl mx-auto flex-1">
         <AnimatePresence mode="wait">
           {showHistory ? (
             <HistoryList 
