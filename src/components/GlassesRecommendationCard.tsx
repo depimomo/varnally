@@ -17,7 +17,7 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       id="glasses-recommendation-card"
-      className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-gray-100 shadow-none sm:shadow-sm relative overflow-hidden"
+      className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm relative overflow-hidden"
     >
       {/* Decorative Background Icon */}
       <div className="absolute -top-6 -right-6 text-gray-100 pointer-events-none">
@@ -26,13 +26,13 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
 
       <div className="relative z-10 space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <div id="glasses-card-header-icon" className="w-10 h-10 bg-brand-secondary rounded-2xl flex items-center justify-center text-white shadow-md shadow-brand-secondary/10">
-            <Glasses size={20} />
-          </div>
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150 pb-5">
+          <div className="space-y-1 w-full">
             <span className="text-[10px] font-black text-brand-secondary uppercase tracking-widest block font-mono">Frames Matcher</span>
-            <h2 className="text-xl font-display font-black text-gray-900 leading-none">Glasses Showcase</h2>
+            <h2 className="text-xl sm:text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
+              <Glasses className="text-brand-secondary shrink-0" size={22} />
+              Glasses Showcase
+            </h2>
           </div>
         </div>
 

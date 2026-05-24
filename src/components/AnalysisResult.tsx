@@ -147,24 +147,38 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
 
         {/* Right Column: Palette & Best/Worst */}
         <div className="lg:col-span-8 space-y-8">
-          <div className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm overflow-hidden">
-            <h2 className="text-xl font-display font-medium flex items-center gap-2 mb-6 text-gray-900">
-              <Check className="text-green-500" />
-              Best Colors to Wear
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm space-y-6 overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150 pb-5">
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-green-600 uppercase tracking-widest font-mono">
+                  Approved Palette
+                </p>
+                <h2 className="text-xl sm:text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
+                  <Check className="text-green-500 shrink-0" size={22} />
+                  Best Colors to Wear
+                </h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 pt-2">
               {(result.bestColors || []).map((color, idx) => (
                 <ColorDrape key={idx} color={color} imageUrl={result.cleanedImageUrl || previewUrl || result.imageUrl || null} />
               ))}
             </div>
           </div>
 
-          <div className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm overflow-hidden">
-            <h2 className="text-xl font-display font-medium flex items-center gap-2 mb-6 text-gray-900">
-              <Trash2 className="text-red-500" size={20} />
-              Colors to Avoid
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm space-y-6 overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150 pb-5">
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-red-500 uppercase tracking-widest font-mono">
+                  Clashing Shades
+                </p>
+                <h2 className="text-xl sm:text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
+                  <Trash2 className="text-red-500 shrink-0" size={20} />
+                  Colors to Avoid
+                </h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 pt-2">
               {(result.avoidColors || []).map((color, idx) => (
                 <ColorDrape key={idx} color={color} imageUrl={result.cleanedImageUrl || previewUrl || result.imageUrl || null} />
               ))}
