@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, RefreshCw, Save } from 'lucide-react';
+import { ChevronLeft, RefreshCw, Save, Check } from 'lucide-react';
 
 interface ResultHeaderProps {
   isLoading: boolean;
@@ -19,15 +19,21 @@ export const ResultHeader: React.FC<ResultHeaderProps> = ({
       <ChevronLeft size={20} />
       Analyze Another
     </button>
-    {canSave && (
+    {canSave ? (
       <button 
         onClick={onSave}
         disabled={isLoading}
-        className="flex items-center gap-2 px-6 py-2.5 bg-brand-secondary text-white rounded-full font-bold shadow-lg shadow-brand-secondary/20 hover:scale-105 active:scale-95 transition-all text-sm disabled:opacity-50"
+        className="flex items-center gap-2 px-6 py-2.5 bg-brand-secondary text-white rounded-full font-bold shadow-lg shadow-brand-secondary/20 hover:scale-105 active:scale-95 transition-all text-sm disabled:opacity-50 cursor-pointer"
       >
         {isLoading ? <RefreshCw size={18} className="animate-spin" /> : <Save size={18} />}
         Save Results
       </button>
+    ) : (
+      <div className="flex items-center gap-1.5 px-5 py-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full font-bold text-xs select-none">
+        <Check size={14} />
+        Saved to History
+      </div>
     )}
   </div>
 );
+

@@ -25,6 +25,8 @@ import { Header } from './components/Header';
 import { HistoryList } from './components/HistoryList';
 import { ImageUploader } from './components/ImageUploader';
 import { AnalysisResult } from './components/AnalysisResult';
+import { LandingHero } from './components/LandingHero';
+import { Toast, ToastType } from './components/Toast';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -36,8 +38,19 @@ export default function App() {
   const [result, setResult] = useState<Analysis | null>(null);
   const [history, setHistory] = useState<Analysis[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -246,8 +259,9 @@ export default function App() {
           createdAt: serverTimestamp(),
         };
 
-        await addDoc(collection(db, 'analyses'), validResult);
-        alert("Color analysis successfully saved to your cloud profile!");
+        const docRef = await addDoc(collection(db, 'analyses'), validResult);
+        setResult({ ...result, id: docRef.id });
+        setToast({ message: "Varna analysis successfully saved to your cloud profile!", type: "success" });
       } else {
         // Save to localStorage for robust offline/guest usage
         const localData = localStorage.getItem('varnally_history');
@@ -274,11 +288,12 @@ export default function App() {
         const updatedHistory = [newLocalItem, ...currentLocalHistory];
         localStorage.setItem('varnally_history', JSON.stringify(updatedHistory));
         setHistory(updatedHistory);
-        alert("Saved to your local history! (Sign in with Google to back up your results on the cloud)");
+        setResult(newLocalItem);
+        setToast({ message: "Saved to local history! Sign in with Google to backup cloud-wide.", type: "success" });
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to save. Try signing in with Google to save securely on the cloud.");
+      setToast({ message: "Failed to save. Please sign in with Google to try again.", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -325,7 +340,7 @@ export default function App() {
         user={user}
         historyLength={history.length}
         showHistory={showHistory}
-        onLogoClick={() => { setResult(null); setShowHistory(false); }}
+        onLogoClick={() => { setResult(null); setShowHistory(false); setShowUploader(false); }}
         onHistoryToggle={() => setShowHistory(!showHistory)}
         onLogin={handleLogin}
         onLogout={handleLogout}
@@ -350,7 +365,7 @@ export default function App() {
               onSave={saveToHistory}
               getFaceShapeImage={getFaceShapeImage}
             />
-          ) : (
+          ) : showUploader ? (
             <ImageUploader 
               previewUrl={previewUrl}
               analyzing={analyzing}
@@ -360,6 +375,11 @@ export default function App() {
               onFileChange={handleFileChange}
               onAnalyze={handleAnalyze}
               onReset={reset}
+              onBackToLanding={() => setShowUploader(false)}
+            />
+          ) : (
+            <LandingHero 
+              onStart={() => setShowUploader(true)}
             />
           )}
         </AnimatePresence>
@@ -375,6 +395,17 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Elegant Toast Feedback */}
+      <AnimatePresence>
+        {toast && (
+          <Toast 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => setToast(null)} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
