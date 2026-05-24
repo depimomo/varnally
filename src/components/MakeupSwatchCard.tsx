@@ -16,7 +16,7 @@ export const MakeupSwatchCard: React.FC<MakeupSwatchCardProps> = ({ id, name, he
         return (
           <div 
             id={id ? `${id}-visual` : undefined}
-            className="w-10 h-10 rounded-full border border-black/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]"
+            className="w-10 h-10 rounded-full border border-black/10 shrink-0 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]"
             style={{ backgroundColor: hex }}
           />
         );
@@ -24,7 +24,7 @@ export const MakeupSwatchCard: React.FC<MakeupSwatchCardProps> = ({ id, name, he
         return (
           <div 
             id={id ? `${id}-visual` : undefined}
-            className="w-10 h-10 rounded-full relative overflow-hidden border border-black/5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]"
+            className="w-10 h-10 rounded-full relative overflow-hidden shrink-0 border border-black/5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]"
           >
             <div 
               className="absolute inset-0"
@@ -39,7 +39,7 @@ export const MakeupSwatchCard: React.FC<MakeupSwatchCardProps> = ({ id, name, he
         return (
           <div 
             id={id ? `${id}-visual` : undefined}
-            className="w-10 h-10 rounded-full relative overflow-hidden border border-black/10 shadow-[inset_0_2px_5px_rgba(0,0,0,0.15)] flex items-center justify-center p-0.5" 
+            className="w-10 h-10 rounded-full relative overflow-hidden shrink-0 border border-black/10 shadow-[inset_0_2px_5px_rgba(0,0,0,0.15)] flex items-center justify-center p-0.5" 
             style={{ background: '#222' }}
           >
             <div 
@@ -52,11 +52,11 @@ export const MakeupSwatchCard: React.FC<MakeupSwatchCardProps> = ({ id, name, he
           </div>
         );
       case 'blush':
-        default:
+      default:
         return (
           <div 
             id={id ? `${id}-visual` : undefined}
-            className="w-10 h-10 rounded-full relative overflow-hidden flex items-center justify-center"
+            className="w-10 h-10 rounded-full relative overflow-hidden shrink-0 flex items-center justify-center"
           >
             <div 
               className="w-8 h-8 rounded-full blur-[2px] opacity-90"
@@ -72,12 +72,12 @@ export const MakeupSwatchCard: React.FC<MakeupSwatchCardProps> = ({ id, name, he
   return (
     <div 
       id={id}
-      className="flex flex-col items-center p-2.5 bg-white border border-neutral-100 rounded-2xl shadow-sm space-y-2"
+      className="flex items-center gap-4 p-3 bg-white border border-neutral-100 rounded-2xl shadow-sm hover:border-black/10 hover:shadow transition-all duration-200"
     >
       {renderVisualSwatch()}
-      <div className="text-center w-full">
-        <p className="text-[10px] font-bold text-gray-800 line-clamp-1 h-3.5 leading-none">{name}</p>
-        <p className="text-[8px] font-mono text-gray-400 font-bold uppercase mt-1">{hex}</p>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs md:text-sm font-semibold text-gray-800 break-words leading-snug">{name}</p>
+        <p className="text-[10px] font-mono text-gray-400 font-bold uppercase mt-1 tracking-wider leading-none">{hex}</p>
       </div>
     </div>
   );

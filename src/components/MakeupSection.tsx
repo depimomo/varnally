@@ -43,7 +43,7 @@ export const MakeupSection: React.FC<MakeupSectionProps> = ({
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="flex flex-col gap-2.5">
         {swatches.map((swatch, idx) => (
           <MakeupSwatchCard
             key={idx}
