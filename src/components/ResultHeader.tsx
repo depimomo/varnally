@@ -25,7 +25,7 @@ export const ResultHeader: React.FC<ResultHeaderProps> = ({
       {onShareStory && (
         <button 
           onClick={onShareStory}
-          className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-purple-600 via-rose-500 to-amber-500 text-white rounded-full font-bold shadow-md hover:scale-105 active:scale-95 transition-all text-xs cursor-pointer shadow-rose-500/10"
+          className="hidden md:flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-purple-600 via-rose-500 to-amber-500 text-white rounded-full font-bold shadow-md hover:scale-105 active:scale-95 transition-all text-xs cursor-pointer shadow-rose-500/10"
         >
           <span className="text-white">✨ Share Poster</span>
         </button>

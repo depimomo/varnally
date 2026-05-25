@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, Trash2, Check } from 'lucide-react';
+import { Sparkles, Trash2, Check, Share2 } from 'lucide-react';
 import { Analysis } from '../types';
 import archetypes from '../data/archetypes.json';
 import { ColorDrape } from './ColorDrape';
@@ -31,6 +31,11 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
   getFaceShapeImage
 }) => {
   const [isPosterOpen, setIsPosterOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [result]);
+
   const borderColors = (archetypes.color_archetypes as any)[result.season]?.[`${result.subType} ${result.season}`]?.border || [];
   const defaultBorderColors = ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"];
   const activeColors = borderColors.length > 0 ? borderColors : defaultBorderColors;
@@ -303,6 +308,18 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
         previewUrl={previewUrl}
         getFaceShapeImage={getFaceShapeImage}
       />
+
+      {/* Floating Share Button on mobile - hidden when poster modal is open */}
+      {!isPosterOpen && (
+        <button
+          onClick={() => setIsPosterOpen(true)}
+          className="fixed bottom-6 right-6 md:hidden z-40 p-4 bg-gradient-to-r from-purple-600 via-rose-500 to-amber-500 text-white rounded-full shadow-xl shadow-rose-500/30 active:scale-95 hover:scale-105 transition-all duration-150 flex items-center justify-center cursor-pointer border border-white/25"
+          id="floating-mobile-share"
+          aria-label="Create shareable story poster"
+        >
+          <Share2 size={24} className="text-white drop-shadow-sm" />
+        </button>
+      )}
     </motion.div>
   );
 };
