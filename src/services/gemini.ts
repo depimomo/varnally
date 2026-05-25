@@ -30,7 +30,7 @@ COLOR ANALYSIS:
 Classify them into one of these strict categories:
 - Winter (Bright, True, or Dark)
 - Spring (Bright, True, or Light)
-- Summer (Cool, True, or Soft)
+- Summer (Light, True, or Soft)
 - Autumn (Soft, True, or Dark)
 Provide exactly 5 colors that best suit them and 5 colors they should avoid.
 Determine if they suit Gold or Silver jewelry.
@@ -81,7 +81,7 @@ export async function analyzeColor(imageBuffer: ArrayBuffer, mimeType: string) {
           isValid: { type: Type.BOOLEAN, description: "Whether the photo is suitable for analysis" },
           errorMessage: { type: Type.STRING, description: "Helpful error message if isValid is false" },
           season: { type: Type.STRING, description: "Strict category: Winter, Spring, Summer, or Autumn" },
-          subType: { type: Type.STRING, description: "Sub-type: Bright, True, Dark, Light, Soft, or Cool" },
+          subType: { type: Type.STRING, description: "Sub-type: Bright, True, Dark, Light, or Soft" },
           faceShape: { type: Type.STRING, description: "One of: Oval, Round, Square, Oblong, Heart, Diamond" },
           faceShapeDescription: { type: Type.STRING, description: "Brief explanation based on the measurement logic used" },
           bestColors: {
@@ -122,7 +122,37 @@ export async function analyzeColor(imageBuffer: ArrayBuffer, mimeType: string) {
   if (!text) throw new Error("No response from AI");
 
   try {
-    return JSON.parse(text);
+    const data = JSON.parse(text);
+    
+    // Normalize season to exactly match archetypes.json structure
+    if (data.season && typeof data.season === "string") {
+      const s = data.season.trim();
+      if (/^spring/i.test(s)) data.season = "Spring";
+      else if (/^summer/i.test(s)) data.season = "Summer";
+      else if (/^autumn/i.test(s)) data.season = "Autumn";
+      else if (/^winter/i.test(s)) data.season = "Winter";
+    }
+
+    // Normalize subType to exactly match archetypes.json structure
+    if (data.subType && typeof data.subType === "string") {
+      const trimmed = data.subType.trim().toLowerCase();
+      if (trimmed === "cool" || trimmed === "warm" || trimmed === "true") {
+        data.subType = "True";
+      } else if (trimmed.includes("bright") || trimmed.includes("vivid")) {
+        data.subType = "Bright";
+      } else if (trimmed.includes("dark") || trimmed.includes("deep")) {
+        data.subType = "Dark";
+      } else if (trimmed.includes("light") || trimmed.includes("pale")) {
+        data.subType = "Light";
+      } else if (trimmed.includes("soft") || trimmed.includes("muted")) {
+        data.subType = "Soft";
+      } else {
+        // Fallback to capitalizing the first character
+        data.subType = data.subType.charAt(0).toUpperCase() + data.subType.slice(1);
+      }
+    }
+
+    return data;
   } catch (e) {
     console.error("Failed to parse Gemini response:", text);
     throw new Error("Could not analyze color. Please try again with a clearer photo.");

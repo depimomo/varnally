@@ -1,0 +1,74 @@
+{
+  "seasons_data": [
+    {
+      "id": "spring",
+      "name": "Spring",
+      "nature": "Warm & Bright",
+      "description": "Fresh, radiant shades resembling early sunrise, buttercups, and peach blossoms.",
+      "gradient": "from-[#FF8A65]/20 via-[#FFD54F]/20 to-[#81C784]/20",
+      "border": "border-[#FFB300]/30",
+      "tagColor": "text-amber-600 bg-amber-50 border-amber-200",
+      "colors": [
+        { "hex": "#FF6B6B", "name": "Coral Poppy" },
+        { "hex": "#FFBE0B", "name": "Golden Marigold" },
+        { "hex": "#3A86C8", "name": "Sky Cerulean" },
+        { "hex": "#06D6A0", "name": "Young Mint" },
+        { "hex": "#FF9F1C", "name": "Warm Apricot" }
+      ]
+    },
+    {
+      "id": "summer",
+      "name": "Summer",
+      "nature": "Cool & Soft",
+      "description": "Chilled, sea-washed pastels, hazy lavender mountains, and soft powdered roses.",
+      "gradient": "from-[#B3E5FC]/20 via-[#E1BEE7]/20 to-[#F8BBD0]/20",
+      "border": "border-[#0288D1]/20",
+      "tagColor": "text-sky-600 bg-sky-50 border-sky-100",
+      "colors": [
+        { "hex": "#B39DDB", "name": "Wisteria Mist" },
+        { "hex": "#90CAF9", "name": "Powder Breeze" },
+        { "hex": "#F06292", "name": "Orchid Petal" },
+        { "hex": "#80CBC4", "name": "Ocean Sage" },
+        { "hex": "#E0F7FA", "name": "Glacier Blue" }
+      ]
+    },
+    {
+      "id": "autumn",
+      "name": "Autumn",
+      "nature": "Warm & Muted",
+      "description": "Rich earthy values, spiced cinnamon, toasted terracotta, and olive forest canopies.",
+      "gradient": "from-[#FFCC80]/20 via-[#D7CCC8]/20 to-[#C5E1A5]/20",
+      "border": "border-[#E65100]/30",
+      "tagColor": "text-orange-700 bg-orange-50 border-orange-250",
+      "colors": [
+        { "hex": "#D84315", "name": "Spiced Clay" },
+        { "hex": "#5D4037", "name": "Toasted Pecan" },
+        { "hex": "#F57C00", "name": "Saffron Crust" },
+        { "hex": "#558B2F", "name": "Indian Olive" },
+        { "hex": "#D4AF37", "name": "Antique Brass" }
+      ]
+    },
+    {
+      "id": "winter",
+      "name": "Winter",
+      "nature": "Cool & Deep",
+      "description": "Bold, high-contrast jewel shades of midnight cobalt, royal magenta, and icy platinum.",
+      "gradient": "from-[#C5CAE9]/20 via-[#F8BBD0]/20 to-[#B2DFDB]/20",
+      "border": "border-[#3F51B5]/30",
+      "tagColor": "text-indigo-600 bg-indigo-50 border-indigo-200",
+      "colors": [
+        { "hex": "#1A237E", "name": "Vedic Indigo" },
+        { "hex": "#880E4F", "name": "Royal Plum" },
+        { "hex": "#006064", "name": "Deep Emerald" },
+        { "hex": "#ECEFF1", "name": "Siberian Ash" },
+        { "hex": "#D500F9", "name": "Laser Fuchsia" }
+      ]
+    }
+  ],
+  "default_palettes": [
+    ["#A8BD37","#EFB45C","#F3BF39","#E88957","#E06625","#D53A21","#B14720","#8A78A8","#5AA78F","#4E9743"],
+    ["#38B3AE","#81C8DE","#1F80B5","#2A5A7E","#324D62","#AA90BD","#8D5489","#A94790","#557871","#40A49A"],
+    ["#A38F1E","#B97A19","#D5A004","#DE7A0A","#C53F19","#B4181B","#7F2E11","#7C162C","#278A76","#377E32"],
+    ["#BFDFEC","#325EA5","#2D4281","#2F3359","#714990","#B34488","#941D31","#01372A","#004737","#016E57"]
+  ]
+}

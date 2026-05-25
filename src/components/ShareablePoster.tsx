@@ -379,10 +379,10 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                   <div className="flex items-center justify-between pt-2.5 border-t border-white/10 mt-2">
                     <div className="flex items-center gap-1">
                       <Sparkles size={10} className="text-white/60" />
-                      <span className="text-[8px] text-white/60 font-bold">Varna Color Analyzer</span>
+                      <span className="text-[8px] text-white/60 font-bold">Try now:</span>
                     </div>
                     <span className="text-[7.5px] font-mono text-white/40 tracking-wider">
-                      #VarnaCosmics
+                      varnally.com
                     </span>
                   </div>
 
