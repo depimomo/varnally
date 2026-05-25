@@ -5,6 +5,7 @@ import html2canvas from 'html2canvas';
 import { Analysis } from '../types';
 import archetypes from '../data/archetypes.json';
 import makeupPresetsData from '../data/makeup_presets.json';
+import { useLanguage } from '../lib/LanguageContext';
 
 interface ShareablePosterProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
   previewUrl,
   getFaceShapeImage
 }) => {
+  const { language } = useLanguage();
   const [isCapturing, setIsCapturing] = React.useState(false);
   const [captureError, setCaptureError] = React.useState<string | null>(null);
   const posterRef = React.useRef<HTMLDivElement>(null);
@@ -75,13 +77,106 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
   };
 
   const backdrop = getSeasonBackdrop(result.season);
-  const archetypeInfo = (archetypes.color_archetypes as any)[result.season]?.[`${result.subType} ${result.season}`];
+  
+  // Localize archetype nickname
+  const rawArchetype = (archetypes.color_archetypes as any)[result.season]?.[`${result.subType} ${result.season}`];
+  let displayName = rawArchetype?.nickname || `${result.subType} ${result.season}`;
+  let displayDesc = rawArchetype?.description || "";
+
+  const getLocalizedSeasonSubtype = (subType: string, season: string, lang: string) => {
+    if (lang !== 'id') return `${subType} ${season}`;
+    const subTypeMap: Record<string, string> = {
+      'Bright': 'Cerah',
+      'True': 'Asli',
+      'Dark': 'Gelap',
+      'Light': 'Terang',
+      'Soft': 'Lembut'
+    };
+    const seasonMap: Record<string, string> = {
+      'Spring': 'Musim Semi',
+      'Summer': 'Musim Panas',
+      'Autumn': 'Musim Gugur',
+      'Winter': 'Musim Dingin'
+    };
+    const mappedSub = subTypeMap[subType] || subType;
+    const mappedSeason = seasonMap[season] || season;
+    return `${mappedSub} ${mappedSeason}`;
+  };
+  const localizedFullType = getLocalizedSeasonSubtype(result.subType, result.season, language);
+
+  if (language === 'id') {
+    const nameMapId: Record<string, string> = {
+      // JSON keys (Nicknames)
+      "The Aurora": "Sang Aurora",
+      "The Glacier": "Gletser Berkilau",
+      "The Eclipse": "Gerhana Misterius",
+      "The Dawn": "Fajar Merekah",
+      "The Meadow": "Padang Rumput Berbunga",
+      "The Sunrise": "Matahari Terbit",
+      "The Seafoam": "Buih Samudra",
+      "The Twilight": "Senja Teduh",
+      "The Haze": "Kabut Lembut",
+      "The Dune": "Bukit Pasir",
+      "The Harvest": "Panen Raya",
+      "The Sunset": "Mentari Tenggelam",
+
+      // Fallbacks / Older versions
+      "Sun-Kissed Buttercup": "Kuncup Mentega Keemasan",
+      "Gilded Honeycomb": "Sarang Madu Melimpah",
+      "Dynamic Coral Blossom": "Bunga Koral Berkilau",
+      "Ocean Misted Lavender": "Lavender Kabut Samudra",
+      "Fresh Powdery Clover": "Semanggi Bubuk Segar",
+      "Ethereal Cool Slate": "Batu Kabut Anggun",
+      "Muted Clay Terracotta": "Tanah Liat Panggang Redup",
+      "Cinnamon Sand Dune": "Pasir Kayu Manis",
+      "Pecan Wood Moss": "Lumut Kayu Kemiri",
+      "High-Contrast Royal Sapphire": "Safir Kerajaan Pekat",
+      "Frosted Jewel Platinum": "Platinum Es Kristal",
+      "Incandescent Midnight Velvet": "Beludru Hitam Kobalt"
+    };
+    if (nameMapId[displayName]) {
+      displayName = nameMapId[displayName];
+    }
+
+    const descMapId: Record<string, string> = {
+      // JSON keys (Descriptions)
+      "Striking and unforgettable. You thrive in high-contrast, vivid jewel tones that mirror a neon sky. Your presence is magnetic and clear.": "Sangat menonjol dan tak terlupakan. Anda bersinar dalam warna permata berjalin kontras tinggi yang menyerupai langit neon. Aura Anda magnetis dan bercahaya murni.",
+      "Absolute and striking. You possess an icy, crisp elegance. Stark, cool tones illuminate your sharp and sophisticated natural contrast.": "Sangat menonjol dan memukau. Anda memiliki keanggunan kristal es yang murni. Paduan warna dingin bersorot tajam memperjelas kontras visual alami Anda yang canggih.",
+      "Mysterious and deeply captivating. You look your best wrapped in rich, cool shadows and intense, luxurious depths.": "Misterius dan sangat memikat. Keindahan terbaik Anda terpancar saat dibalut warna bayangan dingin yang pekat serta kedalaman warna mewah yang intens.",
+      "Delicate, fresh, and full of promise. You glow in airy, pastel-warm colors that capture the first soft light of day.": "Lembut, segar, dan penuh harapan. Rona Anda murni bersinar dalam warna pastel hangat bernapas lapang yang menangkap kelembutan cahaya pertama di pagi hari.",
+      "Vibrant, golden, and blooming. Your natural warmth shines in saturated, sunny hues that radiate life and energy.": "Gemerlap, keemasan, dan bermekaran. Kehangatan alami Anda memancar indah dalam rona warna cerah bersaturasi tinggi yang menyiratkan kehidupan dan energi positif.",
+      "Clear, intense, and awakening. You effortlessly carry the most vivid, warm colors, bringing a bold and joyful energy wherever you go.": "Bening, intens, dan membangkitkan pesona. Anda dengan anggun membawa keindahan warna paling cerah dan hangat, menyebarkan energi yang berani dan riang-gembira.",
+      "Gentle, airy, and refreshing. Your cool, delicate coloring is perfectly complemented by soft, powdery tones that feel like a gentle ocean breeze.": "Menenangkan, sejuk, dan menyegarkan. Warna kulit sejuk Anda yang lembut sangat selaras didampingi rona warna lembut sehalus bedak layaknya embusan angin sepoi pantai.",
+      "Serene, cool, and elegant. You possess a calm beauty that is beautifully enhanced by dusty, muted cool tones like lavender and slate.": "Tenang, sejuk, dan elegan. Anda memiliki kecantikan yang damai, yang kian terpancar indah berkat paduan warna teduh bersahaja seperti lavender lembut dan abu-abu batu sabak.",
+      "Enigmatic and softly blended. Your muted coloring is effortlessly chic, finding its perfect harmony in gentle, gray-tinted cool colors.": "Penuh misteri dan berpadu lembut. Sentuhan warna redup Anda menghadirkan keanggunan alami yang modis, melebur sempurna dalam kedamaian warna sejuk keabu-abuan.",
+      "Earthy, muted, and incredibly stylish. You radiate a calm, grounded warmth that looks stunning in gentle, toasted neutrals.": "Alami, teduh, dan sangat modis. Anda memancarkan kehangatan bersahaja yang tenang, memikat dalam rona warna netral hangat yang lembut bagai pasir gurun.",
+      "Rich, golden, and abundant. You carry the warmth of changing seasons perfectly, glowing in toasted, vibrant earth tones.": "Kaya warna, keemasan, dan melimpah. Anda membingkai kehangatan pergantian musim dengan sempurna, memancar indah dalam rona warna tanah yang pekat dan hangat.",
+      "Deep, warm, and intense. You have a smoldering natural contrast that carries the heaviest, richest autumn colors with absolute grace.": "Pekat, hangat, dan intens. Anda memiliki kontras alami nan memikat yang mampu menyangga deretan rona warna musim gugur paling berat dan mewah dengan keanggunan mutlak.",
+
+      // Fallbacks / Older versions
+      "Bright, warm, and highly radiant. You harmonize with crisp buttercup yellow, live apricot, and sparkling peach tints.": "Cerah, hangat, dan sangat berseri. Anda cocok dengan warna kuning mentega yang renyah, aprikot hidup, dan rona persik yang berkilau.",
+      "Muted, warm, and earth-anchored. Your pigments align with rich spiced terracotta, golden honey, and warm olive leaves.": "Redup, hangat, dan mengakar pada bumi. Rona pigmen Anda menyatu dengan bumbu terracotta yang kaya, madu emas, dan daun zaitun yang hangat.",
+      "Clear, bright, and sparkling with dynamic contrast. Harmonize with vivid poppy coral, live turquoise, and sunny daffodils.": "Bening, cerah, dan berkilau dengan kontras dinamis. Selaras dengan koral popi yang hidup, pirus aktif, dan bunga narsis kuning cerah.",
+      "Cool, soft, and gentle. You shimmer elegantly in muted lavender, smoky mountain shadows, and oceanside powdery blues.": "Sejuk, lembut, dan teduh. Anda bersinar elegan dalam lavender lembut, bayangan pegunungan kemulut asap, dan biru bedak tepi pantai air laut.",
+      "Delicate, cool, and airy. Align your face with soft pastel moss, powdered wild clover, and gentle morning blues.": "Halus, sejuk, dan lapang. Selaraskan wajah Anda dengan lumut pastel lembut, semanggi liar berbubuk halus, dan warna biru pagi yang tenang.",
+      "Smooth, deep, and slate-cooled. Complemented perfectly by mountain stone grays, deep twilight lilac, and soft spruce forests.": "Halus, pekat, dan sejuk bagai batu sabak. Dilengkapi dengan sempurna oleh abu-abu batu pegunungan, ungu senja yang sunyi, dan hutan cemara lembut.",
+      "Deep, rich, and spice-warmed. Anchor your style with baked terracotta clay, roasted pecans, and rich walnut grains.": "Pekat, kaya, dan hangat penuh rempah. Kokohkan gaya Anda dengan tanah liat terracotta panggang, kacang pecan panggang, dan serat kayu kenari yang kaya warna.",
+      "Muted, highly warm, and golden. Accentuate with toasted cinnamon, warm mustard sand, and rich turmeric dust.": "Redup, sangat hangat, dan keemasan. Sempurnakan dengan kayu manis panggang, pasir mustar hangat, dan bubuk kunyit yang kaya rona hangat.",
+      "Earthy, complex, and mossy. Best framed by deep forest olive, dark khaki bark, and warm spiced forest pines.": "Alami, kompleks, dan berlumut. Paling tepat dibingkai oleh hijau zaitun hutan pekat, kulit kayu khaki gelap, dan pinus hutan berempah hangat.",
+      "Pure, high-contrast, and deeply saturated. Sparkle in deep royal cobalt blue, majestic magenta, and pure velvet black.": "Murni, berkontras tinggi, dan sangat jenuh. Berkilau dalam biru kobalt kerajaan yang pekat, magenta agung, dan hitam beludru murni.",
+      "Icy, cool, and crystalline. Reflect pure elegance with frosted mountain silver, icy platinum, and crystalline glacier teal.": "Lebih dingin, sejuk, dan mengkristal bagai es. Cerminkan keanggunan sejati dengan perak pegunungan berselimut es, platinum sejuk, dan pirus gletser murni.",
+      "High-value, dark, and royal. Your presence is captured by deep midnight indigo, rich royal purple, and ink forest tones.": "Sangat pekat, gelap, dan agung. Kehadiran Anda terpancar melalui biru indigo tengah malam yang pekat, ungu kerajaan yang mewah, dan rona tinta hutan gelap."
+    };
+    if (descMapId[displayDesc]) {
+      displayDesc = descMapId[displayDesc];
+    }
+  }
 
   // Resolve makeup colors
   const fullType = `${result.subType} ${result.season}`;
   const makeupDetails = (makeupPresetsData as any)[fullType] || (makeupPresetsData as any)["True Winter"];
 
-  // Slice swatches to look clean on Instagram Story (limit to 3 per section)
+  // Slice swatches to look clean on Instagram Story
   const bestColorsList = (result.bestColors || []).slice(0, 4);
   const avoidColorsList = (result.avoidColors || []).slice(0, 4);
 
@@ -127,15 +222,15 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
       const imgData = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = imgData;
-      link.download = `Varna_Me_Spectra_${result.season}_${result.subType}.png`;
+      link.download = `Varna_Spectra_${result.season}_${result.subType}.png`;
       link.click();
       setIsCapturing(false);
     } catch (err) {
       console.error("Poster capture failed:", err);
-      setCaptureError("Screenshot permission blocked. For local saving, please take a screen capture (Power + Vol Up) directly from the screen.");
+      setCaptureError(language === 'id' ? "Screenshot otomatis terhalang browser. Silakan ambil tangkapan layar (Screenshot) mandiri di perangkat Anda." : "Screenshot permission blocked. For local saving, please take a screen capture.");
       setIsCapturing(false);
     } finally {
-      // Re-insert rules back in reverse order (which matches original order)
+      // Re-insert rules back in reverse order
       for (const item of restoredRules.reverse()) {
         try {
           item.sheet.insertRule(item.cssText, item.index);
@@ -158,7 +253,7 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
           exit={{ opacity: 0, scale: 0.98 }}
           className="relative max-w-5xl w-full mx-auto md:bg-neutral-900 md:border md:border-neutral-800 md:rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row md:my-8 h-full md:h-auto md:max-h-[850px]"
         >
-          {/* Desktop-only Close Button in top right */}
+          {/* Desktop Close Button in top right */}
           <div className="hidden md:block absolute top-4 right-4 z-40">
             <button 
               onClick={onClose} 
@@ -168,22 +263,27 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
             </button>
           </div>
 
-          {/* Left Panel: Preview & Info (Interactive Controls) - Hidden on Mobile to maximize space */}
-          <div className="hidden md:flex flex-1 p-6 md:p-8 flex-col justify-between overflow-y-auto border-r border-neutral-800">
+          {/* Left Panel: Preview & Info (Interactive Controls) */}
+          <div className="hidden md:flex flex-1 p-6 md:p-8 flex-col justify-between overflow-y-auto border-r border-neutral-800 text-white">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-xs font-bold">
+                <span className="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-[10px] font-bold uppercase tracking-wider font-mono">
                   ✨ STORY MAKER
                 </span>
-                <span className="text-xs text-neutral-400 font-mono">Status: Ready to Export</span>
+                <span className="text-[10px] text-neutral-400 font-mono">
+                  {language === 'id' ? "Status: Siap Unduh" : "Status: Ready to Export"}
+                </span>
               </div>
 
-              <h2 className="text-2xl font-display font-bold text-white tracking-tight">
-                Instagram Story Poster
+              <h2 className="text-2xl font-display font-black text-white tracking-tight">
+                {language === 'id' ? "Poster Cerita Instagram" : "Instagram Story Poster"}
               </h2>
 
-              <p className="text-sm text-neutral-400 leading-relaxed">
-                We've designed a specialized minimal 9:16 layout perfectly matching Instagram and Snapchat Story dimensions. You can click the download button below to auto-capture or easily screenshot the preview card directly.
+              <p className="text-xs text-neutral-400 leading-relaxed font-semibold">
+                {language === 'id' 
+                  ? "Kami merancang tata letak khusus 9:16 yang sangat pas dengan dimensi Story Instagram dsb. Anda dapat mengeklik tombol simpan gambar atau mengambil screenshot (tangkapan layar) pada ponsel Anda."
+                  : "We've designed a specialized minimal 9:16 layout perfectly matching Instagram and Snapchat Story dimensions. Easily download the poster or take a screen capture."
+                }
               </p>
 
               {captureError && (
@@ -195,9 +295,12 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
             </div>
 
             <div className="pt-6">
-              <div className="text-center bg-neutral-950/40 p-4 rounded-2xl border border-neutral-800/60 shadow-inner">
-                <span className="text-xs text-neutral-400 font-mono uppercase tracking-wider block leading-relaxed">
-                  💡 Tip: Capture your personalized card using hold (Power + Vol Down) or browser screen clip tools!
+              <div className="text-center bg-neutral-950/45 p-4 rounded-2xl border border-neutral-800/60 shadow-inner">
+                <span className="text-[10.5px] text-neutral-400 font-mono uppercase tracking-wider block leading-relaxed font-semibold">
+                  {language === 'id' 
+                    ? "💡 Tips: Tekan tombol kombinasi (Power + Volume Turun) untuk menyimpan hasil story ini ke galeri ponsel secara instan!"
+                    : "💡 Tip: Capture your personalized card using hold (Power + Vol Down) on your mobile device!"
+                  }
                 </span>
               </div>
             </div>
@@ -228,10 +331,10 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                   {/* Top Bar Label */}
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] font-black uppercase tracking-[0.25em] text-white/90 font-mono">
-                      ✨ VARNA SPOTLIGHT
+                      {language === 'id' ? "✨ REKOMENDASI VARNA" : "✨ VARNA SPOTLIGHT"}
                     </span>
                     <span className="text-[8px] font-bold bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full uppercase font-mono text-white">
-                      Seasonal Profile
+                      {language === 'id' ? "Profil Personal" : "Seasonal Profile"}
                     </span>
                   </div>
 
@@ -251,23 +354,22 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                           referrerPolicy="no-referrer"
                         />
                       </div>
-                      {/* Overlay frame inner groove shadow */}
                       <div className="absolute inset-2 pointer-events-none rounded-full border border-black/5 shadow-[inset_0_3px_8px_rgba(0,0,0,0.15)]" />
                     </div>
                   </div>
 
-                  {/* Archetype Title & Tagline */}
+                   {/* Archetype Title & Tagline */}
                   <div className="text-center space-y-1 py-1">
                     <div className="flex justify-center gap-1.5 flex-wrap">
                       <span className="text-[9px] font-extrabold bg-neutral-900/40 backdrop-blur-sm px-2.5 py-0.5 rounded-full uppercase text-white tracking-widest border border-white/10">
-                        {result.subType} {result.season}
+                        {localizedFullType}
                       </span>
                     </div>
-                    <h3 className="text-xl font-display font-black leading-tight drop-shadow-md text-white mt-1">
-                      {archetypeInfo?.nickname || `${result.subType} ${result.season}`}
+                    <h3 className="text-lg font-display font-black leading-tight drop-shadow-md text-white mt-1">
+                      {displayName}
                     </h3>
-                    <p className="text-[10px] text-white/80 leading-relaxed font-semibold max-w-[280px] mx-auto line-clamp-2 px-2 italic">
-                      "{archetypeInfo?.description || 'Your custom pigmentations analyzed under raw sunlight colors.'}"
+                    <p className="text-[9.5px] text-white/90 leading-relaxed font-semibold max-w-[280px] mx-auto line-clamp-2 px-2 italic">
+                      "{displayDesc || 'Your custom pigmentation mapped under raw sunlight colors.'}"
                     </p>
                   </div>
 
@@ -276,7 +378,7 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                     {/* Best Colors */}
                     <div className="bg-white/95 border border-white/20 p-2 px-2.5 rounded-2xl flex flex-col justify-between text-gray-900 shadow-sm">
                       <span className="text-[8px] font-black tracking-wider text-emerald-700 font-mono uppercase block mb-1">
-                        ✓ BEST HARMONY
+                        {language === 'id' ? "✓ PALET PENYEIMBANG" : "✓ BEST HARMONY"}
                       </span>
                       <div className="flex gap-1.5 justify-around py-0.5">
                         {bestColorsList.map((color, idx) => (
@@ -295,7 +397,7 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                     {/* Avoid Colors */}
                     <div className="bg-white/95 border border-white/20 p-2 px-2.5 rounded-2xl flex flex-col justify-between text-gray-900 shadow-sm">
                       <span className="text-[8px] font-black tracking-wider text-rose-700 font-mono uppercase block mb-1">
-                        ✕ AVOID CLASHES
+                        {language === 'id' ? "✕ HINDARI WARNA INI" : "✕ AVOID CLASHES"}
                       </span>
                       <div className="flex gap-1.5 justify-around py-0.5">
                         {avoidColorsList.map((color, idx) => (
@@ -312,42 +414,40 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                     </div>
                   </div>
 
-                  {/* Makeup Swatches (Simplified Visual Dots) & Face Shape / Glasses Panel */}
+                  {/* Makeup Swatches & Face Shape */}
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     
                     {/* Mini Makeup Palette */}
-                    <div className="bg-white/95 border border-white/20 p-2 rounded-2xl flex flex-col gap-1.5 justify-between text-gray-900 shadow-sm">
+                    <div className="bg-white/95 border border-white/20 p-2 rounded-2xl flex flex-col gap-1.5 justify-between text-gray-900 shadow-sm animate-fade-in">
                       <span className="text-[8px] font-black tracking-wider text-pink-700 font-mono uppercase block">
-                        💄 MAKEUP COLORS
+                        💄 {language === 'id' ? "KOSMETIK IDEAL" : "MAKEUP COLORS"}
                       </span>
 
                       <div className="grid grid-cols-3 gap-y-1.5 gap-x-1.5">
-                        {/* First Row: Lip 1, Blush 1, Eye 1 */}
                         <div className="flex flex-col items-center gap-0.5">
                           <div className="w-4 h-4 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: makeupDetails?.lipColors?.[0]?.hex || '#FFEBE0' }} />
-                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">Lip</span>
+                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">{language === 'id' ? 'Bibir' : 'Lip'}</span>
                         </div>
                         <div className="flex flex-col items-center gap-0.5">
                           <div className="w-4 h-4 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: makeupDetails?.blushes?.[0]?.hex || '#FFEBE0' }} />
-                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">Blush</span>
+                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">{language === 'id' ? 'Pipi' : 'Blush'}</span>
                         </div>
                         <div className="flex flex-col items-center gap-0.5">
                           <div className="w-4 h-4 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: makeupDetails?.eyeshadows?.[0]?.hex || '#FFEBE0' }} />
-                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">Eye</span>
+                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">{language === 'id' ? 'Mata' : 'Eye'}</span>
                         </div>
 
-                        {/* Second Row: Lip 2, Blush 2, Eye 2 */}
                         <div className="flex flex-col items-center gap-0.5">
                           <div className="w-4 h-4 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: makeupDetails?.lipColors?.[1]?.hex || '#E9C0A9' }} />
-                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">Lip</span>
+                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">{language === 'id' ? 'Bibir' : 'Lip'}</span>
                         </div>
                         <div className="flex flex-col items-center gap-0.5">
                           <div className="w-4 h-4 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: makeupDetails?.blushes?.[1]?.hex || '#FF8CA3' }} />
-                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">Blush</span>
+                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">{language === 'id' ? 'Pipi' : 'Blush'}</span>
                         </div>
                         <div className="flex flex-col items-center gap-0.5">
                           <div className="w-4 h-4 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: makeupDetails?.eyeshadows?.[1]?.hex || '#3A3B3C' }} />
-                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">Eye</span>
+                          <span className="text-[6.5px] text-gray-500 font-mono font-bold scale-90">{language === 'id' ? 'Mata' : 'Eye'}</span>
                         </div>
                       </div>
                     </div>
@@ -356,11 +456,11 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                     <div className="bg-white/95 border border-white/20 rounded-2xl relative flex flex-col justify-between p-2 text-gray-900 shadow-sm">
                       <div className="flex items-center justify-between z-10">
                         <span className="text-[7.5px] font-black tracking-wider text-neutral-500 font-mono uppercase">
-                          👓 {result.faceShape} FRAME
+                          👓 {language === 'id' ? "KACAMATA" : "FRAME"} {result.faceShape}
                         </span>
                       </div>
 
-                      {/* Best Glasses image – centered and enlarged */}
+                      {/* Best Glasses image */}
                       <div className="w-full h-14 flex items-center justify-center py-1.5 shrink-0">
                         <img 
                           src={`/glasses/glasses_${result.faceShape.toLowerCase()}.png`}
@@ -375,11 +475,11 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
 
                   </div>
 
-                  {/* Brand / watermark footer */}
+                  {/* Brand watermark footer */}
                   <div className="flex items-center justify-between pt-2.5 border-t border-white/10 mt-2">
                     <div className="flex items-center gap-1">
                       <Sparkles size={10} className="text-white/60" />
-                      <span className="text-[8px] text-white/60 font-bold">Try now:</span>
+                      <span className="text-[8px] text-white/60 font-bold">{language === 'id' ? "Coba sekarang:" : "Try now:"}</span>
                     </div>
                     <span className="text-[7.5px] font-mono text-white/40 tracking-wider">
                       varnally.com
@@ -390,19 +490,22 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
               </div>
             </div>
 
-            {/* Mobile-only actions and screenshot tip - Hidden on Desktop */}
+            {/* Mobile Actions and screenshot tip */}
             <div className="md:hidden w-full max-w-[340px] mt-8 mb-16 px-4 shrink-0 flex flex-col gap-4 z-20">
               <div className="text-center bg-neutral-900/50 p-4 rounded-2xl border border-neutral-800/80 shadow-md">
-                <span className="text-[11px] text-neutral-400 font-mono uppercase leading-relaxed tracking-wider block">
-                  📸 Screenshot Tip: Center the card on your phone, then hold Power + Volume Down for instant saving on your device!
+                <span className="text-[10.5px] text-neutral-300 font-mono uppercase leading-relaxed tracking-wider block font-semibold">
+                  {language === 'id'
+                    ? "📸 Tips Screenshot: Seleraskan posisi kartu di layar, lalu tahan tombol (Power + Volume Turun) untuk menyimpan langsung ke album foto!"
+                    : "📸 Screenshot Tip: Center the card on your phone, then hold Power + Volume Down for instant saving to your device!"
+                  }
                 </span>
               </div>
 
               <button
                 onClick={onClose}
-                className="w-full py-4 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-2xl font-bold text-xs tracking-widest uppercase transition-all active:scale-98 cursor-pointer border border-neutral-700/50"
+                className="w-full py-4 bg-neutral-850 hover:bg-neutral-800 text-neutral-300 rounded-2xl font-black text-xs tracking-widest uppercase transition-all active:scale-98 cursor-pointer border border-neutral-700/50"
               >
-                ← Back to Results
+                {language === 'id' ? "← Kembali ke Hasil" : "← Back to Results"}
               </button>
             </div>
 

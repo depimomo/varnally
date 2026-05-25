@@ -27,8 +27,10 @@ import { ImageUploader } from './components/ImageUploader';
 import { AnalysisResult } from './components/AnalysisResult';
 import { LandingHero } from './components/LandingHero';
 import { Toast, ToastType } from './components/Toast';
+import { useLanguage } from './lib/LanguageContext';
 
 export default function App() {
+  const { language } = useLanguage();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
@@ -201,7 +203,7 @@ export default function App() {
       const analysisResult = await analyzeColor(buffer, selectedFile.type);
       
       if (analysisResult.isValid === false) {
-        setAnalysisError(analysisResult.errorMessage || "This photo doesn't seem suitable for color analysis. Please ensure your face is clear and the lighting is natural.");
+        setAnalysisError(analysisResult.errorMessage || (language === 'id' ? "Foto ini tampaknya tidak cocok untuk analisis warna. Harap pastikan wajah Anda terlihat jelas dengan pencahayaan alami." : "This photo doesn't seem suitable for color analysis. Please ensure your face is clear and the lighting is natural."));
         return;
       }
 
@@ -221,7 +223,7 @@ export default function App() {
       
       setResult(newAnalysis);
     } catch (error) {
-      setAnalysisError(error instanceof Error ? error.message : "Analysis failed unexpectedly. Please try again.");
+      setAnalysisError(error instanceof Error ? error.message : (language === 'id' ? "Analisis gagal. Silakan coba lagi." : "Analysis failed unexpectedly. Please try again."));
     } finally {
       setAnalyzing(false);
     }
@@ -253,7 +255,7 @@ export default function App() {
 
         const docRef = await addDoc(collection(db, 'analyses'), validResult);
         setResult({ ...result, id: docRef.id });
-        setToast({ message: "Varna analysis successfully saved to your cloud profile!", type: "success" });
+        setToast({ message: language === 'id' ? "Analisis Varna berhasil disimpan ke profil cloud Anda!" : "Varna analysis successfully saved to your cloud profile!", type: "success" });
       } else {
         // Save to localStorage for robust offline/guest usage
         const localData = localStorage.getItem('varnally_history');
@@ -281,11 +283,11 @@ export default function App() {
         localStorage.setItem('varnally_history', JSON.stringify(updatedHistory));
         setHistory(updatedHistory);
         setResult(newLocalItem);
-        setToast({ message: "Saved to local history! Sign in with Google to backup cloud-wide.", type: "success" });
+        setToast({ message: language === 'id' ? "Disimpan ke riwayat lokal! Masuk dengan Google untuk pencadangan cloud global." : "Saved to local history! Sign in with Google to backup cloud-wide.", type: "success" });
       }
     } catch (error) {
       console.error(error);
-      setToast({ message: "Failed to save. Please sign in with Google to try again.", type: "error" });
+      setToast({ message: language === 'id' ? "Gagal menyimpan. Silakan masuk menggunakan Google untuk mencoba lagi." : "Failed to save. Please sign in with Google to try again.", type: "error" });
     } finally {
       setLoading(false);
     }

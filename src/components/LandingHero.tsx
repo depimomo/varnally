@@ -8,13 +8,9 @@ import {
   Heart, 
   History,
   Share2,
-  ArrowRight,
-  Compass,
-  CheckCircle,
-  HelpCircle,
-  TrendingUp,
-  Award
+  ArrowRight
 } from 'lucide-react';
+import { useLanguage } from '../lib/LanguageContext';
 import archetypes from '../data/archetypes.json';
 import landingSeasons from '../data/landing_seasons.json';
 
@@ -25,6 +21,74 @@ interface LandingHeroProps {
 // Seasonal Archetypes, extracted static descriptors and default background color schemes config
 const SEASONS_DATA = landingSeasons.seasons_data;
 const DEFAULT_PALETTES = landingSeasons.default_palettes;
+
+// Helper to translate core physical seasons definitions to Indonesian dynamically
+const getLocalizedSeason = (season: any, lang: string) => {
+  if (lang !== 'id') return season;
+  const translations: Record<string, { name: string; nature: string; description: string }> = {
+    'spring': {
+      name: 'Spring (Musim Semi)',
+      nature: 'Hangat & Terang',
+      description: 'Warna segar menyerupai matahari terbit dini hari, bunga kuning mentega, dan kuncup buah persik hangat.'
+    },
+    'summer': {
+      name: 'Summer (Musim Panas)',
+      nature: 'Sejuk & Lembut',
+      description: 'Nuansa warna pastel sejuk sehabis terbilas air laut, kabut pegunungan lavender, dan bunga mawar berselimut bubuk halus.'
+    },
+    'autumn': {
+      name: 'Autumn (Musim Gugur)',
+      nature: 'Hangat & Redup',
+      description: 'Nilai bumi tanah liat panggang yang kaya rona rempah kayu manis, bubuk paprika, dan dedaunan pohon zaitun.'
+    },
+    'winter': {
+      name: 'Winter (Musim Dingin)',
+      nature: 'Sejuk & Pekat',
+      description: 'Warna batuan permata mewah berkontras tinggi seperti biru kobalt tengah malam, merah fuchsia kerajaan, dan platinum es berkilau.'
+    }
+  };
+  const localized = translations[season.id];
+  return localized ? { ...season, ...localized } : season;
+};
+
+const getBenefits = (lang: string) => {
+  if (lang === 'id') {
+    return [
+      {
+        emoji: "✨",
+        title: "Percaya Diri Bergaya",
+        desc: "Hentikan menebak-nebak tipe lipstik, warna rambut, atau pakaian yang membuat Anda tampak pucat lesu. Mengetahui musim warna murni Anda menghemat waktu belanja dan memastikan kecocokan."
+      },
+      {
+        emoji: "📐",
+        title: "Keseimbangan Geometri",
+        desc: "Wajah Anda adalah susunan alami yang cantik atas garis, rasio, dan sudut penyeimbang. Kami menghitung parameter struktur wajah guna mengisolasi jenis kacamata pelengkap terbaik."
+      },
+      {
+        emoji: "🪞",
+        title: "Asal Istilah Varna",
+        desc: "Varna berasal dari bahasa Sanskerta yang berarti warna, cahaya, rona, dan keindahan spektrum. Kami memperkuat keindahan asli wajah dan rona alami Anda secara autentik."
+      }
+    ];
+  }
+  return [
+    {
+      emoji: "✨",
+      title: "Styling Confidence",
+      desc: "Stop guessing lipstick keys, hair tints, or jackets that leave you feeling washed out. Locking down your precise season alignment saves you time and secures total wardrobe certainty."
+    },
+    {
+      emoji: "📐",
+      title: "Geometric Equilibrium",
+      desc: "Your face is a beautiful biological machine of lines, ratios, and anchors. We define your structural parameters to isolate the matching glasses shapes that balance your chin and cheekbones."
+    },
+    {
+      emoji: "🪞",
+      title: "Origins of Varna",
+      desc: "Our brand pays tribute to the term Varna (Sanskrit for color and light spectrum). We don't paint a generic cover on your beautiful facial base—we empower your native organic shades."
+    }
+  ];
+};
 
 // Extract seasonal color palettes from archetypes.json dynamically
 const getSeasonPalette = (seasonKey: string, subtypeKey: string): string[] => {
@@ -45,7 +109,7 @@ const VarnaColorRaysBackdrop: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setPaletteIndex((prev) => (prev + 1) % 4);
-    }, 4500);
+    }, 4550);
     return () => clearInterval(timer);
   }, []);
 
@@ -140,7 +204,11 @@ const VarnaColorRaysBackdrop: React.FC = () => {
 
 
 export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
+  const { language, t } = useLanguage();
   const [selectedSeason, setSelectedSeason] = useState(SEASONS_DATA[0]);
+
+  const activeSeasonTranslated = getLocalizedSeason(selectedSeason, language);
+  const benefits = getBenefits(language);
 
   return (
     <div className="relative space-y-16 py-4 md:py-8 overflow-hidden min-h-screen">
@@ -204,22 +272,24 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
           initial={{ scale: 0.92, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.4 }}
-          className="inline-flex items-center gap-2.5 px-4_5 py-2 px-2 bg-gradient-to-r from-brand-primary/15 via-rose-500/10 to-brand-secondary/15 border border-brand-primary/25 rounded-full text-brand-primary text-xs font-bold uppercase tracking-wider font-mono shadow-sm"
+          className="inline-flex items-center gap-2.5 px-4 py-2 bg-gradient-to-r from-brand-primary/15 via-rose-500/10 to-brand-secondary/15 border border-brand-primary/25 rounded-full text-brand-primary text-xs font-bold uppercase tracking-wider font-mono shadow-sm"
         >
           <Sparkles size={14} className="animate-pulse text-brand-secondary" />
-          <span>Formulating Your Personal Harmony</span>
+          <span>{language === 'id' ? "RUMUSKAN HARMONI PERSONAL ANDA" : "FORMULATING YOUR PERSONAL HARMONY"}</span>
         </motion.div>
 
-        <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight leading-tight text-gray-950">
-          <span className="bg-gradient-to-r from-brand-primary via-[#FF7043] to-brand-secondary bg-clip-text text-transparent">Your true colors,</span> <br />
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-black tracking-tight leading-tight text-gray-950">
+          <span className="bg-gradient-to-r from-brand-primary via-[#FF7043] to-brand-secondary bg-clip-text text-transparent">
+            {language === 'id' ? "Sinar warna sejati," : "Your true colors,"}
+          </span> <br />
           <span className="relative inline-block text-gray-900 mt-1">
-            your best ally.
+            {language === 'id' ? "sekutu keindahan Anda." : "your best ally."}
             <span className="absolute left-0 right-0 bottom-2 h-4 sm:h-5 bg-gradient-to-r from-brand-primary/25 via-pink-400/20 to-brand-secondary/25 rounded-full -z-10" />
           </span>
         </h1>
         
-        <p className="text-lg md:text-xl text-gray-550 max-w-2xl mx-auto font-medium leading-relaxed">
-          Discover the custom micro-pigmentation science & anatomical balance calculated uniquely for you. Find the signature palettes and frame contours designed to celebrate your authentic self.
+        <p className="text-sm sm:text-base md:text-lg text-gray-500 max-w-2xl mx-auto font-semibold leading-relaxed">
+          {t.heroIntro}
         </p>
 
         {/* Primary CTA */}
@@ -228,9 +298,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
             whileHover={{ scale: 1.03, boxShadow: "0 20px 30px -10px rgba(255,110,64,0.3)" }}
             whileTap={{ scale: 0.97 }}
             onClick={onStart}
-            className="inline-flex items-center gap-3.5 px-9 py-5 bg-gradient-to-r from-gray-900 via-gray-850 to-gray-950 text-white rounded-3xl font-bold text-lg shadow-2xl shadow-gray-950/20 hover:text-[#FFA726] transition-all cursor-pointer group"
+            className="inline-flex items-center gap-3.5 px-8 py-4 sm:px-9 sm:py-5 bg-gradient-to-r from-gray-900 via-gray-850 to-gray-950 text-white rounded-3xl font-bold text-base sm:text-lg shadow-2xl shadow-gray-950/20 hover:text-[#FFA726] transition-all cursor-pointer group"
           >
-            <span>Scan My Varna Spectrum</span>
+            <span>{t.startBtn}</span>
             <ArrowRight size={20} className="text-brand-primary group-hover:translate-x-1 transition-transform" />
           </motion.button>
         </div>
@@ -241,8 +311,10 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
         <div className="bg-white/70 backdrop-blur-xl border border-black/5 rounded-[2.5rem] shadow-xl overflow-hidden p-6 sm:p-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
             <div>
-              <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest font-mono">Taste of the Science</p>
-              <h3 className="text-xl font-bold text-gray-900 font-display">Interactive Season Spectrum</h3>
+              <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest font-mono">
+                {language === 'id' ? "SAMPEL TEORI SPEKTRUM" : "TASTE OF THE SCIENCE"}
+              </p>
+              <h3 className="text-xl font-bold text-gray-900 font-display">{t.varnaDockTitle}</h3>
             </div>
             {/* Tab buttons */}
             <div className="flex flex-wrap gap-1 bg-gray-100/80 p-1 rounded-2xl">
@@ -256,7 +328,13 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
                     : 'text-gray-500 hover:text-gray-800'
                   }`}
                 >
-                  {season.name.split(' ')[0]}
+                  {language === 'id' 
+                    ? season.name === 'Spring' ? 'Spring' 
+                      : season.name === 'Summer' ? 'Summer'
+                      : season.name === 'Autumn' ? 'Autumn'
+                      : 'Winter'
+                    : season.name
+                  }
                 </button>
               ))}
             </div>
@@ -271,21 +349,21 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               transition={{ duration: 0.3 }}
               className={`p-6 rounded-[2rem] bg-gradient-to-tr ${selectedSeason.gradient} border ${selectedSeason.border} grid grid-cols-1 md:grid-cols-12 gap-6 items-center`}
             >
-              <div className="md:col-span-5 space-y-3">
+              <div className="md:col-span-12 lg:col-span-5 space-y-3">
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${selectedSeason.tagColor}`}>
-                    {selectedSeason.nature}
+                    {activeSeasonTranslated.nature}
                   </span>
                 </div>
-                <h4 className="text-lg font-black text-gray-900 font-display">{selectedSeason.name}</h4>
-                <p className="text-xs text-gray-600 leading-relaxed font-medium">
-                  {selectedSeason.description}
+                <h4 className="text-lg font-black text-gray-900 font-display">{activeSeasonTranslated.name}</h4>
+                <p className="text-xs text-gray-600 leading-relaxed font-semibold">
+                  {activeSeasonTranslated.description}
                 </p>
               </div>
 
               {/* Dynamic Color Waves */}
-              <div className="md:col-span-7 grid grid-cols-2 min-[400px]:grid-cols-3 sm:grid-cols-5 gap-4 md:gap-3">
-                {selectedSeason.colors.map((c, i) => (
+              <div className="md:col-span-12 lg:col-span-7 grid grid-cols-2 min-[400px]:grid-cols-3 sm:grid-cols-5 gap-4 md:gap-3 font-mono">
+                {selectedSeason.colors.map((c: any, i: number) => (
                   <motion.div 
                     key={c.name}
                     whileHover={{ y: -6, scale: 1.04 }}
@@ -299,7 +377,13 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
                       <div className="absolute top-1 left-1.5 w-3 h-1.5 bg-white/25 rounded-full blur-[0.5px]" />
                     </div>
                     <span className="text-[10px] sm:text-[9px] font-bold text-gray-800 text-center tracking-tight leading-tight w-full px-1 break-normal">
-                      {c.name}
+                      {language === 'id' && c.name === 'Young Mint' ? 'Mint Muda' 
+                        : language === 'id' && c.name === 'Golden Marigold' ? 'Marigold Emas'
+                        : language === 'id' && c.name === 'Coral Poppy' ? 'Koral Berkilau'
+                        : language === 'id' && c.name === 'Powder Breeze' ? 'Biru Bedak'
+                        : language === 'id' && c.name === 'Toasted Pecan' ? 'Kacang Panggang'
+                        : language === 'id' && c.name === 'Spiced Clay' ? 'Rempah Liat'
+                        : c.name}
                     </span>
                     <span className="text-[9px] sm:text-[8px] font-mono text-gray-400 uppercase select-all">
                       {c.hex}
@@ -309,55 +393,38 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               </div>
             </motion.div>
           </AnimatePresence>
+          <p className="text-[11.5px] text-gray-400 text-center italic font-semibold">
+            {t.varnaDockSub}
+          </p>
         </div>
       </div>
 
       {/* 3. Education / Benefits Block */}
       <div className="bg-gradient-to-br from-white/90 via-white/70 to-white/40 backdrop-blur-md border border-black/5 rounded-[3rem] p-8 md:p-12 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 shadow-lg relative z-10">
-        <div className="space-y-4">
-          <div className="w-12 h-12 bg-gradient-to-tr from-brand-primary to-orange-400 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg shadow-brand-primary/25">
-            ✨
+        {benefits.map((benefit, index) => (
+          <div key={index} className="space-y-4">
+            <div className="w-12 h-12 bg-gradient-to-tr from-brand-primary to-orange-400 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg">
+              {benefit.emoji}
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
+              {benefit.title}
+            </h3>
+            <p className="text-xs text-gray-650 leading-relaxed font-semibold">
+              {benefit.desc}
+            </p>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
-            Styling Confidence
-          </h3>
-          <p className="text-xs text-gray-650 leading-relaxed font-semibold">
-            Stop guessing lipstick keys, hair tints, or jackets that leave you feeling washed out. Locking down your precise season alignment saves you time and secures total wardrobe certainty.
-          </p>
-        </div>
-        
-        <div className="space-y-4">
-          <div className="w-12 h-12 bg-gradient-to-tr from-[#00A09E] to-teal-400 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg shadow-brand-secondary/25">
-            📐
-          </div>
-          <h3 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
-            Geometric Equilibrium
-          </h3>
-          <p className="text-xs text-gray-650 leading-relaxed font-semibold">
-            Your face is a beautiful biological machine of lines, ratios, and anchors. We define your structural parameters to isolate the matching glasses shapes that balance your chin and cheeckbones.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <div className="w-12 h-12 bg-gradient-to-tr from-[#714990] to-pink-500 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg shadow-purple-500/25">
-            🪞
-          </div>
-          <h3 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
-            Origins of Varna
-          </h3>
-          <p className="text-xs text-gray-650 leading-relaxed font-semibold">
-            Our brand pays tribute to the term <strong>Varna</strong> (Sanskrit for color and light spectrum). We don't paint a generic cover on your beautiful facial base—we empower your native organic shades.
-          </p>
-        </div>
+        ))}
       </div>
 
       {/* 4. Complete System Feature Grid */}
       <div className="space-y-10 max-w-5xl mx-auto px-4 relative z-10">
         <div className="text-center space-y-3">
-          <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">Precision Analytical Engine</p>
-          <h2 className="text-3xl md:text-4xl font-display font-medium text-gray-900">What Varnally Maps for You</h2>
-          <p className="text-sm text-gray-550 max-w-lg mx-auto">
-            Our intelligent multi-dimensional vision layout runs real pixel color calibration, chroma profiling, and facial boundary geometry.
+          <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
+            {language === 'id' ? "SISTEM INTELEKTUAL SPEKTRUM" : "PRECISION ANALYTICAL ENGINE"}
+          </p>
+          <h2 className="text-3xl md:text-4xl font-display font-black text-gray-900">{t.featuresTitle}</h2>
+          <p className="text-sm text-gray-500 max-w-lg mx-auto font-semibold">
+            {t.featuresSubtitle}
           </p>
         </div>
 
@@ -369,9 +436,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               <div className="w-12 h-12 bg-pink-50 text-brand-primary rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
                 <Palette size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">12-Seasonal Spectrum Analysis</h3>
+              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat1Title}</h3>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                Maps your skin's dominant undertone, eye value contrast, and color intensity boundaries to place you in deep categories (e.g. Deep Autumn, Bright Spring).
+                {t.feat1Desc}
               </p>
             </div>
             {/* Visual colored swatches grid */}
@@ -392,9 +459,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               <div className="w-12 h-12 bg-emerald-50 text-brand-secondary rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
                 <Smile size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">Face Geometry Mapping</h3>
+              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat2Title}</h3>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                Uses landmark boundary calculations to evaluate the curves and angles in your facial contour (Oval, Square, Round, Heart, Oblong, Diamond).
+                {t.feat2Desc}
               </p>
             </div>
             <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
@@ -409,9 +476,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
                 <Glasses size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">Counter-Balancing Frames</h3>
+              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat3Title}</h3>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                Recommends glasses structures using structural offset logic. Rounds out sharp squares, and adds crisp boundaries to soft oval profiles.
+                {t.feat3Desc}
               </p>
             </div>
             <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
@@ -426,9 +493,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               <div className="w-12 h-12 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
                 <Heart size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">Cosmetics Blueprint</h3>
+              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat4Title}</h3>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                Formulates your custom makeup colors instantly: details your perfect lipstick shades, blush highlights, and eyeshadow tones mapped to your season.
+                {t.feat4Desc}
               </p>
             </div>
             {/* Visual swatches inline */}
@@ -448,9 +515,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               <div className="w-12 h-12 bg-sky-50 text-sky-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
                 <History size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">Saved Color Profiles</h3>
+              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat5Title}</h3>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                Saves your past scans and matching palettes securely on your device. Easily compare seasonal ranges or recall your colors anytime.
+                {t.feat5Desc}
               </p>
             </div>
             <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
@@ -465,9 +532,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
                 <Share2 size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">Instagram Story Posters</h3>
+              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat6Title}</h3>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                Creates high-fidelity 9:16 portrait graphics optimized for social stories, showcasing your personal color archetype and frame shape.
+                {t.feat6Desc}
               </p>
             </div>
             <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
@@ -484,9 +551,14 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
         <div className="absolute -inset-1 rounded-[3rem] bg-gradient-to-r from-brand-primary via-pink-400 to-brand-secondary opacity-30 blur-2xl -z-10" />
         
         <div className="bg-white/90 backdrop-blur-xl border border-black/5 p-8 sm:p-10 rounded-[2.5rem] shadow-xl space-y-4">
-          <h3 className="text-2xl sm:text-3xl font-display font-black text-gray-950">Ready to uncover your true aesthetic chemistry?</h3>
-          <p className="text-sm text-gray-550 max-w-md mx-auto leading-relaxed">
-            Take or upload a natural-light portrait selfie. It takes just seconds to isolate your unique Varna map coordinates.
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-display font-black text-gray-950">
+            {language === 'id' ? "Siap mengungkap potensi spektrum kecantikan Anda?" : "Ready to uncover your true aesthetic chemistry?"}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-500 max-w-md mx-auto leading-relaxed font-semibold">
+            {language === 'id' 
+              ? "Unggah foto potret mandiri lurus yang tajam di bawah sinar alami yang jernih. Membutuhkan waktu detik saja untuk kalkulasi." 
+              : "Take or upload a natural-light portrait selfie. It takes just seconds to isolate your unique Varna map coordinates."
+            }
           </p>
           <div className="pt-2">
             <motion.button 
@@ -495,7 +567,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               onClick={onStart}
               className="px-8 py-4 bg-brand-primary text-white hover:bg-brand-primary/95 rounded-2xl font-bold flex items-center gap-2 mx-auto justify-center cursor-pointer shadow-lg shadow-brand-primary/10 hover:scale-[1.01] transition-all text-sm"
             >
-              <span>Begin Free Discovery Scan</span>
+              <span>{language === 'id' ? "Mulai Pemindaian Gratis" : "Begin Free Discovery Scan"}</span>
               <ArrowRight size={16} />
             </motion.button>
           </div>
