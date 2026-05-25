@@ -9,6 +9,7 @@ import { FaceArchitectureCard } from './FaceArchitectureCard';
 import { GlassesRecommendationCard } from './GlassesRecommendationCard';
 import { MakeupRecommendationCard } from './MakeupRecommendationCard';
 import { ResultHeader } from './ResultHeader';
+import { ShareablePoster } from './ShareablePoster';
 
 interface AnalysisResultProps {
   result: Analysis;
@@ -29,6 +30,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
   onSave,
   getFaceShapeImage
 }) => {
+  const [isPosterOpen, setIsPosterOpen] = React.useState(false);
   const borderColors = (archetypes.color_archetypes as any)[result.season]?.[`${result.subType} ${result.season}`]?.border || [];
   const defaultBorderColors = ["A8BD37","EFB45C","F3BF39","E88957","E06625","D53A21","B14720","8A78A8","5AA78F","4E9743"];
   const activeColors = borderColors.length > 0 ? borderColors : defaultBorderColors;
@@ -152,6 +154,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
         canSave={!result.id}
         onBack={onBack}
         onSave={onSave}
+        onShareStory={() => setIsPosterOpen(true)}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -292,6 +295,14 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
           />
         </div>
       </div>
+
+      <ShareablePoster
+        isOpen={isPosterOpen}
+        onClose={() => setIsPosterOpen(false)}
+        result={result}
+        previewUrl={previewUrl}
+        getFaceShapeImage={getFaceShapeImage}
+      />
     </motion.div>
   );
 };
