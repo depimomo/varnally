@@ -19,7 +19,7 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from './lib/firebase';
-import { analyzeColor, regenerateIdPhoto } from './services/gemini';
+import { analyzeColor } from './services/gemini';
 import { Analysis } from './types';
 import { Header } from './components/Header';
 import { HistoryList } from './components/HistoryList';
@@ -198,13 +198,7 @@ export default function App() {
 
       const thumbnailUrl = await generateThumbnail(selectedFile);
       
-      const [analysisResult, rawCleanedImageUrl] = await Promise.all([
-        analyzeColor(buffer, selectedFile.type),
-        regenerateIdPhoto(buffer, selectedFile.type).catch(err => {
-          console.warn("Could not regenerate ID photo passport portrait, falling back:", err);
-          return null;
-        })
-      ]);
+      const analysisResult = await analyzeColor(buffer, selectedFile.type);
       
       if (analysisResult.isValid === false) {
         setAnalysisError(analysisResult.errorMessage || "This photo doesn't seem suitable for color analysis. Please ensure your face is clear and the lighting is natural.");
@@ -213,9 +207,7 @@ export default function App() {
 
       // Dynamic lightweight photo persistence (under 30KB) using canvas compression
       let finalCleanedUrl: string | undefined = undefined;
-      if (rawCleanedImageUrl) {
-        finalCleanedUrl = await compressImageUrl(rawCleanedImageUrl, 350, 0.70);
-      } else if (previewUrl) {
+      if (previewUrl) {
         finalCleanedUrl = await compressImageUrl(previewUrl, 350, 0.70);
       }
 
@@ -376,6 +368,12 @@ export default function App() {
               onAnalyze={handleAnalyze}
               onReset={reset}
               onBackToLanding={() => setShowUploader(false)}
+              onCaptured={(file) => {
+                setSelectedFile(file);
+                setPreviewUrl(URL.createObjectURL(file));
+                setResult(null);
+                setAnalysisError(null);
+              }}
             />
           ) : (
             <LandingHero 

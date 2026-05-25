@@ -22,6 +22,7 @@ interface ImageUploaderProps {
   onAnalyze: () => void;
   onReset: () => void;
   onBackToLanding: () => void;
+  onCaptured: (file: File) => void;
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -33,9 +34,89 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   onFileChange,
   onAnalyze,
   onReset,
-  onBackToLanding
+  onBackToLanding,
+  onCaptured
 }) => {
   const [loadingText, setLoadingText] = React.useState("Analyzing natural shades...");
+  const [cameraMode, setCameraMode] = React.useState(false);
+  const [cameraError, setCameraError] = React.useState<string | null>(null);
+  const [stream, setStream] = React.useState<MediaStream | null>(null);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [lightingStatus, setLightingStatus] = React.useState<"Optimal" | "Too Dark" | "Too Bright" | "Calibrating...">("Calibrating...");
+  const [focusStatus, setFocusStatus] = React.useState<"Optimal" | "Low contrast / Blurry" | "Calibrating...">("Calibrating...");
+
+  React.useEffect(() => {
+    if (!stream) {
+      setLightingStatus("Calibrating...");
+      setFocusStatus("Calibrating...");
+      return;
+    }
+
+    let active = true;
+    const interval = setInterval(() => {
+      if (!active || !videoRef.current) return;
+      const video = videoRef.current;
+      if (video.paused || video.ended || video.readyState < 2) return;
+
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 80;
+        canvas.height = 80;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        ctx.drawImage(video, 0, 0, 80, 80);
+        const imgData = ctx.getImageData(0, 0, 80, 80);
+        const data = imgData.data;
+
+        let totalLuma = 0;
+        const count = data.length / 4;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+          totalLuma += luma;
+        }
+
+        const avgBrightness = totalLuma / count;
+
+        let sumSqDiff = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+          sumSqDiff += (luma - avgBrightness) ** 2;
+        }
+        const stdDev = Math.sqrt(sumSqDiff / count);
+
+        // Analyze lighting characteristics
+        if (avgBrightness < 60) {
+          setLightingStatus("Too Dark");
+        } else if (avgBrightness > 215) {
+          setLightingStatus("Too Bright");
+        } else {
+          setLightingStatus("Optimal");
+        }
+
+        // Analyze standard deviation for contrast details
+        if (stdDev < 15) {
+          setFocusStatus("Low contrast / Blurry");
+        } else {
+          setFocusStatus("Optimal");
+        }
+      } catch (err) {
+        // Safe cross-origin handling
+      }
+    }, 400);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [stream]);
 
   React.useEffect(() => {
     if (!analyzing) {
@@ -66,6 +147,64 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     return () => clearInterval(interval);
   }, [analyzing]);
+
+  const startCamera = async () => {
+    setCameraMode(true);
+    setCameraError(null);
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 640 } },
+        audio: false
+      });
+      setStream(mediaStream);
+      // Let React schedule rendering the video ref before setting srcObject
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+      }, 50);
+    } catch (err) {
+      console.error("Camera access failed:", err);
+      setCameraError("Camera permission denied or camera not found. Please verify permissions or choose to upload from files.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setCameraMode(false);
+    setCameraError(null);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const video = videoRef.current;
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 640;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], `camera_${Date.now()}.jpeg`, { type: 'image/jpeg' });
+            onCaptured(file);
+            stopCamera();
+          }
+        }, 'image/jpeg', 0.90);
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
 
   return (
     <motion.div 
@@ -103,17 +242,113 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         {/* Upload Zone (7 columns or 12 stack) */}
         <div className="md:col-span-6 space-y-6">
           {!previewUrl ? (
-            <div 
-              onClick={onFileClick}
-              className="aspect-square bg-white rounded-[2.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-6 cursor-pointer hover:border-brand-primary hover:bg-brand-primary/5 transition-all group shadow-sm p-4"
-            >
-              <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-white group-hover:text-brand-primary transition-all shadow-sm">
-                <Camera size={26} />
-              </div>
-              <div className="text-center space-y-1">
-                <p className="text-base font-bold text-gray-700">Select face photo</p>
-                <p className="text-xs text-gray-400">Tap to browse files (JPG, PNG)</p>
-              </div>
+            <div className="space-y-4">
+              {!cameraMode ? (
+                <div className="space-y-4">
+                  {/* Select File Option Card */}
+                  <div 
+                    onClick={onFileClick}
+                    className="aspect-square bg-white rounded-[2.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-6 cursor-pointer hover:border-brand-primary hover:bg-brand-primary/5 transition-all group shadow-sm p-4"
+                  >
+                    <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-white group-hover:text-brand-primary transition-all shadow-sm">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                      </svg>
+                    </div>
+                    <div className="text-center space-y-1">
+                      <p className="text-base font-bold text-gray-700">Select face photo</p>
+                      <p className="text-xs text-gray-400 font-medium">Tap to browse files (JPG, PNG)</p>
+                    </div>
+                  </div>
+
+                  {/* Or Trigger Camera Option Button */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); startCamera(); }}
+                    className="w-full py-4 bg-white hover:bg-brand-primary/5 text-gray-800 border-2 border-dashed border-gray-200 rounded-[1.5rem] font-bold text-sm transition-all flex items-center justify-center gap-3 cursor-pointer shadow-sm active:scale-98"
+                  >
+                    <Camera size={18} className="text-brand-primary" />
+                    <span>Or Use Live Face Camera</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="aspect-square bg-gray-950 rounded-[2.5rem] overflow-hidden relative shadow-inner border border-neutral-800 flex flex-col justify-between">
+                    {/* Live Video Preview inside box */}
+                    <video 
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      className="absolute inset-0 w-full h-full object-cover rounded-[2.5rem]"
+                    />
+
+                    {cameraError && (
+                      <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-6 text-center z-20 rounded-[2.5rem] space-y-4">
+                        <p className="text-xs text-red-200 font-semibold leading-relaxed">{cameraError}</p>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); stopCamera(); }}
+                          className="px-5 py-2.5 bg-neutral-100 text-gray-900 font-bold rounded-xl text-xs transition-all cursor-pointer active:scale-95 hover:bg-neutral-100 shadow-sm"
+                        >
+                          Cancel & Go Back
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Top Bar overlays inside Video */}
+                    <div className="relative z-10 p-5 w-full flex justify-between items-center bg-gradient-to-b from-black/60 to-transparent">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); stopCamera(); }}
+                        className="px-3.5 py-1.5 bg-black/50 hover:bg-black/80 text-white font-bold text-[11px] rounded-full backdrop-blur-md border border-white/20 cursor-pointer"
+                      >
+                        Cancel Camera
+                      </button>
+                      
+                      <span className="px-3 py-1 bg-brand-primary text-white font-bold text-[10px] rounded-full uppercase tracking-wider font-mono">
+                        Live Stream
+                      </span>
+                    </div>
+
+                    {/* Oval blueprint outline guides */}
+                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-30 z-10">
+                      <div className="w-48 h-64 rounded-[50%] border-2 border-dashed border-white" />
+                    </div>
+
+                    {/* Shutter controls bar */}
+                    <div className="relative z-10 p-5 bg-gradient-to-t from-black/85 to-transparent flex justify-center w-full">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); capturePhoto(); }}
+                        className="w-16 h-16 rounded-full bg-white border-4 border-neutral-300 hover:border-brand-primary flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 group"
+                        title="Capture Photo"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-brand-primary group-hover:scale-105 transition-transform" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Real-time Environment Assist Indicator outside/below camera */}
+                  {!cameraError && stream && (
+                    <div className="bg-neutral-50 rounded-2xl p-3 px-4 border border-gray-100 flex items-center justify-around text-gray-700 text-xs shadow-sm">
+                      <div className="flex flex-col items-center text-center">
+                        <span className="text-[9px] text-gray-400 uppercase font-mono tracking-wider">Lighting Match</span>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className={`w-2 h-2 rounded-full ${lightingStatus === "Optimal" ? 'bg-emerald-500 animate-pulse' : lightingStatus === "Calibrating..." ? 'bg-amber-400' : 'bg-red-500'}`} />
+                          <span className="font-bold font-mono text-xs text-gray-800">{lightingStatus}</span>
+                        </div>
+                      </div>
+
+                      <div className="w-[1px] h-6 bg-gray-200" />
+
+                      <div className="flex flex-col items-center text-center">
+                        <span className="text-[9px] text-gray-400 uppercase font-mono tracking-wider">Focus / Clarity</span>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className={`w-2 h-2 rounded-full ${focusStatus === "Optimal" ? 'bg-emerald-500 animate-pulse' : focusStatus === "Calibrating..." ? 'bg-amber-400' : 'bg-red-500'}`} />
+                          <span className="font-bold font-mono text-xs text-gray-800">{focusStatus}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <input 
                 type="file" 
                 ref={fileInputRef} 

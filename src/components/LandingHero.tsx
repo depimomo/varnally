@@ -23,7 +23,7 @@ interface LandingHeroProps {
 const SEASONS_DATA = [
   {
     id: 'spring',
-    name: 'Vasanta (Spring)',
+    name: 'Spring',
     nature: 'Warm & Bright',
     description: 'Fresh, radiant shades resembling early sunrise, buttercups, and peach blossoms.',
     gradient: 'from-[#FF8A65]/20 via-[#FFD54F]/20 to-[#81C784]/20',
@@ -39,7 +39,7 @@ const SEASONS_DATA = [
   },
   {
     id: 'summer',
-    name: 'Grishma (Summer)',
+    name: 'Summer',
     nature: 'Cool & Soft',
     description: 'Chilled, sea-washed pastels, hazy lavender mountains, and soft powdered roses.',
     gradient: 'from-[#B3E5FC]/20 via-[#E1BEE7]/20 to-[#F8BBD0]/20',
@@ -55,7 +55,7 @@ const SEASONS_DATA = [
   },
   {
     id: 'autumn',
-    name: 'Sharad (Autumn)',
+    name: 'Autumn',
     nature: 'Warm & Muted',
     description: 'Rich earthy values, spiced cinnamon, toasted terracotta, and olive forest canopies.',
     gradient: 'from-[#FFCC80]/20 via-[#D7CCC8]/20 to-[#C5E1A5]/20',
@@ -71,7 +71,7 @@ const SEASONS_DATA = [
   },
   {
     id: 'winter',
-    name: 'Hemanta (Winter)',
+    name: 'Winter',
     nature: 'Cool & Deep',
     description: 'Bold, high-contrast jewel shades of midnight cobalt, royal magenta, and icy platinum.',
     gradient: 'from-[#C5CAE9]/20 via-[#F8BBD0]/20 to-[#B2DFDB]/20',
@@ -151,14 +151,14 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
           initial={{ scale: 0.92, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.4 }}
-          className="inline-flex items-center gap-2.5 px-4_5 py-2 bg-gradient-to-r from-brand-primary/15 via-rose-500/10 to-brand-secondary/15 border border-brand-primary/25 rounded-full text-brand-primary text-xs font-bold uppercase tracking-wider font-mono shadow-sm"
+          className="inline-flex items-center gap-2.5 px-4_5 py-2 px-2 bg-gradient-to-r from-brand-primary/15 via-rose-500/10 to-brand-secondary/15 border border-brand-primary/25 rounded-full text-brand-primary text-xs font-bold uppercase tracking-wider font-mono shadow-sm"
         >
           <Sparkles size={14} className="animate-pulse text-brand-secondary" />
-          <span>Formulating Personal Harmony with Physics-Level Precision</span>
+          <span>Formulating Your Personal Harmony</span>
         </motion.div>
 
         <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight leading-tight text-gray-950">
-          <span className="bg-gradient-to-r from-brand-primary via-[#FF7043] to-brand-secondary bg-clip-text text-transparent">Varnally.</span> Your true colors,<br />
+          <span className="bg-gradient-to-r from-brand-primary via-[#FF7043] to-brand-secondary bg-clip-text text-transparent">Your true colors,</span> <br />
           <span className="relative inline-block text-gray-900 mt-1">
             your best ally.
             <span className="absolute left-0 right-0 bottom-2 h-4 sm:h-5 bg-gradient-to-r from-brand-primary/25 via-pink-400/20 to-brand-secondary/25 rounded-full -z-10" />
