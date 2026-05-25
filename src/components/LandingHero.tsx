@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, 
@@ -6,7 +6,8 @@ import {
   Smile, 
   Glasses, 
   Heart, 
-  UserCheck, 
+  History,
+  Share2,
   ArrowRight,
   Compass,
   CheckCircle,
@@ -14,10 +15,130 @@ import {
   TrendingUp,
   Award
 } from 'lucide-react';
+import archetypes from '../data/archetypes.json';
 
 interface LandingHeroProps {
   onStart: () => void;
 }
+
+// Extract seasonal color palettes from archetypes.json dynamically
+const getSeasonPalette = (seasonKey: string, subtypeKey: string): string[] => {
+  const border = (archetypes.color_archetypes as any)[seasonKey]?.[subtypeKey]?.border || [];
+  return border.map((hex: string) => hex.startsWith('#') ? hex : `#${hex}`);
+};
+
+const DEFAULT_PALETTES = [
+  ["#A8BD37","#EFB45C","#F3BF39","#E88957","#E06625","#D53A21","#B14720","#8A78A8","#5AA78F","#4E9743"], // Spring
+  ["#38B3AE","#81C8DE","#1F80B5","#2A5A7E","#324D62","#AA90BD","#8D5489","#A94790","#557871","#40A49A"], // Summer
+  ["#A38F1E","#B97A19","#D5A004","#DE7A0A","#C53F19","#B4181B","#7F2E11","#7C162C","#278A76","#377E32"], // Autumn
+  ["#BFDFEC","#325EA5","#2D4281","#2F3359","#714990","#B34488","#941D31","#01372A","#004737","#016E57"]  // Winter
+];
+
+const PALETTES = [
+  getSeasonPalette('Spring', 'True Spring').length > 0 ? getSeasonPalette('Spring', 'True Spring') : DEFAULT_PALETTES[0],
+  getSeasonPalette('Summer', 'True Summer').length > 0 ? getSeasonPalette('Summer', 'True Summer') : DEFAULT_PALETTES[1],
+  getSeasonPalette('Autumn', 'True Autumn').length > 0 ? getSeasonPalette('Autumn', 'True Autumn') : DEFAULT_PALETTES[2],
+  getSeasonPalette('Winter', 'True Winter').length > 0 ? getSeasonPalette('Winter', 'True Winter') : DEFAULT_PALETTES[3]
+];
+
+const VarnaColorRaysBackdrop: React.FC = () => {
+  const [paletteIndex, setPaletteIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPaletteIndex((prev) => (prev + 1) % 4);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const activePalette = PALETTES[paletteIndex] || DEFAULT_PALETTES[0];
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center -z-15 overflow-visible pointer-events-none select-none">
+      <div className="relative w-0 h-0 flex items-center justify-center">
+        
+        {/* Layer 1: Clockwise slow rotation - larger and highly blurred color sweeps */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[680px] h-[680px] flex items-center justify-center"
+        >
+          {activePalette.map((color, i) => (
+            <motion.div
+              key={`ray-cw-${i}`}
+              className="absolute w-14 h-[350px] rounded-full blur-[65px] opacity-[0.25]"
+              style={{
+                top: '50%',
+                left: '50%',
+                transformOrigin: 'center center',
+                transform: `translate(-50%, -50%) rotate(${i * 36}deg) translateY(-140px)`,
+              }}
+              animate={{
+                backgroundColor: color,
+                scaleY: [1, 1.2, 0.9, 1],
+                opacity: [0.22, 0.32, 0.22, 0.22],
+              }}
+              transition={{
+                backgroundColor: { duration: 2.2, ease: "easeInOut" },
+                scaleY: { duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut" },
+                opacity: { duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut" }
+              }}
+            />
+          ))}
+        </motion.div>
+
+        {/* Layer 2: Counter-Clockwise slow rotation - smaller/sharper rays for dynamic texture */}
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[500px] h-[500px] flex items-center justify-center"
+        >
+          {activePalette.map((color, i) => (
+            <motion.div
+              key={`ray-ccw-${i}`}
+              className="absolute w-10 h-[260px] rounded-full blur-[40px] opacity-[0.28]"
+              style={{
+                top: '50%',
+                left: '50%',
+                transformOrigin: 'center center',
+                transform: `translate(-50%, -50%) rotate(${i * 36 + 18}deg) translateY(-100px)`,
+              }}
+              animate={{
+                backgroundColor: color,
+                scaleY: [0.95, 1.15, 0.85, 0.95],
+                opacity: [0.25, 0.35, 0.25, 0.25],
+              }}
+              transition={{
+                backgroundColor: { duration: 2.2, ease: "easeInOut" },
+                scaleY: { duration: 6 - (i % 2), repeat: Infinity, ease: "easeInOut" },
+                opacity: { duration: 6 - (i % 2), repeat: Infinity, ease: "easeInOut" }
+              }}
+            />
+          ))}
+        </motion.div>
+
+        {/* Layer 3: Central Ambient Core Pulse */}
+        <motion.div
+          animate={{
+            backgroundColor: activePalette[0],
+            scale: [0.85, 1.15, 0.85],
+            opacity: [0.25, 0.45, 0.25],
+          }}
+          transition={{
+            backgroundColor: { duration: 2.2, ease: "easeInOut" },
+            scale: { duration: 7, repeat: Infinity, ease: "easeInOut" },
+            opacity: { duration: 7, repeat: Infinity, ease: "easeInOut" }
+          }}
+          className="absolute w-96 h-96 rounded-full blur-[70px]"
+        />
+        
+        {/* Layer 4: Extremely subtle crisp concentric circles for a spatial target look */}
+        <div className="absolute w-[320px] h-[320px] rounded-full border border-gray-950/[0.03] -z-10" />
+        <div className="absolute w-[480px] h-[480px] rounded-full border border-gray-950/[0.015] -z-10" />
+      </div>
+    </div>
+  );
+};
 
 // Seasonal Archetypes with color recipes for the Interactive Varna Spectrum Dock
 const SEASONS_DATA = [
@@ -146,7 +267,8 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
       </div>
 
       {/* 1. Hero Title Section */}
-      <div className="text-center max-w-4xl mx-auto space-y-6 px-4 md:px-0 relative z-10">
+      <div className="text-center max-w-4xl mx-auto space-y-6 px-4 md:px-0 relative z-10 overflow-visible">
+        <VarnaColorRaysBackdrop />
         <motion.div 
           initial={{ scale: 0.92, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -367,52 +489,59 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
             </div>
           </div>
 
-          {/* Feature 4: Cosmetics (2-columns wide for spectacular impact!) */}
-          <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-purple-500/5 rounded-[2rem] border border-black/5 hover:border-purple-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group lg:col-span-2">
+          {/* Feature 4: Cosmetics */}
+          <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-purple-500/5 rounded-[2rem] border border-black/5 hover:border-purple-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
             <div className="space-y-3">
               <div className="w-12 h-12 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
                 <Heart size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">Smart Cosmetics Blueprint</h3>
+              <h3 className="text-lg font-bold text-gray-900 font-display">Cosmetics Blueprint</h3>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                Formulates your custom makeup colors instantly: provides exactly 3 perfect lipsticks, 3 high-contrast eyeshadows, 3 blushers, and matching foundation bases configured for your season.
+                Formulates your custom makeup colors instantly: details your perfect lipstick shades, blush highlights, and eyeshadow tones mapped to your season.
               </p>
             </div>
-            {/* Visual Makeup Shade Swatches grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-mono">
-              <div className="p-2 bg-red-500/5 border border-red-500/10 rounded-xl text-center">
-                <div className="w-4 h-4 rounded-full bg-[#E54B64] mx-auto mb-1 shadow-sm" />
-                <span className="text-[8px] font-bold text-red-700 block text-center uppercase">Lipsticks</span>
-              </div>
-              <div className="p-2 bg-amber-500/5 border border-amber-500/10 rounded-xl text-center">
-                <div className="w-4 h-4 rounded-full bg-[#DCA988] mx-auto mb-1 shadow-sm" />
-                <span className="text-[8px] font-bold text-amber-700 block text-center uppercase">Eyeshadows</span>
-              </div>
-              <div className="p-2 bg-pink-500/5 border border-pink-500/10 rounded-xl text-center">
-                <div className="w-4 h-4 rounded-full bg-[#FA9A9C] mx-auto mb-1 shadow-sm" />
-                <span className="text-[8px] font-bold text-pink-700 block text-center uppercase">Blushers</span>
-              </div>
-              <div className="p-2 bg-[#FF7043]/5 border border-[#FF7043]/10 rounded-xl text-center">
-                <div className="w-4 h-4 rounded-full bg-[#E1C2A5] mx-auto mb-1 shadow-sm" />
-                <span className="text-[8px] font-bold text-[#E56A47] block text-center uppercase">Foundations</span>
+            {/* Visual swatches inline */}
+            <div className="flex gap-1.5 bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
+              <span className="text-[9px] font-bold text-purple-600 font-mono uppercase">Colors:</span>
+              <div className="flex gap-1">
+                <span className="w-4 h-4 rounded-full bg-[#E54B64] block shadow-sm border border-white" />
+                <span className="w-4 h-4 rounded-full bg-[#FA9A9C] block shadow-sm border border-white" />
+                <span className="w-4 h-4 rounded-full bg-[#DCA988] block shadow-sm border border-white" />
               </div>
             </div>
           </div>
 
-          {/* Feature 5: Smart Profile Clarifier */}
+          {/* Feature 5: Saved Varna Records */}
           <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-sky-500/5 rounded-[2rem] border border-black/5 hover:border-sky-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
             <div className="space-y-3">
               <div className="w-12 h-12 bg-sky-50 text-sky-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                <UserCheck size={24} />
+                <History size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">Smart Background Cleanse</h3>
+              <h3 className="text-lg font-bold text-gray-900 font-display">Saved Color Profiles</h3>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                Minimizes background visual interference automatically keying your facial portrait, producing a clear passport color-neutral template.
+                Saves your past scans and matching palettes securely on your device. Easily compare seasonal ranges or recall your colors anytime.
               </p>
             </div>
             <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
-              <span className="text-[9px] font-bold text-sky-600 font-mono uppercase">AI Neutralization</span>
-              <span className="text-[10px] font-bold text-emerald-600 font-mono">ACTIVE</span>
+              <span className="text-[9px] font-bold text-sky-600 font-mono uppercase">Local database</span>
+              <span className="text-[10px] font-bold text-emerald-600 font-mono">PERSISTED</span>
+            </div>
+          </div>
+
+          {/* Feature 6: Custom Shareable Poster */}
+          <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-rose-500/5 rounded-[2rem] border border-black/5 hover:border-rose-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
+            <div className="space-y-3">
+              <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
+                <Share2 size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 font-display">Instagram Story Posters</h3>
+              <p className="text-xs text-gray-500 leading-relaxed font-semibold">
+                Creates high-fidelity 9:16 portrait graphics optimized for social stories, showcasing your personal color archetype and frame shape.
+              </p>
+            </div>
+            <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
+              <span className="text-[9px] font-bold text-rose-600 font-mono uppercase">Ready to share</span>
+              <span className="text-[10px] font-bold text-purple-600 font-mono">9:16 RATIO</span>
             </div>
           </div>
 
