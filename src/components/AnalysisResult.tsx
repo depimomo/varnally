@@ -52,14 +52,101 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
   });
   const conicGradientStyle = `conic-gradient(from 0deg at 50% 50%, ${conicGradientParts.join(', ')})`;
 
+  // Curve color formula based on season input
+  const getSeasonTheme = (seasonInput: string) => {
+    const s = (seasonInput || '').toLowerCase();
+    if (s.includes('spring') || s.includes('vasanta')) {
+      return {
+        name: 'Spring',
+        displayGradient: 'from-amber-400 via-[#FF7043] to-rose-400',
+        shadowColor: 'shadow-orange-400/20',
+        cardBg: 'bg-white/80 backdrop-blur-xl bg-gradient-to-tr from-white via-white/95 to-[#FFF8E1]/30',
+        cardBorder: 'sm:border-[#FFE0B2]/60',
+        badgeStyle: 'bg-amber-150 text-amber-800 border-amber-200/50',
+        textAccent: 'text-amber-600',
+        titleTagColor: 'text-amber-600 bg-amber-50 border-amber-200',
+        glowOrbs: [
+          'bg-[#FF8A65]/10 top-20 left-[10%]',
+          'bg-[#FFD54F]/12 top-[40%] right-[5%]',
+          'bg-[#81C784]/8 bottom-10 left-[20%]',
+          'bg-rose-400/8 bottom-[35%] right-[15%]'
+        ]
+      };
+    } else if (s.includes('summer') || s.includes('grishma')) {
+      return {
+        name: 'Summer',
+        displayGradient: 'from-sky-450 via-[#9C8EB9] to-pink-400',
+        shadowColor: 'shadow-sky-500/20',
+        cardBg: 'bg-white/80 backdrop-blur-xl bg-gradient-to-tr from-white via-white/95 to-[#E1F5FE]/35',
+        cardBorder: 'sm:border-[#B3E5FC]/60',
+        badgeStyle: 'bg-sky-100 text-sky-800 border-sky-200/50',
+        textAccent: 'text-sky-600',
+        titleTagColor: 'text-sky-600 bg-sky-50 border-sky-100',
+        glowOrbs: [
+          'bg-[#B3E5FC]/12 top-20 left-[10%]',
+          'bg-[#E1BEE7]/10 top-[40%] right-[5%]',
+          'bg-[#F8BBD0]/8 bottom-10 left-[20%]',
+          'bg-blue-400/8 bottom-[35%] right-[15%]'
+        ]
+      };
+    } else if (s.includes('autumn') || s.includes('sharad')) {
+      return {
+        name: 'Autumn',
+        displayGradient: 'from-[#8D5A2B] via-[#D84315] to-[#F57C00]',
+        shadowColor: 'shadow-orange-700/20',
+        cardBg: 'bg-white/80 backdrop-blur-xl bg-gradient-to-tr from-white via-white/95 to-[#EFEBE9]/45',
+        cardBorder: 'sm:border-[#D7CCC8]/60',
+        badgeStyle: 'bg-orange-100 text-orange-800 border-orange-200/50',
+        textAccent: 'text-orange-600',
+        titleTagColor: 'text-orange-700 bg-orange-50 border-orange-200',
+        glowOrbs: [
+          'bg-[#FFCC80]/12 top-20 left-[10%]',
+          'bg-[#D7CCC8]/10 top-[40%] right-[5%]',
+          'bg-[#C5E1A5]/8 bottom-10 left-[20%]',
+          'bg-amber-400/6 bottom-[35%] right-[15%]'
+        ]
+      };
+    } else {
+      // Winter
+      return {
+        name: 'Winter',
+        displayGradient: 'from-[#1A237E] via-[#283593] to-[#880E4F]',
+        shadowColor: 'shadow-indigo-950/20',
+        cardBg: 'bg-white/80 backdrop-blur-xl bg-gradient-to-tr from-white via-white/95 to-[#E8EAF6]/35',
+        cardBorder: 'sm:border-[#C5CAE9]/60',
+        badgeStyle: 'bg-indigo-100 text-indigo-800 border-indigo-200/50',
+        textAccent: 'text-indigo-600',
+        titleTagColor: 'text-indigo-600 bg-indigo-50 border-indigo-200',
+        glowOrbs: [
+          'bg-[#C5CAE9]/12 top-20 left-[10%]',
+          'bg-[#F8BBD0]/8 top-[40%] right-[5%]',
+          'bg-[#B2DFDB]/8 bottom-10 left-[20%]',
+          'bg-indigo-400/8 bottom-[35%] right-[15%]'
+        ]
+      };
+    }
+  };
+
+  const theme = getSeasonTheme(result.season);
+
   return (
     <motion.div
       key="result"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.05 }}
-      className="space-y-8"
+      className="space-y-8 relative"
     >
+      {/* Absolute Season Backdrop Glow Orbs */}
+      <div className="absolute inset-x-0 top-0 h-full overflow-hidden pointer-events-none -z-20">
+        {theme.glowOrbs.map((orbClass, idx) => (
+          <div 
+            key={idx} 
+            className={`absolute w-80 h-80 rounded-full blur-[110px] ${orbClass}`} 
+          />
+        ))}
+      </div>
+
       <ResultHeader
         isLoading={loading}
         canSave={!result.id}
@@ -100,25 +187,25 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
             />
           </div>
 
-          {/* Your Varna Section */}
+          {/* Your Varna Section with stunning dynamic gradient */}
           {(archetypes.color_archetypes as any)[result.season]?.[`${result.subType} ${result.season}`] && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-br from-brand-primary to-brand-primary/80 p-8 rounded-[2rem] shadow-xl shadow-brand-primary/20 text-white relative overflow-hidden"
+              className={`bg-gradient-to-br ${theme.displayGradient} p-8 rounded-[2rem] shadow-xl ${theme.shadowColor} text-white relative overflow-hidden`}
             >
               <div className="absolute -right-4 -top-4 opacity-20">
                 <Sparkles size={100} />
               </div>
 
               <div className="relative z-10 space-y-4">
-                <div className="flex items-center gap-2 text-white/90">
-                  <Sparkles size={18} />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Your Varna</span>
+                <div className="flex items-center gap-2 text-white/90 font-mono text-[10px] font-bold uppercase tracking-[0.2em]">
+                  <Sparkles size={14} className="animate-spin" />
+                  <span>Your Verified Varna Map</span>
                 </div>
 
                 <div>
-                  <h3 className="text-3xl font-display font-black leading-tight">
+                  <h3 className="text-3xl font-display font-black leading-tight drop-shadow-sm">
                     {(archetypes.color_archetypes as any)[result.season][`${result.subType} ${result.season}`].nickname}
                   </h3>
                 </div>
@@ -142,19 +229,20 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
             skinUndertone={result.skinUndertone}
             eyeColor={result.eyeColor}
             hairColor={result.hairColor}
+            className={`bg-transparent sm:${theme.cardBg} sm:border ${theme.cardBorder}`}
           />
         </div>
 
         {/* Right Column: Palette & Best/Worst */}
         <div className="lg:col-span-8 space-y-8">
-          <div className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm space-y-6 overflow-hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150 pb-5">
+          <div className={`bg-transparent sm:${theme.cardBg} p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border ${theme.cardBorder} shadow-none sm:shadow-sm space-y-6 overflow-hidden`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-green-600 uppercase tracking-widest font-mono">
+                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest font-mono">
                   Approved Palette
                 </p>
                 <h2 className="text-xl sm:text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
-                  <Check className="text-green-500 shrink-0" size={22} />
+                  <span className="p-1 px-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-extrabold shadow-sm">✓</span>
                   Best Colors to Wear
                 </h2>
               </div>
@@ -166,14 +254,14 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
             </div>
           </div>
 
-          <div className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm space-y-6 overflow-hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150 pb-5">
+          <div className={`bg-transparent sm:${theme.cardBg} p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border ${theme.cardBorder} shadow-none sm:shadow-sm space-y-6 overflow-hidden`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-red-500 uppercase tracking-widest font-mono">
+                <p className="text-[10px] font-black text-rose-600 uppercase tracking-widest font-mono">
                   Clashing Shades
                 </p>
                 <h2 className="text-xl sm:text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
-                  <Trash2 className="text-red-500 shrink-0" size={20} />
+                  <span className="p-1 px-1.5 bg-rose-50 text-rose-600 rounded-lg text-sm font-extrabold shadow-sm">✕</span>
                   Colors to Avoid
                 </h2>
               </div>
@@ -186,17 +274,22 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
           </div>
 
           <MakeupRecommendationCard 
-            season={result.season} 
+            season={result.season as any} 
             subType={result.subType} 
+            className={`bg-transparent sm:${theme.cardBg} sm:border ${theme.cardBorder}`}
           />
 
           <FaceArchitectureCard
             faceShape={result.faceShape}
             faceShapeDescription={result.faceShapeDescription}
             imageUrl={getFaceShapeImage(result.faceShape)}
+            className={`bg-transparent sm:${theme.cardBg} sm:border ${theme.cardBorder}`}
           />
 
-          <GlassesRecommendationCard faceShape={result.faceShape} />
+          <GlassesRecommendationCard 
+            faceShape={result.faceShape} 
+            className={`bg-transparent sm:${theme.cardBg} sm:border ${theme.cardBorder}`}
+          />
         </div>
       </div>
     </motion.div>

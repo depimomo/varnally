@@ -335,7 +335,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 font-sans selection:bg-brand-primary/20 flex flex-col">
+    <div className="min-h-screen bg-white sm:bg-neutral-50 font-sans selection:bg-brand-primary/20 flex flex-col">
       <Header 
         user={user}
         historyLength={history.length}

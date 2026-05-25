@@ -4,11 +4,12 @@ interface ObservationCardProps {
   skinUndertone: string;
   eyeColor: string;
   hairColor: string;
+  className?: string;
 }
 
-export const ObservationCard: React.FC<ObservationCardProps> = ({ skinUndertone, eyeColor, hairColor }) => (
-  <div className="bg-transparent sm:bg-white p-0 sm:p-6 rounded-none sm:rounded-[2rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm space-y-6">
-    <div className="border-b border-gray-150 pb-4">
+export const ObservationCard: React.FC<ObservationCardProps> = ({ skinUndertone, eyeColor, hairColor, className }) => (
+  <div className={`p-0 sm:p-6 rounded-none sm:rounded-[2rem] relative overflow-hidden ${className || 'bg-transparent sm:bg-white border-0 sm:border border-black/5 shadow-none sm:shadow-sm'} space-y-6`}>
+    <div className="pb-1">
       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">
         Traits Metrics
       </p>

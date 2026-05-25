@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { ColorInfo } from '../types';
 
@@ -8,8 +8,6 @@ interface ColorDrapeProps {
 }
 
 export const ColorDrape: React.FC<ColorDrapeProps> = ({ color, imageUrl }) => {
-  const [isZoomed, setIsZoomed] = useState(false);
-
   // Fallback SVG silhouette of an elegant mannequin/portrait if no user photo is available
   const fallbackSvg = (
     <svg className="w-full h-full text-neutral-400 p-4" viewBox="0 0 100 120" fill="currentColor">
@@ -24,8 +22,7 @@ export const ColorDrape: React.FC<ColorDrapeProps> = ({ color, imageUrl }) => {
       {/* Interactive Drape Card */}
       <motion.div 
         layoutId={`card-${color.name.toLowerCase().replace(/\s+/g, '-')}`}
-        onClick={() => setIsZoomed(true)}
-        className="flex flex-col items-center gap-2 cursor-zoom-in"
+        className="flex flex-col items-center gap-2"
         whileHover={{ y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -91,80 +88,6 @@ export const ColorDrape: React.FC<ColorDrapeProps> = ({ color, imageUrl }) => {
           </div>
         </div>
       </motion.div>
-
-      {/* Expanded Modal View on Click */}
-      {isZoomed && (
-        <div 
-          onClick={() => setIsZoomed(false)}
-          className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 cursor-zoom-out"
-        >
-          <motion.div 
-            layoutId={`card-${color.name.toLowerCase().replace(/\s+/g, '-')}`}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl border border-neutral-100 flex flex-col p-4 gap-4"
-          >
-            {/* Big Canvas View */}
-            <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border border-neutral-100 bg-neutral-50 shadow-inner">
-              {imageUrl ? (
-                <img 
-                  src={imageUrl} 
-                  alt={color.name} 
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {fallbackSvg}
-                </div>
-              )}
-
-              {/* V-Neck Drape */}
-              <svg 
-                viewBox="0 0 100 100" 
-                preserveAspectRatio="none" 
-                className="absolute inset-0 w-full h-full pointer-events-none"
-              >
-                <path 
-                  d="M 0,55 L 50,65 L 100,55 L 100,100 L 0,100 Z" 
-                  fill={color.hex} 
-                />
-                <path 
-                  d="M 0,55 L 50,65 L 100,55" 
-                  fill="none" 
-                  stroke="black" 
-                  strokeWidth="0.6" 
-                  opacity="0.08" 
-                />
-              </svg>
-            </div>
-
-            {/* Swatch Information Footer */}
-            <div className="flex items-center justify-between px-2 pt-1 pb-2">
-              <div className="space-y-0.5">
-                <span className="text-xs font-black text-neutral-400 uppercase tracking-widest block leading-none">
-                  Color Swatch
-                </span>
-                <h3 className="text-xl font-display font-black text-neutral-900 leading-none">
-                  {color.name}
-                </h3>
-                <span className="text-sm font-mono text-neutral-500 font-bold tracking-wider block">
-                  {color.hex.toUpperCase()}
-                </span>
-              </div>
-              <div 
-                className="w-12 h-12 rounded-2xl border-2 border-white shadow-md" 
-                style={{ backgroundColor: color.hex }}
-              />
-            </div>
-
-            <button 
-              onClick={() => setIsZoomed(false)}
-              className="w-full py-3 bg-neutral-900 hover:bg-neutral-800 text-white rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-98"
-            >
-              Close Drape
-            </button>
-          </motion.div>
-        </div>
-      )}
     </>
   );
 };

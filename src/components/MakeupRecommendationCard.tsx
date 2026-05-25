@@ -23,9 +23,10 @@ const MAKEUP_PRESETS = makeupPresetsData as Record<string, MakeupData>;
 interface MakeupRecommendationCardProps {
   season: 'Winter' | 'Spring' | 'Summer' | 'Autumn';
   subType: string;
+  className?: string;
 }
 
-export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> = ({ season, subType }) => {
+export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> = ({ season, subType, className }) => {
   const fullType = `${subType} ${season}`;
   const makeupDetails = MAKEUP_PRESETS[fullType] || MAKEUP_PRESETS["True Winter"]; // safe fallback
 
@@ -35,9 +36,9 @@ export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> =
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, duration: 0.5 }}
       id="makeup-recommendation-card"
-      className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm space-y-8"
+      className={`p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] relative overflow-hidden ${className || 'bg-transparent sm:bg-white border-0 sm:border border-black/5 shadow-none sm:shadow-sm'} space-y-8`}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div className="space-y-1">
           <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
             Expert Cosmetics Map

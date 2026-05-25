@@ -5,9 +5,10 @@ import glassesData from '../data/glasses.json';
 
 interface GlassesRecommendationCardProps {
   faceShape: string;
+  className?: string;
 }
 
-export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps> = ({ faceShape }) => {
+export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps> = ({ faceShape, className }) => {
   const recommendations = (glassesData.glasses_recommendations as any)[faceShape];
 
   if (!recommendations) return null;
@@ -17,7 +18,7 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       id="glasses-recommendation-card"
-      className="bg-transparent sm:bg-white p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] border-0 sm:border border-black/5 shadow-none sm:shadow-sm relative overflow-hidden"
+      className={`p-0 sm:p-6 md:p-8 rounded-none sm:rounded-[2.5rem] relative overflow-hidden ${className || 'bg-transparent sm:bg-white border-0 sm:border border-black/5 shadow-none sm:shadow-sm'}`}
     >
       {/* Decorative Background Icon */}
       <div className="absolute -top-6 -right-6 text-gray-100 pointer-events-none">
@@ -26,7 +27,7 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
 
       <div className="relative z-10 space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-150 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
           <div className="space-y-1 w-full">
             <span className="text-[10px] font-black text-brand-secondary uppercase tracking-widest block font-mono">Frames Matcher</span>
             <h2 className="text-xl sm:text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
