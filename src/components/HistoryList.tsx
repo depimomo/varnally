@@ -4,6 +4,7 @@ import { ChevronLeft, Trash2, AlertTriangle, X } from 'lucide-react';
 import { Analysis } from '../types';
 import archetypes from '../data/archetypes.json';
 import { useLanguage } from '../lib/LanguageContext';
+import { getFormattedVarnaTitle } from '../lib/varnaUtils';
 
 interface HistoryListProps {
   history: Analysis[];
@@ -47,10 +48,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
       {history.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200 p-6 animate-fade-in">
           <p className="text-gray-500 font-semibold text-sm">
-            {language === 'id' 
-              ? "Belum ada analisis yang disimpan. Coba analisis foto wajah Anda!" 
-              : "No saved analyses yet. Try analyzing your face photo!"
-            }
+            {t.noSavedAnalyses}
           </p>
         </div>
       ) : (
@@ -60,41 +58,6 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             const rawArchetype = (archetypes.color_archetypes as any)[item.season]?.[`${item.subType} ${item.season}`];
             let displayName = rawArchetype?.nickname || `${item.subType} ${item.season}`;
             
-            if (language === 'id') {
-              const nameMapId: Record<string, string> = {
-                // JSON keys (Nicknames)
-                "The Aurora": "Sang Aurora",
-                "The Glacier": "Gletser Berkilau",
-                "The Eclipse": "Gerhana Misterius",
-                "The Dawn": "Fajar Merekah",
-                "The Meadow": "Padang Rumput Berbunga",
-                "The Sunrise": "Matahari Terbit",
-                "The Seafoam": "Buih Samudra",
-                "The Twilight": "Senja Teduh",
-                "The Haze": "Kabut Lembut",
-                "The Dune": "Bukit Pasir",
-                "The Harvest": "Panen Raya",
-                "The Sunset": "Mentari Tenggelam",
-
-                // Fallbacks / Older versions
-                "Sun-Kissed Buttercup": "Kuncup Mentega Keemasan",
-                "Gilded Honeycomb": "Sarang Madu Melimpah",
-                "Dynamic Coral Blossom": "Bunga Koral Berkilau",
-                "Ocean Misted Lavender": "Lavender Kabut Samudra",
-                "Fresh Powdery Clover": "Semanggi Bubuk Segar",
-                "Ethereal Cool Slate": "Batu Kabut Anggun",
-                "Muted Clay Terracotta": "Tanah Liat Panggang Redup",
-                "Cinnamon Sand Dune": "Pasir Kayu Manis",
-                "Pecan Wood Moss": "Lumut Kayu Kemiri",
-                "High-Contrast Royal Sapphire": "Safir Kerajaan Pekat",
-                "Frosted Jewel Platinum": "Platinum Es Kristal",
-                "Incandescent Midnight Velvet": "Beludru Hitam Kobalt"
-              };
-              if (nameMapId[displayName]) {
-                displayName = nameMapId[displayName];
-              }
-            }
-
             return (
               <motion.div 
                 key={item.id}
@@ -121,7 +84,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                   )}
                   <div className="min-w-0 pr-6">
                     <p className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] mb-0.5">
-                      {language === 'id' ? "Arketipe Warna" : "Color Archetype"}
+                      {getFormattedVarnaTitle(item.name, language)}
                     </p>
                     <h3 className="font-display font-black text-base truncate leading-tight text-gray-900">
                       {displayName}
@@ -141,7 +104,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     onClick={() => onView(item)}
                     className="text-brand-secondary text-xs sm:text-sm font-black flex items-center gap-1 hover:underline cursor-pointer"
                   >
-                    {language === 'id' ? "Lihat Hasil Lengkap" : "View Full Result"}
+                    {t.viewFullResult}
                   </button>
                 </div>
               </motion.div>
@@ -167,13 +130,10 @@ export const HistoryList: React.FC<HistoryListProps> = ({
 
               {/* Header Text */}
               <h3 className="text-lg font-display font-black text-gray-900 mb-1.5 uppercase tracking-wide">
-                {language === 'id' ? "Konfirmasi Hapus" : "Confirm Deletion"}
+                {t.confirmDeletion}
               </h3>
-              <p className="text-xs text-gray-500 leading-relaxed mb-6 font-semibold">
-                {language === 'id' 
-                  ? "Apakah Anda yakin ingin menghapus analisis warna yang disimpan ini secara permanen? Tindakan ini tidak dapat dibatalkan." 
-                  : "Are you sure you want to permanently delete this saved color analysis? This action cannot be undone."
-                }
+              <p className="text-xs text-gray-550 leading-relaxed mb-6 font-semibold">
+                {t.confirmDeletionDesc}
               </p>
 
               {/* Action Buttons */}
@@ -182,13 +142,13 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                   onClick={confirmDelete}
                   className="w-full py-3 bg-red-500 hover:bg-red-650 text-white rounded-2xl font-black text-xs tracking-widest uppercase transition-all shadow-md shadow-red-500/10 cursor-pointer active:scale-98"
                 >
-                  {language === 'id' ? "Ya, Hapus Sekarang" : "Yes, Delete Item"}
+                  {t.yesDeleteItem}
                 </button>
                 <button
                   onClick={() => setDeleteItemId(null)}
                   className="w-full py-3 bg-gray-50 hover:bg-gray-150 text-gray-700 rounded-2xl font-black text-xs tracking-widest uppercase transition-all border border-gray-150 cursor-pointer active:scale-98"
                 >
-                  {language === 'id' ? "Batal" : "Cancel"}
+                  {t.cancel}
                 </button>
               </div>
 

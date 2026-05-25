@@ -32,37 +32,33 @@ export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> =
   const fullType = `${subType} ${season}`;
   const makeupDetails = MAKEUP_PRESETS[fullType] || MAKEUP_PRESETS["True Winter"]; // safe fallback
 
-  let finishVal = makeupDetails.finish;
-  let foundationDesc = makeupDetails.foundationDescription;
-  let lipsDesc = "Accentuate yours with distinct intensity levels. Recommended finishes include hydrating cream lipsticks, light glossy stains, or vibrant liquid velvets.";
-  let eyeDesc = "Create exquisite dimensions using customized gradients that make your natural base color pop instantly.";
-  let blushDesc = "Soft dustings of warm apricot, cool berry, or silky rose blushers to shape and contour your natural bone structures.";
+  // Translate finish using translation keys
+  const finishes: Record<string, string> = {
+    'Matte': t.finishMatte,
+    'Satin': t.finishSatin,
+    'Dewy': t.finishDewy,
+    'Semi-Matte': t.finishSemiMatte
+  };
+  const finishVal = finishes[makeupDetails.finish] || makeupDetails.finish;
 
-  if (language === 'id') {
-    const finishes: Record<string, string> = {
-      'Matte': 'Matte (Tanpa Kilap)',
-      'Satin': 'Satin (Sutra Halus)',
-      'Dewy': 'Dewy (Segar Basah)',
-      'Semi-Matte': 'Semi-Matte (Seimbang)'
-    };
-    finishVal = finishes[finishVal] || finishVal;
-
-    // Translate standard preset foundation structures dynamically
-    const fStr = foundationDesc.toLowerCase();
-    if (fStr.includes('velvety') || fStr.includes('cool undertone') || fStr.includes('pink-toned')) {
-      foundationDesc = "Gunakan alas bedak berserat sejuk-dingin dengan hasil akhir beludru kental (matte) atau satin semi-matte. Sempurna dipadukan dengan bedak berpigmen merah muda dingin.";
-    } else if (fStr.includes('warm golden') || fStr.includes('peach') || fStr.includes('yellow-gold')) {
-      foundationDesc = "Pilih alas bedak bernuansa hangat keemasan, kuning madu, atau persik jingga dengan hasil akhir dewy segar. Hindari alas bedak dengan pigmen merah muda dingin.";
-    } else if (fStr.includes('soft satin') || fStr.includes('fresh dewy') || fStr.includes('sheer rose')) {
-      foundationDesc = "Pilih alas bedak ringan berserat halus dengan akhiran sutra satin atau segar berseri (dewy). Padukan dengan warna mawar lembut transparan yang sejuk.";
+  // Dynamically resolve localized description for foundation
+  const getFoundationDesc = () => {
+    const fStr = makeupDetails.foundationDescription.toLowerCase();
+    if (fStr.includes('velvety') || fStr.includes('cool undertone') || fStr.includes('pink-toned') || fStr.includes('sejuk-dingin') || fStr.includes('beludru')) {
+      return t.makeupFoundCool;
+    } else if (fStr.includes('warm golden') || fStr.includes('peach') || fStr.includes('yellow-gold') || fStr.includes('hangat keemasan') || fStr.includes('madu')) {
+      return t.makeupFoundWarm;
+    } else if (fStr.includes('soft satin') || fStr.includes('fresh dewy') || fStr.includes('sheer rose') || fStr.includes('sutra satin') || fStr.includes('mawar lembut')) {
+      return t.makeupFoundSoft;
     } else {
-      foundationDesc = "Gunakan foundation hangat keemasan atau tembaga hangat dengan hasil akhir matte murni. Formula ini menghadirkan kilau anggun pada rona kulit alami Anda.";
+      return t.makeupFoundBronze;
     }
+  };
+  const foundationDesc = getFoundationDesc();
 
-    lipsDesc = "Pertajam senyum Anda dengan warna pilihan berintensitas teratur. Direkomendasikan jenis lipstik krim hidrasi, glossy ringan sehat, atau beludru cair yang hidup.";
-    eyeDesc = "Ciptakan dimensi kelopak mata bergaya menggunakan kustomisasi gradasi yang memancarkan kejernihan warna mata Anda seketika.";
-    blushDesc = "Sapuan lembut dari perona pipi aprikot hangat, beri segar yang sejuk, atau mawar sutra halus untuk memahat struktur dahi dan tulang pipi Anda.";
-  }
+  const lipsDesc = t.makeupLipsDesc;
+  const eyeDesc = t.makeupEyeDesc;
+  const blushDesc = t.makeupBlushDesc;
 
   return (
     <motion.div

@@ -58,7 +58,7 @@ export const FaceArchitectureCard: React.FC<FaceArchitectureCardProps> = ({
   imageUrl,
   className
 }) => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const { shapeName, description } = getLocalizedFaceShape(faceShape, faceShapeDescription, language);
 
   return (
@@ -70,10 +70,10 @@ export const FaceArchitectureCard: React.FC<FaceArchitectureCardProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div className="space-y-1">
           <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest font-mono">
-            {language === 'id' ? "STRUKTUR GEOMETRIS WAJAH" : "Geometric Structure"}
+            {t.geometricStructure}
           </p>
           <h2 className="text-xl sm:text-2xl font-display font-black text-gray-900 flex items-center gap-2">
-            {language === 'id' ? "Arsitektur Wajah" : "Face Architecture"}
+            {t.faceArchitecture}
           </h2>
         </div>
       </div>
@@ -89,13 +89,13 @@ export const FaceArchitectureCard: React.FC<FaceArchitectureCardProps> = ({
         <div className="flex-1 space-y-4">
           <div className="space-y-1">
             <span className="text-[10px] uppercase font-mono font-bold text-brand-secondary bg-brand-secondary/5 border border-brand-secondary/10 px-2.5 py-0.5 rounded-full inline-block">
-              {language === 'id' ? "Hasil Pemindaian" : "Your Facemapping"}
+              {t.yourFacemapping}
             </span>
             <h3 className="text-2xl font-display font-black text-gray-900 mt-2">{shapeName}</h3>
           </div>
           <div className="space-y-2">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest font-mono">{language === 'id' ? "Ulasan Struktural" : "Structural Analysis"}</p>
-            <p className="text-xs sm:text-sm text-gray-650 leading-relaxed font-semibold italic bg-neutral-50/50 p-4 rounded-xl border border-neutral-100">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest font-mono">{t.structuralAnalysis}</p>
+            <p className="text-xs sm:text-sm text-gray-650 leading-relaxed font-semibold italic bg-white p-4 rounded-xl border border-neutral-100">
               "{description}"
             </p>
           </div>

@@ -93,7 +93,7 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
         <div className="space-y-6">
 
           {/* Top Section: Style Goal */}
-          <div id="glasses-style-goal-box" className="bg-neutral-50 border border-gray-100 p-5 rounded-2xl">
+          <div id="glasses-style-goal-box" className="bg-white border border-gray-100 p-5 rounded-2xl">
             <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest mb-1 font-mono">
               {t.stylingObjective}
             </p>

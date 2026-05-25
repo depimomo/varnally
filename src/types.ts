@@ -6,6 +6,7 @@ export interface ColorInfo {
 export interface Analysis {
   id?: string;
   userId: string;
+  name?: string;
   season: 'Winter' | 'Spring' | 'Summer' | 'Autumn';
   subType: string;
   bestColors: ColorInfo[];

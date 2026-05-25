@@ -28,7 +28,7 @@ export const MakeupSection: React.FC<MakeupSectionProps> = ({
   return (
     <div 
       id={id} 
-      className="bg-neutral-50/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-neutral-100 flex flex-col justify-between space-y-4"
+      className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-neutral-100 flex flex-col justify-between space-y-4"
     >
       <div className="space-y-2">
         <div className="flex items-center gap-1.5">

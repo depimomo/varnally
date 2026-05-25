@@ -22,72 +22,64 @@ interface LandingHeroProps {
 const SEASONS_DATA = landingSeasons.seasons_data;
 const DEFAULT_PALETTES = landingSeasons.default_palettes;
 
-// Helper to translate core physical seasons definitions to Indonesian dynamically
-const getLocalizedSeason = (season: any, lang: string) => {
-  if (lang !== 'id') return season;
+// Helper to translate core physical seasons definitions dynamically using localizations keys
+const getLocalizedSeason = (season: any, t: any) => {
   const translations: Record<string, { name: string; nature: string; description: string }> = {
     'spring': {
-      name: 'Spring (Musim Semi)',
-      nature: 'Hangat & Terang',
-      description: 'Warna segar menyerupai matahari terbit dini hari, bunga kuning mentega, dan kuncup buah persik hangat.'
+      name: t.seasonSpringName || 'Spring (Springtime)',
+      nature: t.seasonSpringNature || 'Warm & Bright',
+      description: t.seasonSpringDesc || 'Fresh colors capturing the first morning sun light, crisp buttercup yellow, and warm peach tints.'
     },
     'summer': {
-      name: 'Summer (Musim Panas)',
-      nature: 'Sejuk & Lembut',
-      description: 'Nuansa warna pastel sejuk sehabis terbilas air laut, kabut pegunungan lavender, dan bunga mawar berselimut bubuk halus.'
+      name: t.seasonSummerName || 'Summer (Summertime)',
+      nature: t.seasonSummerNature || 'Cool & Soft',
+      description: t.seasonSummerDesc || 'Gentle pastel shades refreshed by ocean waters, misty lavender mountains, and powdery rose garden blossoms.'
     },
     'autumn': {
-      name: 'Autumn (Musim Gugur)',
-      nature: 'Hangat & Redup',
-      description: 'Nilai bumi tanah liat panggang yang kaya rona rempah kayu manis, bubuk paprika, dan dedaunan pohon zaitun.'
+      name: t.seasonAutumnName || 'Autumn (Autumntime)',
+      nature: t.seasonAutumnNature || 'Warm & Muted',
+      description: t.seasonAutumnDesc || 'Earthy tones capturing spiced cinnamon, baked terracotta, roasted pecan nuts, and olive tree leaves.'
     },
     'winter': {
-      name: 'Winter (Musim Dingin)',
-      nature: 'Sejuk & Pekat',
-      description: 'Warna batuan permata mewah berkontras tinggi seperti biru kobalt tengah malam, merah fuchsia kerajaan, dan platinum es berkilau.'
+      name: t.seasonWinterName || 'Winter (Wintertime)',
+      nature: t.seasonWinterNature || 'Cool & Brilliant',
+      description: t.seasonWinterDesc || 'High-contrast vivid jewel tones like royal cobalt blue, deep royal crimson, and platinum glacier crystal.'
     }
   };
   const localized = translations[season.id];
   return localized ? { ...season, ...localized } : season;
 };
 
-const getBenefits = (lang: string) => {
-  if (lang === 'id') {
-    return [
-      {
-        emoji: "✨",
-        title: "Percaya Diri Bergaya",
-        desc: "Hentikan menebak-nebak tipe lipstik, warna rambut, atau pakaian yang membuat Anda tampak pucat lesu. Mengetahui musim warna murni Anda menghemat waktu belanja dan memastikan kecocokan."
-      },
-      {
-        emoji: "📐",
-        title: "Keseimbangan Geometri",
-        desc: "Wajah Anda adalah susunan alami yang cantik atas garis, rasio, dan sudut penyeimbang. Kami menghitung parameter struktur wajah guna mengisolasi jenis kacamata pelengkap terbaik."
-      },
-      {
-        emoji: "🪞",
-        title: "Asal Istilah Varna",
-        desc: "Varna berasal dari bahasa Sanskerta yang berarti warna, cahaya, rona, dan keindahan spektrum. Kami memperkuat keindahan asli wajah dan rona alami Anda secara autentik."
-      }
-    ];
-  }
+const getBenefits = (t: any) => {
   return [
     {
       emoji: "✨",
-      title: "Styling Confidence",
-      desc: "Stop guessing lipstick keys, hair tints, or jackets that leave you feeling washed out. Locking down your precise season alignment saves you time and secures total wardrobe certainty."
+      title: t.benefit1Title || "Styling Confidence",
+      desc: t.benefit1Desc || "Stop guessing lipstick keys, hair tints, or jackets that leave you feeling washed out. Locking down your precise season alignment saves you time and secures total wardrobe certainty."
     },
     {
       emoji: "📐",
-      title: "Geometric Equilibrium",
-      desc: "Your face is a beautiful biological machine of lines, ratios, and anchors. We define your structural parameters to isolate the matching glasses shapes that balance your chin and cheekbones."
+      title: t.benefit2Title || "Geometric Equilibrium",
+      desc: t.benefit2Desc || "Your face is a beautiful biological machine of lines, ratios, and anchors. We define your structural parameters to isolate the matching glasses shapes that balance your chin and cheekbones."
     },
     {
       emoji: "🪞",
-      title: "Origins of Varna",
-      desc: "Our brand pays tribute to the term Varna (Sanskrit for color and light spectrum). We don't paint a generic cover on your beautiful facial base—we empower your native organic shades."
+      title: t.benefit3Title || "Origins of Varna",
+      desc: t.benefit3Desc || "Our brand pays tribute to the term Varna (Sanskrit for color and light spectrum). We don't paint a generic cover on your beautiful facial base—we empower your native organic shades."
     }
   ];
+};
+
+const getLocalizedColorName = (name: string, t: any) => {
+  const map: Record<string, string> = {
+    'Young Mint': t.colorYoungMint || 'Young Mint',
+    'Golden Marigold': t.colorGoldenMarigold || 'Golden Marigold',
+    'Coral Poppy': t.colorCoralPoppy || 'Coral Poppy',
+    'Powder Breeze': t.colorPowderBreeze || 'Powder Breeze',
+    'Toasted Pecan': t.colorToastedPecan || 'Toasted Pecan',
+    'Spiced Clay': t.colorSpicedClay || 'Spiced Clay',
+  };
+  return map[name] || name;
 };
 
 // Extract seasonal color palettes from archetypes.json dynamically
@@ -204,11 +196,11 @@ const VarnaColorRaysBackdrop: React.FC = () => {
 
 
 export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const [selectedSeason, setSelectedSeason] = useState(SEASONS_DATA[0]);
 
-  const activeSeasonTranslated = getLocalizedSeason(selectedSeason, language);
-  const benefits = getBenefits(language);
+  const activeSeasonTranslated = getLocalizedSeason(selectedSeason, t);
+  const benefits = getBenefits(t);
 
   return (
     <div className="relative space-y-16 py-4 md:py-8 overflow-hidden min-h-screen">
@@ -275,15 +267,15 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
           className="inline-flex items-center gap-2.5 px-4 py-2 bg-gradient-to-r from-brand-primary/15 via-rose-500/10 to-brand-secondary/15 border border-brand-primary/25 rounded-full text-brand-primary text-xs font-bold uppercase tracking-wider font-mono shadow-sm"
         >
           <Sparkles size={14} className="animate-pulse text-brand-secondary" />
-          <span>{language === 'id' ? "RUMUSKAN HARMONI PERSONAL ANDA" : "FORMULATING YOUR PERSONAL HARMONY"}</span>
+          <span>{t.varnaColorRaysTag}</span>
         </motion.div>
 
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-black tracking-tight leading-tight text-gray-950">
           <span className="bg-gradient-to-r from-brand-primary via-[#FF7043] to-brand-secondary bg-clip-text text-transparent">
-            {language === 'id' ? "Sinar warna sejati," : "Your true colors,"}
+            {t.trueColors}
           </span> <br />
           <span className="relative inline-block text-gray-900 mt-1">
-            {language === 'id' ? "sekutu keindahan Anda." : "your best ally."}
+            {t.bestAlly}
             <span className="absolute left-0 right-0 bottom-2 h-4 sm:h-5 bg-gradient-to-r from-brand-primary/25 via-pink-400/20 to-brand-secondary/25 rounded-full -z-10" />
           </span>
         </h1>
@@ -312,7 +304,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
             <div>
               <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest font-mono">
-                {language === 'id' ? "SAMPEL TEORI SPEKTRUM" : "TASTE OF THE SCIENCE"}
+                {t.tasteOfScienceTag}
               </p>
               <h3 className="text-xl font-bold text-gray-900 font-display">{t.varnaDockTitle}</h3>
             </div>
@@ -328,13 +320,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
                     : 'text-gray-500 hover:text-gray-800'
                   }`}
                 >
-                  {language === 'id' 
-                    ? season.name === 'Spring' ? 'Spring' 
-                      : season.name === 'Summer' ? 'Summer'
-                      : season.name === 'Autumn' ? 'Autumn'
-                      : 'Winter'
-                    : season.name
-                  }
+                  {season.name}
                 </button>
               ))}
             </div>
@@ -377,13 +363,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
                       <div className="absolute top-1 left-1.5 w-3 h-1.5 bg-white/25 rounded-full blur-[0.5px]" />
                     </div>
                     <span className="text-[10px] sm:text-[9px] font-bold text-gray-800 text-center tracking-tight leading-tight w-full px-1 break-normal">
-                      {language === 'id' && c.name === 'Young Mint' ? 'Mint Muda' 
-                        : language === 'id' && c.name === 'Golden Marigold' ? 'Marigold Emas'
-                        : language === 'id' && c.name === 'Coral Poppy' ? 'Koral Berkilau'
-                        : language === 'id' && c.name === 'Powder Breeze' ? 'Biru Bedak'
-                        : language === 'id' && c.name === 'Toasted Pecan' ? 'Kacang Panggang'
-                        : language === 'id' && c.name === 'Spiced Clay' ? 'Rempah Liat'
-                        : c.name}
+                      {getLocalizedColorName(c.name, t)}
                     </span>
                     <span className="text-[9px] sm:text-[8px] font-mono text-gray-400 uppercase select-all">
                       {c.hex}
@@ -393,9 +373,6 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               </div>
             </motion.div>
           </AnimatePresence>
-          <p className="text-[11.5px] text-gray-400 text-center italic font-semibold">
-            {t.varnaDockSub}
-          </p>
         </div>
       </div>
 
@@ -420,7 +397,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
       <div className="space-y-10 max-w-5xl mx-auto px-4 relative z-10">
         <div className="text-center space-y-3">
           <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
-            {language === 'id' ? "SISTEM INTELEKTUAL SPEKTRUM" : "PRECISION ANALYTICAL ENGINE"}
+            {t.analyticalEngineTag}
           </p>
           <h2 className="text-3xl md:text-4xl font-display font-black text-gray-900">{t.featuresTitle}</h2>
           <p className="text-sm text-gray-500 max-w-lg mx-auto font-semibold">
@@ -552,13 +529,10 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
         
         <div className="bg-white/90 backdrop-blur-xl border border-black/5 p-8 sm:p-10 rounded-[2.5rem] shadow-xl space-y-4">
           <h3 className="text-xl sm:text-2xl md:text-3xl font-display font-black text-gray-950">
-            {language === 'id' ? "Siap mengungkap potensi spektrum kecantikan Anda?" : "Ready to uncover your true aesthetic chemistry?"}
+            {t.uncoverChemistryQuery}
           </h3>
           <p className="text-xs sm:text-sm text-gray-500 max-w-md mx-auto leading-relaxed font-semibold">
-            {language === 'id' 
-              ? "Unggah foto potret mandiri lurus yang tajam di bawah sinar alami yang jernih. Membutuhkan waktu detik saja untuk kalkulasi." 
-              : "Take or upload a natural-light portrait selfie. It takes just seconds to isolate your unique Varna map coordinates."
-            }
+            {t.uncoverChemistrySub}
           </p>
           <div className="pt-2">
             <motion.button 
@@ -567,7 +541,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               onClick={onStart}
               className="px-8 py-4 bg-brand-primary text-white hover:bg-brand-primary/95 rounded-2xl font-bold flex items-center gap-2 mx-auto justify-center cursor-pointer shadow-lg shadow-brand-primary/10 hover:scale-[1.01] transition-all text-sm"
             >
-              <span>{language === 'id' ? "Mulai Pemindaian Gratis" : "Begin Free Discovery Scan"}</span>
+              <span>{t.beginFreeScan}</span>
               <ArrowRight size={16} />
             </motion.button>
           </div>

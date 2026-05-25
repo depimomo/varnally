@@ -24,6 +24,8 @@ interface ImageUploaderProps {
   onReset: () => void;
   onBackToLanding: () => void;
   onCaptured: (file: File) => void;
+  inputName: string;
+  setInputName: (name: string) => void;
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -36,22 +38,24 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   onAnalyze,
   onReset,
   onBackToLanding,
-  onCaptured
+  onCaptured,
+  inputName,
+  setInputName
 }) => {
   const { language, t } = useLanguage();
-  const [loadingText, setLoadingText] = React.useState(language === 'id' ? "Menganalisis rona alami wajah..." : "Analyzing natural shades...");
+  const [loadingText, setLoadingText] = React.useState(t.analyzingShades);
   const [cameraMode, setCameraMode] = React.useState(false);
   const [cameraError, setCameraError] = React.useState<string | null>(null);
   const [stream, setStream] = React.useState<MediaStream | null>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const [lightingStatus, setLightingStatus] = React.useState<"Optimal" | "Too Dark" | "Too Bright" | "Calibrating..." | "Terlalu Gelap" | "Terlalu Terang" | "Mengkalibrasi...">("Calibrating...");
-  const [focusStatus, setFocusStatus] = React.useState<"Optimal" | "Low contrast / Blurry" | "Calibrating..." | "Kurang Kontras / Blur" | "Mengkalibrasi...">("Calibrating...");
+  const [lightingStatus, setLightingStatus] = React.useState<string>(t.calibrating);
+  const [focusStatus, setFocusStatus] = React.useState<string>(t.calibrating);
   const [sampleSrc, setSampleSrc] = React.useState("/face-shape/sample.jpeg");
 
   React.useEffect(() => {
     if (!stream) {
-      setLightingStatus(language === 'id' ? "Mengkalibrasi..." : "Calibrating...");
-      setFocusStatus(language === 'id' ? "Mengkalibrasi..." : "Calibrating...");
+      setLightingStatus(t.calibrating);
+      setFocusStatus(t.calibrating);
       return;
     }
 
@@ -97,16 +101,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
         // Analyze lighting characteristics
         if (avgBrightness < 60) {
-          setLightingStatus(language === 'id' ? "Terlalu Gelap" : "Too Dark");
+          setLightingStatus(t.tooDark);
         } else if (avgBrightness > 215) {
-          setLightingStatus(language === 'id' ? "Terlalu Terang" : "Too Bright");
+          setLightingStatus(t.tooBright);
         } else {
           setLightingStatus("Optimal");
         }
 
         // Analyze standard deviation for contrast details
         if (stdDev < 15) {
-          setFocusStatus(language === 'id' ? "Kurang Kontras / Blur" : "Low contrast / Blurry");
+          setFocusStatus(t.lowContrast);
         } else {
           setFocusStatus("Optimal");
         }
@@ -123,33 +127,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   React.useEffect(() => {
     if (!analyzing) {
-      setLoadingText(language === 'id' ? "Menganalisis rona alami wajah..." : "Analyzing natural shades...");
+      setLoadingText(t.analyzingShades);
       return;
     }
 
-    const sentencesEn = [
-      "Scanning skin undertones...",
-      "Mapping facial geometry...",
-      "Analyzing hair contrast...",
-      "Detecting pigment depth...",
-      "Calibrating season chart...",
-      "Formulating cosmetic path...",
-      "Balancing bone structures...",
-      "Finalizing your Varna map..."
+    const sentences = [
+      t.loadingSentence1,
+      t.loadingSentence2,
+      t.loadingSentence3,
+      t.loadingSentence4,
+      t.loadingSentence5,
+      t.loadingSentence6,
+      t.loadingSentence7,
+      t.loadingSentence8
     ];
-
-    const sentencesId = [
-      "Memindai rona dasar kulit...",
-      "Memetakan geometri wajah...",
-      "Menganalisis kontras rambut...",
-      "Mendeteksi kedalaman pigmen...",
-      "Mengkalibrasi rona musim warna...",
-      "Merumuskan kelayakan blueprint makeup...",
-      "Menyeimbangkan bentuk tulang pipi...",
-      "Menyelesaikan analisis Varna Anda..."
-    ];
-
-    const sentences = language === 'id' ? sentencesId : sentencesEn;
 
     // Pick a starting sentence randomly
     const initialIndex = Math.floor(Math.random() * sentences.length);
@@ -162,7 +153,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }, 1800);
 
     return () => clearInterval(interval);
-  }, [analyzing, language]);
+  }, [analyzing, language, t]);
 
   const startCamera = async () => {
     setCameraMode(true);
@@ -181,7 +172,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       }, 50);
     } catch (err) {
       console.error("Camera access failed:", err);
-      setCameraError(language === 'id' ? "Kamera diblokir atau tidak ditemukan. Periksa pengaturan izin Anda." : "Camera permission denied or camera not found. Please verify permissions.");
+      setCameraError(t.cameraAccessDenied);
     }
   };
 
@@ -257,6 +248,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         
         {/* Upload Zone */}
         <div className="md:col-span-12 lg:col-span-6 space-y-6">
+          {/* Name Input Box */}
+          <div className="bg-white p-5 rounded-3xl border border-black/5 shadow-sm space-y-2">
+            <label className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono block">
+              {t.nameInputLabel}
+            </label>
+            <input 
+              type="text"
+              value={inputName}
+              onChange={(e) => setInputName(e.target.value)}
+              placeholder={t.nameInputPlaceholder}
+              className="w-full px-4 py-2.5 bg-neutral-50 hover:bg-neutral-100/50 focus:bg-white border border-gray-200 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 rounded-xl text-sm font-semibold text-gray-800 transition-all placeholder:text-gray-350 outline-none"
+            />
+          </div>
+
           {!previewUrl ? (
             <div className="space-y-4">
               {!cameraMode ? (
@@ -347,7 +352,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     <div className="bg-neutral-50 rounded-2xl p-3 px-4 border border-gray-100 flex items-center justify-around text-gray-700 text-xs shadow-sm">
                       <div className="flex flex-col items-center text-center">
                         <span className="text-[9px] text-gray-400 uppercase font-mono tracking-wider">
-                          {language === 'id' ? "Pencahayaan" : "Lighting Match"}
+                          {t.lightingMatch}
                         </span>
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className={`w-2 h-2 rounded-full ${lightingStatus === "Optimal" ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`} />
@@ -359,7 +364,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
                       <div className="flex flex-col items-center text-center">
                         <span className="text-[9px] text-gray-400 uppercase font-mono tracking-wider">
-                          {language === 'id' ? "Ketajaman / Fokus" : "Focus / Clarity"}
+                          {t.focusClarity}
                         </span>
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className={`w-2 h-2 rounded-full ${focusStatus === "Optimal" ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`} />
@@ -447,7 +452,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 ) : (
                   <>
                     <Sparkles size={20} className="text-brand-primary shrink-0" />
-                    <span>{analysisError ? (language === 'id' ? "Ulangi Analisis" : "Re-Try Scanning") : t.analyzeBtn}</span>
+                    <span>{analysisError ? t.reTryScanning : t.analyzeBtn}</span>
                   </>
                 )}
               </button>
@@ -472,16 +477,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         <div id="selfie-guide-card" className="md:col-span-12 lg:col-span-6 bg-white p-6 sm:p-8 rounded-[2rem] border border-black/5 shadow-sm space-y-6">
           <div>
             <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
-              {language === 'id' ? "Petunjuk Ahli" : "Expert Guidelines"}
+              {t.expertGuidelines}
             </p>
             <h3 className="text-lg font-bold text-gray-900 font-display">
-              {language === 'id' ? "Cara Mengambil Foto Terbaik" : "How to Grab the Best Picture"}
+              {t.howToGrab}
             </h3>
             <p className="text-xs text-gray-550 mt-1 font-semibold">
-              {language === 'id' 
-                ? "Guna memastikan kecocokan warna palet dan kacamata yang maksimal, silakan penuhi petunjuk berikut:" 
-                : "To ensure maximum color palette accuracy and shape precision, please satisfy these check rules:"
-              }
+              {t.photoGuidelineIntro}
             </p>
           </div>
 
@@ -499,10 +501,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               />
               <div className="absolute top-2 left-2 bg-emerald-500/95 text-white text-[9px] font-bold py-1 px-2.5 rounded-full flex items-center gap-1 shadow-sm backdrop-blur-sm font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                <span>{language === 'id' ? "SAMPEL PORTRET IDEAL" : "IDEAL SAMPLE PHOTO"}</span>
+                <span>{t.idealSamplePhoto}</span>
               </div>
               <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 pt-6 text-white font-semibold text-[10.5px]">
-                <p>{language === 'id' ? "Sempurna: Wajah depan lurus, kulit bersih bebas makeup, sinar matahari alami" : "Perfect: Front angle, clean skin, natural daylight"}</p>
+                <p>{t.samplePhotoDesc}</p>
               </div>
             </div>
           </div>
@@ -516,13 +518,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               </div>
               <div>
                 <h4 className="text-sm font-bold text-gray-900">
-                  {language === 'id' ? "Kulit Polos Bebas Makeup" : "Clean Skin (No Makeup)"}
+                  {t.cleanSkin}
                 </h4>
                 <p className="text-xs text-gray-550 leading-relaxed font-semibold mt-0.5">
-                  {language === 'id' 
-                    ? "Rona alami kulit asli paling akurat dibaca dari aliran darah biologis sel kulit alami Anda." 
-                    : "Real skin color is verified through natural blood flow and raw cell color distribution."
-                  }
+                  {t.cleanSkinDescription}
                 </p>
               </div>
             </div>
@@ -534,13 +533,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               </div>
               <div>
                 <h4 className="text-sm font-bold text-gray-900">
-                  {language === 'id' ? "Garis Lingkar Wajah Terlihat Jelas" : "Clear Facial Margins"}
+                  {t.clearFacialMargins}
                 </h4>
                 <p className="text-xs text-gray-550 leading-relaxed font-semibold mt-0.5">
-                  {language === 'id' 
-                    ? "Singkirkan rambut sela, kacamata hitam, poni kening, ataupun topi penghalang lingkar kepala Anda." 
-                    : "Sweep any hair, bangs, or styling locks away from your face for accurate contour detection."
-                  }
+                  {t.clearFacialMarginsDescription}
                 </p>
               </div>
             </div>
@@ -552,13 +548,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               </div>
               <div>
                 <h4 className="text-sm font-bold text-gray-900">
-                  {language === 'id' ? "Pencahayaan Matahari yang Lembut" : "Natural Daylight"}
+                  {t.naturalDaylight}
                 </h4>
                 <p className="text-xs text-gray-550 leading-relaxed font-semibold mt-0.5">
-                  {language === 'id' 
-                    ? "Sinar lampu neon ruangan buatan terkadang membiaskan warna asli rona temperatur wajah." 
-                    : "Artificial lights cast relative color tints that may interfere with accurate season calculations."
-                  }
+                  {t.naturalDaylightDescription}
                 </p>
               </div>
             </div>
@@ -570,13 +563,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               </div>
               <div>
                 <h4 className="text-sm font-bold text-gray-900">
-                  {language === 'id' ? "Sudut Lurus Sejajar Mata" : "Straight Angle, Open Expression"}
+                  {t.straightAngle}
                 </h4>
                 <p className="text-xs text-gray-550 leading-relaxed font-semibold mt-0.5">
-                  {language === 'id' 
-                    ? "Posisikan kamera tepat di depan mata untuk mencegah perubahan struktur dimensi pelipis dan tulang pipi." 
-                    : "Keep the camera at eye level block to prevent distorted structural dimensions of your chin."
-                  }
+                  {t.straightAngleDescription}
                 </p>
               </div>
             </div>

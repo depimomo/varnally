@@ -11,6 +11,7 @@ import { MakeupRecommendationCard } from './MakeupRecommendationCard';
 import { ResultHeader } from './ResultHeader';
 import { ShareablePoster } from './ShareablePoster';
 import { useLanguage } from '../lib/LanguageContext';
+import { getFormattedVarnaTitle } from '../lib/varnaUtils';
 
 interface AnalysisResultProps {
   result: Analysis;
@@ -80,7 +81,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
           'bg-[#81C784]/8 bottom-10 left-[20%]',
           'bg-rose-400/8 bottom-[35%] right-[15%]'
         ],
-        localizedSeason: 'Spring (Musim Semi)'
+        localizedSeason: t.seasonSpringName
       };
     } else if (s.includes('summer') || s.includes('grishma')) {
       return {
@@ -98,7 +99,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
           'bg-[#F8BBD0]/8 bottom-10 left-[20%]',
           'bg-blue-400/8 bottom-[35%] right-[15%]'
         ],
-        localizedSeason: 'Summer (Musim Panas)'
+        localizedSeason: t.seasonSummerName
       };
     } else if (s.includes('autumn') || s.includes('sharad')) {
       return {
@@ -116,7 +117,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
           'bg-[#C5E1A5]/8 bottom-10 left-[20%]',
           'bg-amber-400/6 bottom-[35%] right-[15%]'
         ],
-        localizedSeason: 'Autumn (Musim Gugur)'
+        localizedSeason: t.seasonAutumnName
       };
     } else {
       // Winter
@@ -135,104 +136,32 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
           'bg-[#B2DFDB]/8 bottom-10 left-[20%]',
           'bg-indigo-400/8 bottom-[35%] right-[15%]'
         ],
-        localizedSeason: 'Winter (Musim Dingin)'
+        localizedSeason: t.seasonWinterName
       };
     }
   };
 
   const theme = getSeasonTheme(result.season);
   const localizedJewerly = (result.jewelry || '').toLowerCase() === 'gold' 
-    ? (language === 'id' ? 'Emas' : 'Gold') 
-    : (language === 'id' ? 'Perak' : 'Silver');
+    ? t.metalGold 
+    : t.metalSilver;
 
-  const getLocalizedSubType = (subType: string, lang: string) => {
-    if (lang !== 'id') return subType;
+  const getLocalizedSubType = (subType: string) => {
     const map: Record<string, string> = {
-      'Bright': 'Cerah',
-      'True': 'Asli',
-      'Dark': 'Gelap',
-      'Light': 'Terang',
-      'Soft': 'Lembut'
+      'Bright': t.subTypeBright,
+      'True': t.subTypeTrue,
+      'Dark': t.subTypeDark,
+      'Light': t.subTypeLight,
+      'Soft': t.subTypeSoft
     };
     return map[subType] || subType;
   };
-  const localizedSubType = getLocalizedSubType(result.subType, language);
+  const localizedSubType = getLocalizedSubType(result.subType);
 
   // Localize archetype descriptions and titles if Indonesian
   const rawArchetype = (archetypes.color_archetypes as any)[result.season]?.[`${result.subType} ${result.season}`];
   let displayName = rawArchetype?.nickname || `${result.subType} ${result.season}`;
   let displayDesc = rawArchetype?.description || "";
-
-  if (language === 'id') {
-    // Elegant, highly customized translated maps for Indonesian
-    const nameMapId: Record<string, string> = {
-      // JSON keys (Nicknames)
-      "The Aurora": "Sang Aurora",
-      "The Glacier": "Gletser Berkilau",
-      "The Eclipse": "Gerhana Misterius",
-      "The Dawn": "Fajar Merekah",
-      "The Meadow": "Padang Rumput Berbunga",
-      "The Sunrise": "Matahari Terbit",
-      "The Seafoam": "Buih Samudra",
-      "The Twilight": "Senja Teduh",
-      "The Haze": "Kabut Lembut",
-      "The Dune": "Bukit Pasir",
-      "The Harvest": "Panen Raya",
-      "The Sunset": "Mentari Tenggelam",
-      
-      // Fallbacks / Older versions
-      "Sun-Kissed Buttercup": "Kuncup Mentega Keemasan",
-      "Gilded Honeycomb": "Sarang Madu Melimpah",
-      "Dynamic Coral Blossom": "Bunga Koral Berkilau",
-      "Ocean Misted Lavender": "Lavender Kabut Samudra",
-      "Fresh Powdery Clover": "Semanggi Bubuk Segar",
-      "Ethereal Cool Slate": "Batu Kabut Anggun",
-      "Muted Clay Terracotta": "Tanah Liat Panggang Redup",
-      "Cinnamon Sand Dune": "Pasir Kayu Manis",
-      "Pecan Wood Moss": "Lumut Kayu Kemiri",
-      "High-Contrast Royal Sapphire": "Safir Kerajaan Pekat",
-      "Frosted Jewel Platinum": "Platinum Es Kristal",
-      "Incandescent Midnight Velvet": "Beludru Hitam Kobalt"
-    };
-
-    if (nameMapId[displayName]) {
-      displayName = nameMapId[displayName];
-    }
-
-    const descMapId: Record<string, string> = {
-      // JSON keys (Descriptions)
-      "Striking and unforgettable. You thrive in high-contrast, vivid jewel tones that mirror a neon sky. Your presence is magnetic and clear.": "Sangat menonjol dan tak terlupakan. Anda bersinar dalam warna permata berjalin kontras tinggi yang menyerupai langit neon. Aura Anda magnetis dan bercahaya murni.",
-      "Absolute and striking. You possess an icy, crisp elegance. Stark, cool tones illuminate your sharp and sophisticated natural contrast.": "Sangat menonjol dan memukau. Anda memiliki keanggunan kristal es yang murni. Paduan warna dingin bersorot tajam memperjelas kontras visual alami Anda yang canggih.",
-      "Mysterious and deeply captivating. You look your best wrapped in rich, cool shadows and intense, luxurious depths.": "Misterius dan sangat memikat. Keindahan terbaik Anda terpancar saat dibalut warna bayangan dingin yang pekat serta kedalaman warna mewah yang intens.",
-      "Delicate, fresh, and full of promise. You glow in airy, pastel-warm colors that capture the first soft light of day.": "Lembut, segar, dan penuh harapan. Rona Anda murni bersinar dalam warna pastel hangat bernapas lapang yang menangkap kelembutan cahaya pertama di pagi hari.",
-      "Vibrant, golden, and blooming. Your natural warmth shines in saturated, sunny hues that radiate life and energy.": "Gemerlap, keemasan, dan bermekaran. Kehangatan alami Anda memancar indah dalam rona warna cerah bersaturasi tinggi yang menyiratkan kehidupan dan energi positif.",
-      "Clear, intense, and awakening. You effortlessly carry the most vivid, warm colors, bringing a bold and joyful energy wherever you go.": "Bening, intens, dan membangkitkan pesona. Anda dengan anggun membawa keindahan warna paling cerah dan hangat, menyebarkan energi yang berani dan riang-gembira.",
-      "Gentle, airy, and refreshing. Your cool, delicate coloring is perfectly complemented by soft, powdery tones that feel like a gentle ocean breeze.": "Menenangkan, sejuk, dan menyegarkan. Warna kulit sejuk Anda yang lembut sangat selaras didampingi rona warna lembut sehalus bedak layaknya embusan angin sepoi pantai.",
-      "Serene, cool, and elegant. You possess a calm beauty that is beautifully enhanced by dusty, muted cool tones like lavender and slate.": "Tenang, sejuk, dan elegan. Anda memiliki kecantikan yang damai, yang kian terpancar indah berkat paduan warna teduh bersahaja seperti lavender lembut dan abu-abu batu sabak.",
-      "Enigmatic and softly blended. Your muted coloring is effortlessly chic, finding its perfect harmony in gentle, gray-tinted cool colors.": "Penuh misteri dan berpadu lembut. Sentuhan warna redup Anda menghadirkan keanggunan alami yang modis, melebur sempurna dalam kedamaian warna sejuk keabu-abuan.",
-      "Earthy, muted, and incredibly stylish. You radiate a calm, grounded warmth that looks stunning in gentle, toasted neutrals.": "Alami, teduh, dan sangat modis. Anda memancarkan kehangatan bersahaja yang tenang, memikat dalam rona warna netral hangat yang lembut bagai pasir gurun.",
-      "Rich, golden, and abundant. You carry the warmth of changing seasons perfectly, glowing in toasted, vibrant earth tones.": "Kaya warna, keemasan, dan melimpah. Anda membingkai kehangatan pergantian musim dengan sempurna, memancar indah dalam rona warna tanah yang pekat dan hangat.",
-      "Deep, warm, and intense. You have a smoldering natural contrast that carries the heaviest, richest autumn colors with absolute grace.": "Pekat, hangat, dan intens. Anda memiliki kontras alami nan memikat yang mampu menyangga deretan rona warna musim gugur paling berat dan mewah dengan keanggunan mutlak.",
-
-      // Fallbacks / Older versions
-      "Bright, warm, and highly radiant. You harmonize with crisp buttercup yellow, live apricot, and sparkling peach tints.": "Cerah, hangat, dan sangat berseri. Anda cocok dengan warna kuning mentega yang renyah, aprikot hidup, dan rona persik yang berkilau.",
-      "Muted, warm, and earth-anchored. Your pigments align with rich spiced terracotta, golden honey, and warm olive leaves.": "Redup, hangat, dan mengakar pada bumi. Rona pigmen Anda menyatu dengan bumbu terracotta yang kaya, madu emas, dan daun zaitun yang hangat.",
-      "Clear, bright, and sparkling with dynamic contrast. Harmonize with vivid poppy coral, live turquoise, and sunny daffodils.": "Bening, cerah, dan berkilau dengan kontras dinamis. Selaras dengan koral popi yang hidup, pirus aktif, dan bunga narsis kuning cerah.",
-      "Cool, soft, and gentle. You shimmer elegantly in muted lavender, smoky mountain shadows, and oceanside powdery blues.": "Sejuk, lembut, dan teduh. Anda bersinar elegan dalam lavender lembut, bayangan pegunungan berasap, dan biru bedak tepi pantai air laut.",
-      "Delicate, cool, and airy. Align your face with soft pastel moss, powdered wild clover, and gentle morning blues.": "Halus, sejuk, dan lapang. Selaraskan wajah Anda dengan lumut pastel lembut, semanggi liar berbubuk halus, dan warna biru pagi yang tenang.",
-      "Smooth, deep, and slate-cooled. Complemented perfectly by mountain stone grays, deep twilight lilac, and soft spruce forests.": "Halus, pekat, dan sejuk bagai batu sabak. Dilengkapi dengan sempurna oleh abu-abu batu pegunungan, ungu senja yang sunyi, dan hutan cemara lembut.",
-      "Deep, rich, and spice-warmed. Anchor your style with baked terracotta clay, roasted pecans, and rich walnut grains.": "Pekat, kaya, dan hangat penuh rempah. Kokohkan gaya Anda dengan tanah liat terracotta panggang, kacang pecan panggang, dan serat kayu kenari yang kaya warna.",
-      "Muted, highly warm, and golden. Accentuate with toasted cinnamon, warm mustard sand, and rich turmeric dust.": "Redup, sangat hangat, dan keemasan. Sempurnakan dengan kayu manis panggang, pasir mustar hangat, dan bubuk kunyit yang kaya rona hangat.",
-      "Earthy, complex, and mossy. Best framed by deep forest olive, dark khaki bark, and warm spiced forest pines.": "Alami, kompleks, dan berlumut. Paling tepat dibingkai oleh hijau zaitun hutan pekat, kulit kayu khaki gelap, dan pinus hutan berempah hangat.",
-      "Pure, high-contrast, and deeply saturated. Sparkle in deep royal cobalt blue, majestic magenta, and pure velvet black.": "Murni, berkontras tinggi, dan sangat jenuh. Berkilau dalam biru kobalt kerajaan yang pekat, magenta agung, dan hitam beludru murni.",
-      "Icy, cool, and crystalline. Reflect pure elegance with frosted mountain silver, icy platinum, and crystalline glacier teal.": "Lebih dingin, sejuk, dan mengkristal bagai es. Cerminkan keanggunan sejati dengan perak pegunungan berselimut es, platinum sejuk, dan pirus gletser murni.",
-      "High-value, dark, and royal. Your presence is captured by deep midnight indigo, rich royal purple, and ink forest tones.": "Sangat pekat, gelap, dan agung. Kehadiran Anda terpancar melalui biru indigo tengah malam yang pekat, ungu kerajaan yang mewah, dan rona tinta hutan gelap."
-    };
-
-    if (descMapId[displayDesc]) {
-      displayDesc = descMapId[displayDesc];
-    }
-  }
 
   return (
     <motion.div
@@ -259,6 +188,16 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
         onSave={onSave}
         onShareStory={() => setIsPosterOpen(true)}
       />
+
+      {/* Main Analysis Title Heading */}
+      <div className="text-center md:text-left space-y-1 pb-1 pt-2">
+        <h1 className="text-4xl font-display font-black tracking-tight text-gray-950">
+          {getFormattedVarnaTitle(result.name, language)}
+        </h1>
+        <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
+          {t.personalDiagnosticsTitle}
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Photo & Details */}
@@ -307,7 +246,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
               <div className="relative z-10 space-y-4">
                 <div className="flex items-center gap-2 text-white/90 font-mono text-[10px] font-bold uppercase tracking-[0.2em]">
                   <Sparkles size={14} className="animate-spin" />
-                  <span>{t.vefifiedVarnaMap}</span>
+                  <span>{getFormattedVarnaTitle(result.name, language).toUpperCase()}</span>
                 </div>
 
                 <div>
@@ -322,7 +261,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
 
                 <div className="flex flex-wrap gap-1.5 pt-2">
                   <span className="px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider">
-                    {language === 'id' ? theme.localizedSeason : result.season}
+                    {theme.localizedSeason}
                   </span>
                   <span className="px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider">
                     {localizedSubType}
