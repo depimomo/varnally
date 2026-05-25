@@ -44,6 +44,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [lightingStatus, setLightingStatus] = React.useState<"Optimal" | "Too Dark" | "Too Bright" | "Calibrating...">("Calibrating...");
   const [focusStatus, setFocusStatus] = React.useState<"Optimal" | "Low contrast / Blurry" | "Calibrating...">("Calibrating...");
+  const [sampleSrc, setSampleSrc] = React.useState("/face-shape/sample.jpeg");
 
   React.useEffect(() => {
     if (!stream) {
@@ -451,6 +452,29 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             <p className="text-xs text-gray-500 mt-1">To ensure maximum color palette accuracy and shape precision, please satisfy these check rules:</p>
           </div>
 
+          {/* Real-time visual sample placeholder */}
+          <div className="relative group/sample rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/25 p-2.5">
+            <div className="aspect-[4/3] rounded-xl overflow-hidden relative shadow-sm bg-neutral-100">
+              <img 
+                src={sampleSrc}
+                onError={() => {
+                  // Clean fallback to premium natural sunlight portrait if sample is empty or missing
+                  setSampleSrc("https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600&h=450");
+                }}
+                alt="Perfect Analysis Sample Portrait"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover/sample:scale-102"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute top-2 left-2 bg-emerald-500/95 text-white text-[9px] font-bold py-1 px-2.5 rounded-full flex items-center gap-1 shadow-sm backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                <span>IDEAL SAMPLE PHOTO</span>
+              </div>
+              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 pt-6 text-white">
+                <p className="text-[11px] font-semibold">Perfect: Front angle, clean skin, natural daylight</p>
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-4 pt-2">
             
             {/* Rule 1 */}
@@ -461,7 +485,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               <div>
                 <h4 className="text-sm font-bold text-gray-800">Clean Skin (No Makeup)</h4>
                 <p className="text-xs text-gray-550 leading-relaxed font-medium mt-0.5">
-                  Ensure zero foundation, colored blush, or tinted sunscreen. Real skin color is verified through natural blood flow and raw cell color distribution.
+                  Real skin color is verified through natural blood flow and raw cell color distribution.
                 </p>
               </div>
             </div>
@@ -474,7 +498,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               <div>
                 <h4 className="text-sm font-bold text-gray-800">Clear Facial Margins</h4>
                 <p className="text-xs text-gray-550 leading-relaxed font-medium mt-0.5">
-                  Sweep any hair, bangs, or styling locks away from your face. Our system checks your jaw line, chin depth, and temples to map out your structural bones.
+                  Sweep any hair, bangs, or styling locks away from your face.
                 </p>
               </div>
             </div>
@@ -485,9 +509,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 <Sun size={18} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-gray-800">Diffused Natural Daylight</h4>
+                <h4 className="text-sm font-bold text-gray-800">Natural Daylight</h4>
                 <p className="text-xs text-gray-550 leading-relaxed font-semibold mt-0.5">
-                  Stand directly in front of a window or outdoors. Artificial yellow lamps or indoor downlights cast unnatural color interference that corrupts accurate season mapping.
+                  Artificial lights cast may corrupts accurate season mapping.
                 </p>
               </div>
             </div>
@@ -500,7 +524,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               <div>
                 <h4 className="text-sm font-bold text-gray-800">Straight Angle, Open Expression</h4>
                 <p className="text-xs text-gray-550 leading-relaxed font-semibold mt-0.5">
-                  Look forward with neutral eyes. Keep the camera at eye level to prevent distorted structural dimensions of your chin and cheekbones.
+                  Keep the camera at eye level to prevent distorted structural dimensions of your chin and cheekbones.
                 </p>
               </div>
             </div>

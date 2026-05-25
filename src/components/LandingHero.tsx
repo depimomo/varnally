@@ -231,7 +231,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
               </div>
 
               {/* Dynamic Color Waves */}
-              <div className="md:col-span-7 grid grid-cols-5 gap-3">
+              <div className="md:col-span-7 grid grid-cols-2 min-[400px]:grid-cols-3 sm:grid-cols-5 gap-4 md:gap-3">
                 {selectedSeason.colors.map((c, i) => (
                   <motion.div 
                     key={c.name}
@@ -245,10 +245,10 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
                       {/* Highlight reflection */}
                       <div className="absolute top-1 left-1.5 w-3 h-1.5 bg-white/25 rounded-full blur-[0.5px]" />
                     </div>
-                    <span className="text-[9px] font-bold text-gray-800 text-center tracking-tight truncate w-full">
+                    <span className="text-[10px] sm:text-[9px] font-bold text-gray-800 text-center tracking-tight leading-tight w-full px-1 break-normal">
                       {c.name}
                     </span>
-                    <span className="text-[8px] font-mono text-gray-400 uppercase select-all">
+                    <span className="text-[9px] sm:text-[8px] font-mono text-gray-400 uppercase select-all">
                       {c.hex}
                     </span>
                   </motion.div>
