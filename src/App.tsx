@@ -28,6 +28,7 @@ import { AnalysisResult } from './components/AnalysisResult';
 import { LandingHero } from './components/LandingHero';
 import { Toast, ToastType } from './components/Toast';
 import { useLanguage } from './lib/LanguageContext';
+import { Github, Linkedin } from 'lucide-react';
 
 export default function App() {
   const { language, t } = useLanguage();
@@ -392,11 +393,29 @@ export default function App() {
 
       <footer className="py-12 border-t border-gray-100 bg-white">
         <div className="max-w-4xl mx-auto px-8 text-center space-y-4">
-          <p className="text-sm font-medium text-gray-400">Powered by Gemini Vision 2.0 Flash</p>
-          <div className="flex justify-center gap-8">
-            {['Winter', 'Spring', 'Summer', 'Autumn'].map(season => (
-              <span key={season} className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">{season}</span>
-            ))}
+          <p className="text-sm font-semibold text-gray-550">
+            Crafted with <span className="text-rose-500 animate-pulse">{"♡"}</span> for <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">#JuaraVibeCoding</span>
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 pt-1">
+            <a 
+              href="https://www.linkedin.com/in/monicadevikristiadi/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 hover:text-brand-primary transition-all font-mono uppercase tracking-widest active:scale-95"
+            >
+              <Linkedin size={14} className="shrink-0" />
+              LinkedIn
+            </a>
+            <span className="hidden sm:inline text-gray-200">|</span>
+            <a 
+              href="https://github.com/depimomo/varnally" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 hover:text-brand-secondary transition-all font-mono uppercase tracking-widest active:scale-95"
+            >
+              <Github size={14} className="shrink-0" />
+              Github
+            </a>
           </div>
         </div>
       </footer>
