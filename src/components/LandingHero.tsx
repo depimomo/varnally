@@ -26,22 +26,22 @@ const DEFAULT_PALETTES = landingSeasons.default_palettes;
 const getLocalizedSeason = (season: any, t: any) => {
   const translations: Record<string, { name: string; nature: string; description: string }> = {
     'spring': {
-      name: t.seasonSpringName || 'Spring (Springtime)',
+      name: t.seasonSpringName || 'Spring',
       nature: t.seasonSpringNature || 'Warm & Bright',
       description: t.seasonSpringDesc || 'Fresh colors capturing the first morning sun light, crisp buttercup yellow, and warm peach tints.'
     },
     'summer': {
-      name: t.seasonSummerName || 'Summer (Summertime)',
+      name: t.seasonSummerName || 'Summer',
       nature: t.seasonSummerNature || 'Cool & Soft',
       description: t.seasonSummerDesc || 'Gentle pastel shades refreshed by ocean waters, misty lavender mountains, and powdery rose garden blossoms.'
     },
     'autumn': {
-      name: t.seasonAutumnName || 'Autumn (Autumntime)',
+      name: t.seasonAutumnName || 'Autumn',
       nature: t.seasonAutumnNature || 'Warm & Muted',
       description: t.seasonAutumnDesc || 'Earthy tones capturing spiced cinnamon, baked terracotta, roasted pecan nuts, and olive tree leaves.'
     },
     'winter': {
-      name: t.seasonWinterName || 'Winter (Wintertime)',
+      name: t.seasonWinterName || 'Winter',
       nature: t.seasonWinterNature || 'Cool & Brilliant',
       description: t.seasonWinterDesc || 'High-contrast vivid jewel tones like royal cobalt blue, deep royal crimson, and platinum glacier crystal.'
     }

@@ -148,7 +148,7 @@ export const GlassesRecommendationCard: React.FC<GlassesRecommendationCardProps>
                 {recommendations.frames_to_avoid.map((frame: string, idx: number) => (
                   <div
                     key={idx}
-                    className="px-4 py-2 bg-red-50/40 border border-red-105 hover:border-red-200 shadow-sm rounded-xl text-xs font-bold text-gray-650 flex items-center gap-2 transition-all font-semibold"
+                    className="px-4 py-2 bg-red-50/40 border border-red-500/10 hover:border-red-500/25 shadow-sm rounded-xl text-xs font-bold text-gray-650 flex items-center gap-2 transition-all font-semibold"
                   >
                     <span className="w-1.5 h-[1.5px] bg-red-400" />
                     {frame}
