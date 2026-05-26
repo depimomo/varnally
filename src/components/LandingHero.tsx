@@ -197,9 +197,6 @@ const VarnaColorRaysBackdrop: React.FC = () => {
 
 export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
   const { t } = useLanguage();
-  const [selectedSeason, setSelectedSeason] = useState(SEASONS_DATA[0]);
-
-  const activeSeasonTranslated = getLocalizedSeason(selectedSeason, t);
   const benefits = getBenefits(t);
 
   return (
@@ -258,7 +255,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
       </div>
 
       {/* 1. Hero Title Section */}
-      <div className="text-center max-w-4xl mx-auto space-y-6 px-4 md:px-0 relative z-10 overflow-visible">
+      <div className="text-center max-w-4xl mx-auto space-y-6 px-4 md:px-0 relative z-10 overflow-visible min-h-[calc(100vh-9rem)] sm:min-h-[calc(100vh-12rem)] flex flex-col justify-center items-center pb-12 sm:pb-16">
         <VarnaColorRaysBackdrop />
         <motion.div 
           initial={{ scale: 0.92, opacity: 0 }}
@@ -298,99 +295,154 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
         </div>
       </div>
 
-      {/* 2. Interactive Varna Spectrum Dock */}
-      <div className="max-w-4xl mx-auto px-4 relative z-10">
-        <div className="bg-white/70 backdrop-blur-xl border border-black/5 rounded-[2.5rem] shadow-xl overflow-hidden p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
-            <div>
-              <p className="text-[10px] font-black text-brand-secondary uppercase tracking-widest font-mono">
-                {t.tasteOfScienceTag}
-              </p>
-              <h3 className="text-xl font-bold text-gray-900 font-display">{t.varnaDockTitle}</h3>
-            </div>
-            {/* Tab buttons */}
-            <div className="flex flex-wrap gap-1 bg-gray-100/80 p-1 rounded-2xl">
-              {SEASONS_DATA.map((season) => (
-                <button
-                  key={season.id}
-                  onClick={() => setSelectedSeason(season)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    selectedSeason.id === season.id 
-                    ? 'bg-white text-gray-900 shadow-sm' 
-                    : 'text-gray-500 hover:text-gray-800'
-                  }`}
-                >
-                  {season.name}
-                </button>
-              ))}
-            </div>
-          </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedSeason.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className={`p-6 rounded-[2rem] bg-gradient-to-tr ${selectedSeason.gradient} border ${selectedSeason.border} grid grid-cols-1 md:grid-cols-12 gap-6 items-center`}
-            >
-              <div className="md:col-span-12 lg:col-span-5 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${selectedSeason.tagColor}`}>
-                    {activeSeasonTranslated.nature}
+
+      {/* Archetypes & Mascots Showcase Section - Premium Character Showcase */}
+      <div className="space-y-12 w-full relative z-10">
+        <div className="max-w-5xl mx-auto px-4 text-center space-y-2.5">
+          <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
+            {t.exploreArchetypesTag || "THE 12 ARCHETYPES"}
+          </p>
+          <h2 className="text-3xl md:text-4xl font-display font-black text-gray-900 leading-tight">
+            {t.exploreArchetypesTitle || "Discover Your Color Archetype"}
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-500 max-w-lg mx-auto font-semibold leading-relaxed">
+            {t.exploreArchetypesSub || "We map your natural traits onto 12 fine-tuned seasons and persona archetypes. Explore the beautiful ecosystem below."}
+          </p>
+        </div>
+
+        <div className="w-full">
+          {[
+            { 
+              key: 'Spring', 
+              bgClass: 'from-[#EBF8F0] via-[#FCFBE5] to-[#E3F7EB]', 
+              glowClass: 'bg-emerald-400/12', 
+              tagBg: 'bg-emerald-50/80 text-emerald-800 border-emerald-100/50',
+              accentColor: 'text-emerald-950',
+              seasonNature: t.seasonSpringNature || 'Warm & Bright'
+            },
+            { 
+              key: 'Summer', 
+              bgClass: 'from-[#E6F0FA] via-[#FAEDF6] to-[#E4EEFA]', 
+              glowClass: 'bg-sky-400/10', 
+              tagBg: 'bg-indigo-50/80 text-indigo-800 border-indigo-100/50',
+              accentColor: 'text-indigo-950',
+              seasonNature: t.seasonSummerNature || 'Cool & Soft'
+            },
+            { 
+              key: 'Autumn', 
+              bgClass: 'from-[#FBF1E6] via-[#FCFAF0] to-[#FCE7D9]', 
+              glowClass: 'bg-amber-400/12', 
+              tagBg: 'bg-orange-50/80 text-orange-800 border-orange-100/50',
+              accentColor: 'text-orange-950',
+              seasonNature: t.seasonAutumnNature || 'Warm & Muted'
+            },
+            { 
+              key: 'Winter', 
+              bgClass: 'from-[#E1ECFD] via-[#F0F5FE] to-[#E5EDFC]', 
+              glowClass: 'bg-blue-400/10', 
+              tagBg: 'bg-blue-50/80 text-blue-800 border-blue-100/50',
+              accentColor: 'text-blue-950',
+              seasonNature: t.seasonWinterNature || 'Cool & Brilliant'
+            }
+          ].map((season) => {
+            let seasonName = "";
+            if (season.key === 'Spring') {
+              seasonName = t.seasonSpringName || 'Spring';
+            } else if (season.key === 'Summer') {
+              seasonName = t.seasonSummerName || 'Summer';
+            } else if (season.key === 'Autumn') {
+              seasonName = t.seasonAutumnName || 'Autumn';
+            } else if (season.key === 'Winter') {
+              seasonName = t.seasonWinterName || 'Winter';
+            }
+
+            const seasonArchetypes = (archetypes.color_archetypes as any)[season.key] || {};
+
+            return (
+              <div 
+                key={season.key} 
+                className={`w-full bg-gradient-to-r ${season.bgClass} animate-gradient-bg py-16 sm:py-24 relative overflow-hidden`}
+              >
+                {/* 16Personalities style large faint backdrop watermark name - positioned physically higher so it is readable and not fully blocked */}
+                <div className="absolute top-10 sm:top-14 left-0 right-0 flex justify-center select-none pointer-events-none z-0 w-full px-4 overflow-hidden">
+                  <span className="font-display font-black text-[13vw] sm:text-8xl md:text-[10rem] lg:text-[12rem] tracking-[0.06em] sm:tracking-[0.12em] leading-none uppercase text-white/60 text-center whitespace-nowrap block">
+                    {seasonName}
                   </span>
                 </div>
-                <h4 className="text-lg font-black text-gray-900 font-display">{activeSeasonTranslated.name}</h4>
-                <p className="text-xs text-gray-600 leading-relaxed font-semibold">
-                  {activeSeasonTranslated.description}
-                </p>
-              </div>
 
-              {/* Dynamic Color Waves */}
-              <div className="md:col-span-12 lg:col-span-7 grid grid-cols-2 min-[400px]:grid-cols-3 sm:grid-cols-5 gap-4 md:gap-3 font-mono">
-                {selectedSeason.colors.map((c: any, i: number) => (
-                  <motion.div 
-                    key={c.name}
-                    whileHover={{ y: -6, scale: 1.04 }}
-                    className="flex flex-col items-center gap-2 cursor-pointer pt-2 group"
-                  >
-                    <div 
-                      className="w-12 h-12 rounded-2xl shadow-md border-2 border-white/80 transition-all duration-300 group-hover:shadow-lg relative"
-                      style={{ backgroundColor: c.hex }}
-                    >
-                      {/* Highlight reflection */}
-                      <div className="absolute top-1 left-1.5 w-3 h-1.5 bg-white/25 rounded-full blur-[0.5px]" />
-                    </div>
-                    <span className="text-[10px] sm:text-[9px] font-bold text-gray-800 text-center tracking-tight leading-tight w-full px-1 break-normal">
-                      {getLocalizedColorName(c.name, t)}
-                    </span>
-                    <span className="text-[9px] sm:text-[8px] font-mono text-gray-400 uppercase select-all">
-                      {c.hex}
-                    </span>
-                  </motion.div>
-                ))}
+                {/* Mascot profiles with float animations, pedestal shadows, and glowing backlights */}
+                <div className="max-w-5xl mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-3 gap-y-16 gap-x-10 sm:gap-x-12 pt-16 sm:pt-20">
+                  {Object.entries(seasonArchetypes).map(([fullName, data]: [string, any]) => {
+                    const nicknameLower = data.nickname.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_');
+                    
+                    const parts = fullName.split(' ');
+                    const subPart = parts[0]; 
+                    const seasonPart = parts[1] || ''; 
+                    
+                    const subTypeMap: Record<string, string> = {
+                      'Bright': t.subTypeBright || 'Bright',
+                      'True': t.subTypeTrue || 'True',
+                      'Dark': t.subTypeDark || 'Dark',
+                      'Light': t.subTypeLight || 'Light',
+                      'Soft': t.subTypeSoft || 'Soft'
+                    };
+                    const seasonMap: Record<string, string> = {
+                      'Spring': t.seasonSpringName || 'Spring',
+                      'Summer': t.seasonSummerName || 'Summer',
+                      'Autumn': t.seasonAutumnName || 'Autumn',
+                      'Winter': t.seasonWinterName || 'Winter'
+                    };
+                    const localizedFullName = `${subTypeMap[subPart] || subPart} ${seasonMap[seasonPart] || seasonPart}`;
+
+                    return (
+                      <div 
+                        key={fullName} 
+                        className="transition-all duration-300 group flex flex-col items-center text-center h-full focus:outline-none select-none relative z-10"
+                      >
+                        {/* Elegant Mascot Frame - crop transparent spacing & zoom */}
+                        <div className="w-28 h-28 sm:w-32 sm:h-32 mx-auto relative flex items-end justify-center mb-5">
+                          {/* Ambient radial color glow background of standard premium layouts */}
+                          <div className={`absolute inset-2 rounded-full blur-2xl opacity-80 scale-90 ${season.glowClass} transition-transform duration-500 group-hover:scale-110`} />
+                          
+                          {/* Radial floor pedestal shadow under floating character */}
+                          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-16 h-2 bg-black/[0.08] blur-[5px] rounded-full transition-all duration-500 group-hover:w-20 group-hover:opacity-45" />
+
+                          {/* Mascot with float on hover */}
+                          <img 
+                            src={`/mascot/${nicknameLower}.png`}
+                            alt={data.nickname}
+                            className="w-36 h-36 object-contain max-w-none relative z-10 select-none pointer-events-none scale-[1.35] transform transition-all duration-500 group-hover:scale-[1.45] group-hover:-translate-y-3"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
+                        
+                        {/* Text Information block with balanced typography */}
+                        <div className="space-y-2 pointer-events-none">
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-mono font-bold tracking-widest text-[#FF8A65] uppercase leading-none block">
+                              {localizedFullName}
+                            </span>
+                            <h4 className="text-xl font-display font-black text-gray-950 leading-snug transition-colors duration-300 group-hover:text-brand-primary">
+                              {data.nickname}
+                            </h4>
+                          </div>
+                          
+                          <p className="text-xs text-gray-650 font-semibold leading-relaxed max-w-[240px] mx-auto line-clamp-3">
+                            {data.description}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            );
+          })}
         </div>
-      </div>
-
-      {/* 3. Education / Benefits Block */}
-      <div className="bg-gradient-to-br from-white/90 via-white/70 to-white/40 backdrop-blur-md border border-black/5 rounded-[3rem] p-8 md:p-12 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 shadow-lg relative z-10">
-        {benefits.map((benefit, index) => (
-          <div key={index} className="space-y-4">
-            <div className="w-12 h-12 bg-gradient-to-tr from-brand-primary to-orange-400 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg">
-              {benefit.emoji}
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 font-display flex items-center gap-2">
-              {benefit.title}
-            </h3>
-            <p className="text-xs text-gray-650 leading-relaxed font-semibold">
-              {benefit.desc}
-            </p>
-          </div>
-        ))}
       </div>
 
       {/* 4. Complete System Feature Grid */}

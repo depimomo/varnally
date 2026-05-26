@@ -230,5 +230,8 @@
   "analysisUnexpectedError": "Analysis failed unexpectedly. Please try again.",
   "varnaSavedCloud": "Varna analysis successfully saved to your cloud profile!",
   "savedLocalHistory": "Saved to local history! Sign in with Google to backup cloud-wide.",
-  "failedToSaveCloud": "Failed to save. Please sign in with Google to try again."
+  "failedToSaveCloud": "Failed to save. Please sign in with Google to try again.",
+  "exploreArchetypesTag": "THE 12 ARCHETYPES",
+  "exploreArchetypesTitle": "Discover Your Color Archetype",
+  "exploreArchetypesSub": "We map your natural traits onto 12 fine-tuned seasons and persona archetypes. Explore the beautiful ecosystem below."
 }
