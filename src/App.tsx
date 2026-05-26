@@ -249,16 +249,34 @@ export default function App() {
         }
 
         const validResult = {
-          ...result,
+          userId: user.uid,
+          season: result.season,
+          subType: result.subType,
           bestColors: trimmedBestColors,
           avoidColors: trimmedAvoidColors,
-          userId: user.uid,
+          jewelry: result.jewelry,
+          faceShape: result.faceShape,
+          faceShapeDescription: result.faceShapeDescription,
+          skinUndertone: result.skinUndertone,
+          eyeColor: result.eyeColor,
+          hairColor: result.hairColor,
+          name: result.name || null,
+          imageUrl: result.imageUrl || null,
+          cleanedImageUrl: result.cleanedImageUrl || null,
           createdAt: serverTimestamp(),
         };
 
-        const docRef = await addDoc(collection(db, 'analyses'), validResult);
-        setResult({ ...result, id: docRef.id });
-        setToast({ message: t.varnaSavedCloud, type: "success" });
+        let docRef;
+        try {
+          docRef = await addDoc(collection(db, 'analyses'), validResult);
+        } catch (error) {
+          handleFirestoreError(error, OperationType.CREATE, 'analyses');
+        }
+        
+        if (docRef) {
+          setResult({ ...result, id: docRef.id });
+          setToast({ message: t.varnaSavedCloud, type: "success" });
+        }
       } else {
         // Save to localStorage for robust offline/guest usage
         const localData = localStorage.getItem('varnally_history');
@@ -304,7 +322,11 @@ export default function App() {
   const deleteAnalysis = async (id: string) => {
     try {
       if (user && !id.startsWith('local_')) {
-        await deleteDoc(doc(db, 'analyses', id));
+        try {
+          await deleteDoc(doc(db, 'analyses', id));
+        } catch (error) {
+          handleFirestoreError(error, OperationType.DELETE, `analyses/${id}`);
+        }
       } else {
         const localData = localStorage.getItem('varnally_history');
         if (localData) {
@@ -393,8 +415,8 @@ export default function App() {
 
       <footer className="py-12 border-t border-gray-100 bg-white">
         <div className="max-w-4xl mx-auto px-8 text-center space-y-4">
-          <p className="text-sm font-semibold text-gray-550">
-            Crafted with <span className="text-rose-500 animate-pulse">{"♡"}</span> for <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">#JuaraVibeCoding</span>
+          <p className="text-sm font-semibold text-gray-550 border-gray-100">
+            Crafted with <span className="text-rose-500 animate-pulse">{"♡"}</span> for <a href="https://rsvp.withgoogle.com/events/juaravibecoding/home" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity inline-block"><span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">#JuaraVibeCoding</span></a>
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 pt-1">
             <a 
