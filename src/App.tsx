@@ -29,6 +29,7 @@ import { LandingHero } from './components/LandingHero';
 import { Toast, ToastType } from './components/Toast';
 import { useLanguage } from './lib/LanguageContext';
 import { Github, Linkedin } from 'lucide-react';
+import { WelcomeOverlay } from './components/WelcomeOverlay';
 
 export default function App() {
   const { language, t } = useLanguage();
@@ -40,6 +41,7 @@ export default function App() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [inputName, setInputName] = useState("");
   const [result, setResult] = useState<Analysis | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [history, setHistory] = useState<Analysis[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
@@ -225,6 +227,7 @@ export default function App() {
       };
       
       setResult(newAnalysis);
+      setShowWelcomeModal(true);
     } catch (error) {
       setAnalysisError(error instanceof Error ? error.message : t.analysisUnexpectedError);
     } finally {
@@ -352,6 +355,7 @@ export default function App() {
     setPreviewUrl(null);
     setResult(null);
     setInputName("");
+    setShowWelcomeModal(false);
   };
 
   return (
@@ -445,6 +449,17 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Dynamic Animated Welcome Overlay Transition */}
+      <AnimatePresence>
+        {showWelcomeModal && result && (
+          <WelcomeOverlay 
+            result={result}
+            previewUrl={previewUrl}
+            onClose={() => setShowWelcomeModal(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Elegant Toast Feedback */}
       <AnimatePresence>

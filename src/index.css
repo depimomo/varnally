@@ -26,7 +26,20 @@ body {
   }
 }
 
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 .animate-gradient-bg {
   background-size: 200% 200%;
   animation: gradient-shift 8s ease-in-out infinite;
+}
+
+.group:hover .group-hover\:animate-shine {
+  animation: shine 1.4s ease-in-out infinite;
 }
