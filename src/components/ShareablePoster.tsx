@@ -244,15 +244,16 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                     </span>
                   </div>
 
-                  {/* Circle Portrait Wrapped in conic color drape */}
-                  <div className="flex justify-center my-2">
+                  {/* Portrait & Mascot Side by Side */}
+                  <div className="flex justify-center items-center gap-6 my-2">
+                    {/* Circle Portrait wrapped in conic color drape */}
                     <div 
-                      className="w-36 h-36 rounded-full overflow-hidden relative flex items-center justify-center p-3 shadow-xl bg-white/10"
+                      className="w-28 h-28 rounded-full overflow-hidden relative flex items-center justify-center p-2.5 shadow-xl bg-white/10 shrink-0"
                       style={{ backgroundImage: conicGradientStyle }}
                     >
                       {/* Base shadow ellipse */}
-                      <div className="absolute inset-2 bg-white rounded-full scale-[1.01]" />
-                      <div className="absolute inset-2 overflow-hidden rounded-full">
+                      <div className="absolute inset-1.5 bg-white rounded-full scale-[1.01]" />
+                      <div className="absolute inset-1.5 overflow-hidden rounded-full">
                         <img
                           src={result.cleanedImageUrl || previewUrl || result.imageUrl || ''}
                           alt="Face sample profile"
@@ -260,8 +261,23 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                           referrerPolicy="no-referrer"
                         />
                       </div>
-                      <div className="absolute inset-2 pointer-events-none rounded-full border border-black/5 shadow-[inset_0_3px_8px_rgba(0,0,0,0.15)]" />
+                      <div className="absolute inset-1.5 pointer-events-none rounded-full border border-black/5 shadow-[inset_0_3px_8px_rgba(0,0,0,0.15)]" />
                     </div>
+
+                    {/* Mascot Character Image */}
+                    {rawArchetype?.nickname && (
+                      <div className="w-24 h-28 flex items-center justify-center relative shrink-0 overflow-hidden">
+                        <img 
+                          src={`/mascot/${rawArchetype.nickname.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_')}.png`}
+                          alt={rawArchetype.nickname}
+                          className="w-36 h-36 object-contain relative z-10 select-none pointer-events-none scale-[1.35]"
+                          referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
 
                    {/* Archetype Title & Tagline */}

@@ -239,20 +239,39 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
               animate={{ opacity: 1, y: 0 }}
               className={`bg-gradient-to-br ${theme.displayGradient} p-8 rounded-[2rem] shadow-xl ${theme.shadowColor} text-white relative overflow-hidden`}
             >
-              <div className="absolute -right-4 -top-4 opacity-20">
+              <div className="absolute -right-4 -top-4 opacity-15">
                 <Sparkles size={100} />
               </div>
 
               <div className="relative z-10 space-y-4">
-                <div className="flex items-center gap-2 text-white/90 font-mono text-[10px] font-bold uppercase tracking-[0.2em]">
-                  <Sparkles size={14} className="animate-spin" />
-                  <span>{getFormattedVarnaTitle(result.name, language).toUpperCase()}</span>
-                </div>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-3 flex-1">
+                    <div className="flex items-center gap-2 text-white/90 font-mono text-[10px] font-bold uppercase tracking-[0.2em]">
+                      <Sparkles size={14} className="animate-pulse" />
+                      <span>{getFormattedVarnaTitle(result.name, language).toUpperCase()}</span>
+                    </div>
 
-                <div>
-                  <h3 className="text-3xl font-display font-black leading-tight drop-shadow-sm">
-                    {displayName}
-                  </h3>
+                    <div>
+                      <h3 className="text-3xl font-display font-black leading-tight drop-shadow-sm">
+                        {displayName}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {rawArchetype.nickname && (
+                    <div className="shrink-0 relative group">
+                      <div className="absolute inset-0 bg-white/10 rounded-2xl blur-md group-hover:scale-110 transition-transform duration-300" />
+                      <img 
+                        src={`/mascot/${rawArchetype.nickname.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_')}.png`} 
+                        alt={rawArchetype.nickname} 
+                        className="w-20 h-20 sm:w-24 sm:h-24 object-contain relative z-10 drop-shadow-lg transform group-hover:scale-105 transition-transform duration-300 pointer-events-none select-none"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <p className="text-xs sm:text-sm font-semibold text-white/95 leading-relaxed italic">
