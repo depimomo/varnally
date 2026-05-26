@@ -203,8 +203,7 @@ export async function analyzeMakeupSwatches(
   mimeType: string,
   season: 'Winter' | 'Spring' | 'Summer' | 'Autumn',
   subType: string,
-  category: 'Foundation' | 'Lip' | 'Eye' | 'Blush',
-  presetsText: string
+  fullSeasonPresets: any
 ) {
   const base64Data = btoa(
     new Uint8Array(imageBuffer).reduce(
@@ -214,27 +213,36 @@ export async function analyzeMakeupSwatches(
   );
 
   const prompt = `
-You are an expert personal color analyst and makeup matching system.
+You are an expert personal color analyst and smart makeup matching system.
 The user has a personal color season of: **${subType} ${season}**.
-Here is a description of makeup colors recommended for their season in this category (**${category}**):
-${presetsText}
 
-The user has uploaded an image of cosmetics, swatches, or shade variants. Your task is to analyze the image and find which swatches/options (if any) are suitable matches for the user's personal color season.
+Here is the complete seasonal makeup recommendations data for this profile:
+${JSON.stringify(fullSeasonPresets, null, 2)}
 
-CRITICAL DIRECTIVES:
-1. Examine the image carefully. Identify names, shade codes, or labeled brand swatches (e.g., "Shade 01 Pink", "Nude Amber Co", "Fair 110", or numbered icons).
-2. Evaluate these options against their personal color profile:
+Your tasks:
+1. Carefully examine the uploaded image and AUTO-DETECT the makeup/cosmetic category. It should be classified as one of these:
+   - "Foundation" (if it is a liquid foundation, concealer, skin tint, powder swatch, or base product)
+   - "Lip" (if it is lipstick, lip gloss, lip tint, lip liner, or lip swatches on skin/lips)
+   - "Eye" (if it is eyeshadow, brow product, eyeliner, or eye palette swatches)
+   - "Blush" (if it is blush, highlighters, bronzer, or cheek pigment swatches)
+
+2. Identify any visible shade names, brand codes, or numbered swatch labels in the image.
+
+3. Compare these swatches/shades against their seasonal profile guidelines in the AUTO-DETECTED category.
    - Winter matches deep/cool, high saturation, clear contrast tones.
    - Summer matches cool/muted, pastel, dusty pink/mauve tones.
    - Spring matches bright/warm, yellow-gold, coral, peach peach tones.
    - Autumn matches warm, muted tones, earth pigments, terracotta, or golden bronze tones.
-3. If NONE of the shades suit the user (e.g., all swatches are too warm for a Winter profile, or too cool for an Autumn profile), set "matchFound" to false, explain why in the "explanation", and return empty array for "matches".
-4. If there are suitable options, select between 1 and 3 matching shades (never select shades that contrast with their seasonal profile, even if they look pretty!). Provide specific, human-friendly reasons why they complement this color profile's undertone, skin type, and overall visual balance.
-5. For each match, supply an estimated "hexColor" (e.g., "#FFB7B2" or similar) representing this color swatch in the image, so we can render a visual swatch selector/indicator in our interface.
-6. Set "explanation" to summarize the matching assessment.
+
+4. If NONE of the shades suit the user's season (e.g. too warm, too muddy, or too contrasting), set "matchFound" to false, explain why in "explanation", and return empty array for "matches".
+5. If there are suitable options, choose between 1 and 3 matching shades that harmonize beautifuly.
+   - For each match, estimate a "hexColor" representing this shade in the image.
+   - Calculate a "matchScore" from 0 to 100 based on exact season alignment.
+6. Provide a consolidated "explanation" summarizing the assessment.
 
 Output MUST be a valid JSON object matching this schema exactly. Do not output anything other than JSON:
 {
+  "detectedCategory": "Foundation" | "Lip" | "Eye" | "Blush",
   "matchFound": boolean,
   "explanation": string,
   "matches": [
@@ -269,6 +277,7 @@ Output MUST be a valid JSON object matching this schema exactly. Do not output a
       responseSchema: {
         type: Type.OBJECT,
         properties: {
+          detectedCategory: { type: Type.STRING, description: "The detected makeup category: Foundation, Lip, Eye, or Blush" },
           matchFound: { type: Type.BOOLEAN, description: "Whether any suitable shades were found matching the user color season" },
           explanation: { type: Type.STRING, description: "Summarize findings: no match found, or how the matching swatches compare to their color profile" },
           matches: {
@@ -285,7 +294,7 @@ Output MUST be a valid JSON object matching this schema exactly. Do not output a
             }
           }
         },
-        required: ["matchFound", "explanation", "matches"]
+        required: ["detectedCategory", "matchFound", "explanation", "matches"]
       }
     }
   });

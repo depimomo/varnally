@@ -36,6 +36,7 @@ interface MatchResult {
 }
 
 interface SwatchAnalysisResponse {
+  detectedCategory: CategoryType;
   matchFound: boolean;
   explanation: string;
   matches: MatchResult[];
@@ -46,7 +47,6 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
   const isIndo = language === 'id';
 
   // State Management
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('Lip');
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -65,28 +65,23 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
     title: { en: 'Glow Me Up', id: 'Glow Me Up' },
     backBtn: { en: 'Back to Hub', id: 'Kembali ke Hub' },
     subtitle: { 
-      en: 'Find the absolute perfect cosmetics. Upload any product swatches, and our AI will pair them accurately with your personal season.', 
-      id: 'Temukan kosmetik yang benar-benar sempurna. Unggah swatch produk apa pun, dan AI kami akan mencocokkannya dengan presisi sesuai musim personal Anda.' 
+      en: 'Find the absolute perfect cosmetics. Upload any product swatches (lip, foundation, eye, or blush), and our AI will auto-detect the product and match it against your seasonal palette.', 
+      id: 'Temukan kosmetik yang benar-benar sempurna. Unggah foto swatch kosmetik apa pun (lipstik, foundation, eyeshadow, atau blush), dan AI kami akan mendeteksi jenis produk serta mencocokkannya dengan musim personal Anda secara instan.' 
     },
     personalProfile: { en: 'My Active Color Profile', id: 'Profil Warna Aktif Saya' },
     idealFinish: { en: 'Ideal Finish', id: 'Hasil Akhir Ideal' },
-    selectCategory: { en: '1. Select Makeup Category', id: '1. Pilih Kategori Riasan' },
-    categoryDesc: { 
-      en: 'Choose what type of product you are matching today to provide context for our AI stylist.', 
-      id: 'Pilih jenis produk yang ingin dicocokkan hari ini untuk memberikan konteks bagi penata gaya AI kami.' 
-    },
-    uploadTitle: { en: '2. Upload Swatch Photos', id: '2. Unggah Foto Swatch' },
+    uploadTitle: { en: 'Upload Swatch Photos', id: 'Unggah Foto Swatch' },
     dragActiveText: { en: 'Drop your image here...', id: 'Lepaskan gambar Anda di sini...' },
     dragInactiveText: { 
-      en: 'Drag & drop your swatch photo here, or click to browse', 
+      en: 'Drag & drop a swatch photo here, or click to browse', 
       id: 'Seret & letakkan foto swatch Anda di sini, atau klik untuk memilih file' 
     },
     instructions: { 
-      en: 'Please ensure the photo clearly shows the available swatch colors and their names/codes.', 
-      id: 'Pastikan foto menampilkan warna swatch dan nama/kode shade dengan jelas.' 
+      en: 'You can upload photos of lipsticks, foundations, eyeshadows, or blush swatches. Ensure shade names or colors are clearly visible.', 
+      id: 'Anda dapat mengunggah foto swatch lipstik, foundation, eyeshadow, atau blush. Pastikan warna swatch dan teks shade terlihat jelas.' 
     },
     analyzeBtn: { en: 'Analyze Swatches', id: 'Analisis Swatch' },
-    analyzingText: { en: 'Matching shades against your season...', id: 'Mencocokkan shade dengan musim Anda...' },
+    analyzingText: { en: 'Processing...', id: 'Memproses...' },
     noMatchTitle: { en: 'No Match Found', id: 'Tidak Ada Cocok' },
     noMatchDesc: { 
       en: 'None of these shades are recommended for your color season. Sticking to your recommended palette will prevent feeling washed out.', 
@@ -107,24 +102,17 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
     return dict[key][isIndo ? 'id' : 'en'];
   };
 
-  const categories: { id: CategoryType; label: string; icon: React.ReactNode }[] = [
-    { id: 'Foundation', label: isIndo ? 'Base / Foundation' : 'Foundation', icon: <Sparkles size={16} /> },
-    { id: 'Lip', label: 'Lip', icon: <Heart size={16} /> },
-    { id: 'Eye', label: isIndo ? 'Eye / Mata' : 'Eyeshadow', icon: <Eye size={16} /> },
-    { id: 'Blush', label: isIndo ? 'Blush / Cheek' : 'Blush', icon: <Palette size={16} /> },
-  ];
-
   // Random loading phrases to keep users engaged
   const loadingSentences = isIndo ? [
-    "Menganalisis...",
-    "Mencocokkan...",
-    "Memeriksa kulit...",
-    "Menghitung skor..."
+    "Menganalisis kemurnian swatch...",
+    "Mencocokkan undertone kulit...",
+    "Memeriksa keselarasan palet warna...",
+    "Menghitung skor kecocokan..."
   ] : [
-    "Analyzing...",
-    "Matching...",
-    "Checking profile...",
-    "Calculating..."
+    "Analyzing swatches...",
+    "Matching skin undertones...",
+    "Checking season alignment...",
+    "Calculating compatibility scores..."
   ];
 
   useEffect(() => {
@@ -201,25 +189,12 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
       const arrayBuffer = await selectedFile.arrayBuffer();
       const mimeType = selectedFile.type;
 
-      // Extract specific recommendation guidelines to anchor the AI
-      let guideText = "";
-      if (selectedCategory === 'Foundation') {
-        guideText = `Ideal foundation finish is: ${preset.finish}. Foundation recommendations: ${preset.foundationDescription}. Typical flattering swatches: ${preset.foundationSwatches.map((s: any) => `${s.name} (${s.hex})`).join(', ')}`;
-      } else if (selectedCategory === 'Lip') {
-        guideText = `Flattering lip colors usually include: ${preset.lipColors.map((s: any) => `${s.name} (${s.hex})`).join(', ')}`;
-      } else if (selectedCategory === 'Eye') {
-        guideText = `Flattering eyeshadow palettes usually include: ${preset.eyeshadows.map((s: any) => `${s.name} (${s.hex})`).join(', ')}`;
-      } else if (selectedCategory === 'Blush') {
-        guideText = `Flattering blushes usually include: ${preset.blushes.map((s: any) => `${s.name} (${s.hex})`).join(', ')}`;
-      }
-
       const response = await analyzeMakeupSwatches(
         arrayBuffer,
         mimeType,
         pinnedProfile.season,
         pinnedProfile.subType,
-        selectedCategory,
-        guideText
+        preset
       );
 
       setResult(response);
@@ -229,15 +204,6 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
     } finally {
       setAnalyzing(false);
     }
-  };
-
-  // Helper arrays for simple recommended colors display
-  const getSubSwatches = () => {
-    if (selectedCategory === 'Foundation') return preset.foundationSwatches || [];
-    if (selectedCategory === 'Lip') return preset.lipColors || [];
-    if (selectedCategory === 'Eye') return preset.eyeshadows || [];
-    if (selectedCategory === 'Blush') return preset.blushes || [];
-    return [];
   };
 
   return (
@@ -257,11 +223,6 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
           <ArrowLeft size={14} />
           {tLocal('backBtn')}
         </button>
-
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 rounded-full border border-amber-500/20 text-[10px] font-black uppercase tracking-widest text-amber-600 font-mono">
-          <Sparkles size={12} className="animate-pulse" />
-          {isIndo ? 'PENCARI MAKEUP AI' : 'AI MAKEUP SHADE SELECTOR'}
-        </div>
       </div>
 
       {/* Hero Intro */}
@@ -358,46 +319,9 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
         {/* Left Side: Configuration Controls */}
         <div className="md:col-span-12 lg:col-span-6 space-y-6">
           
-          {/* STEP 1: Interactive Category Selection */}
-          <div className="bg-white p-6 rounded-[2rem] border border-neutral-200/50 shadow-sm space-y-4">
-            <div className="space-y-1">
-              <h3 className="text-sm font-black text-neutral-800 uppercase tracking-wider font-mono flex items-center gap-2">
-                <span className="w-5 h-5 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px]">
-                  1
-                </span>
-                {tLocal('selectCategory')}
-              </h3>
-              <p className="text-xs text-neutral-400 font-medium">
-                {tLocal('categoryDesc')}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2.5">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => { setSelectedCategory(cat.id); setResult(null); }}
-                  className={`flex items-center gap-2.5 p-3 px-4 border rounded-2xl font-bold text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                    selectedCategory === cat.id
-                      ? 'bg-neutral-900 border-neutral-900 text-white shadow-md shadow-neutral-900/10 scale-[1.01]'
-                      : 'bg-white hover:bg-neutral-50 border-neutral-200 text-neutral-600'
-                  }`}
-                >
-                  <span className={selectedCategory === cat.id ? 'text-amber-400 animate-pulse' : 'text-neutral-400'}>
-                    {cat.icon}
-                  </span>
-                  <span>{cat.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* STEP 2: Drag and Drop Upload Area */}
+          {/* STEP 1: Drag and Drop Upload Area */}
           <div className="bg-white p-6 rounded-[2rem] border border-neutral-200/50 shadow-sm space-y-4">
             <h3 className="text-sm font-black text-neutral-800 uppercase tracking-wider font-mono flex items-center gap-2">
-              <span className="w-5 h-5 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px]">
-                2
-              </span>
               {tLocal('uploadTitle')}
             </h3>
 
@@ -552,9 +476,16 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
                       </div>
                     )}
                     <div>
-                      <h3 className="text-base font-display font-black uppercase tracking-wide text-neutral-950">
-                        {result.matchFound ? tLocal('matchSuccessTitle') : tLocal('noMatchTitle')}
-                      </h3>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-sm sm:text-base font-display font-black uppercase tracking-wide text-neutral-950">
+                          {result.matchFound ? tLocal('matchSuccessTitle') : tLocal('noMatchTitle')}
+                        </h3>
+                        {result.detectedCategory && (
+                          <span className="text-[9px] bg-neutral-900 text-white font-mono uppercase font-black px-2.5 py-0.5 rounded-full select-none">
+                            {result.detectedCategory}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] text-neutral-500 font-semibold mt-0.5">
                         {result.matchFound ? tLocal('matchSuccessDesc') : tLocal('noMatchDesc')}
                       </p>
