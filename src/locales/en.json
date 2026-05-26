@@ -9,6 +9,12 @@
   "saved": "Saved! 💖",
   "savingLocal": "Saved to local history! Sign in with Google to backup cloud-wide.",
   "saveCloud": "Save my Varna",
+  "setAsMyProfile": "Set as My Profile",
+  "myActiveProfile": "Active Profile",
+  "profileSavedAsDefault": "Successfully set as your active profile!",
+  "pinnedBadge": "My Profile",
+  "pinButtonTooltip": "Pin / set as my active profile",
+  "hubLockedWarning": "Please complete a scan and select/set a Varna as your active profile to unlock Varnally Hub!",
 
   "heroTagline": "Discover Your True Colors & Frame Perfect Glasses",
   "heroSparkSubtitle": "AI-Powered Personal Color & Face Shape Diagnostics",

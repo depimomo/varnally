@@ -16,7 +16,8 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
-  serverTimestamp
+  serverTimestamp,
+  updateDoc
 } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from './lib/firebase';
 import { analyzeColor } from './services/gemini';
@@ -30,6 +31,7 @@ import { Toast, ToastType } from './components/Toast';
 import { useLanguage } from './lib/LanguageContext';
 import { Github, Linkedin } from 'lucide-react';
 import { WelcomeOverlay } from './components/WelcomeOverlay';
+import { VarnallyHub } from './components/VarnallyHub';
 
 export default function App() {
   const { language, t } = useLanguage();
@@ -45,6 +47,7 @@ export default function App() {
   const [history, setHistory] = useState<Analysis[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
+  const [showHub, setShowHub] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -102,6 +105,16 @@ export default function App() {
 
     return () => unsubscribe();
   }, [user]);
+
+  // Sync details view result if its pin status changes in the background history change
+  useEffect(() => {
+    if (result && result.id) {
+      const latestItem = history.find(item => item.id === result.id);
+      if (latestItem && latestItem.isPinnedProfile !== result.isPinnedProfile) {
+        setResult(latestItem);
+      }
+    }
+  }, [history, result]);
 
   const handleLogin = async () => {
     const provider = new GoogleAuthProvider();
@@ -235,7 +248,7 @@ export default function App() {
     }
   };
 
-  const saveToHistory = async () => {
+  const saveToHistory = async (shouldPin = false) => {
     if (!result) return;
     
     setLoading(true);
@@ -249,6 +262,16 @@ export default function App() {
         const trimmedAvoidColors = (result.avoidColors || []).slice(0, 5);
         while (trimmedAvoidColors.length < 5) {
           trimmedAvoidColors.push({ hex: "#000000", name: "Black" });
+        }
+
+        // If pinning this, set all previous to false first
+        if (shouldPin) {
+          const resetPromises = history.map(async (item) => {
+            if (item.id && item.isPinnedProfile) {
+              await updateDoc(doc(db, 'analyses', item.id), { isPinnedProfile: false });
+            }
+          });
+          await Promise.all(resetPromises);
         }
 
         const validResult = {
@@ -267,6 +290,7 @@ export default function App() {
           imageUrl: result.imageUrl || null,
           cleanedImageUrl: result.cleanedImageUrl || null,
           createdAt: serverTimestamp(),
+          isPinnedProfile: shouldPin,
         };
 
         let docRef;
@@ -277,7 +301,8 @@ export default function App() {
         }
         
         if (docRef) {
-          setResult({ ...result, id: docRef.id });
+          const savedResult = { ...result, id: docRef.id, isPinnedProfile: shouldPin };
+          setResult(savedResult);
           setToast({ message: t.varnaSavedCloud, type: "success" });
         }
       } else {
@@ -296,14 +321,24 @@ export default function App() {
         }
 
         const localId = result.id || `local_${Date.now()}`;
+        
+        let processedHistory = currentLocalHistory;
+        if (shouldPin) {
+          processedHistory = currentLocalHistory.map((item) => ({
+            ...item,
+            isPinnedProfile: false
+          }));
+        }
+
         const newLocalItem: Analysis = {
           ...result,
           id: localId,
           userId: 'anonymous',
           createdAt: new Date().toISOString(),
+          isPinnedProfile: shouldPin,
         };
 
-        const updatedHistory = [newLocalItem, ...currentLocalHistory];
+        const updatedHistory = [newLocalItem, ...processedHistory];
         localStorage.setItem('varnally_history', JSON.stringify(updatedHistory));
         setHistory(updatedHistory);
         setResult(newLocalItem);
@@ -314,6 +349,58 @@ export default function App() {
       setToast({ message: t.failedToSaveCloud, type: "error" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const pinProfile = async (id: string) => {
+    try {
+      const targetItem = history.find(item => item.id === id);
+      const isCurrentlyPinned = targetItem?.isPinnedProfile === true;
+
+      if (user) {
+        // Clear all other pinned instances
+        const updatePromises = history.map(async (item) => {
+          if (item.id && item.id !== id && item.isPinnedProfile) {
+            await updateDoc(doc(db, 'analyses', item.id), { isPinnedProfile: false });
+          }
+        });
+        await Promise.all(updatePromises);
+        
+        // Toggle pin state
+        const nextPinnedState = !isCurrentlyPinned;
+        await updateDoc(doc(db, 'analyses', id), { isPinnedProfile: nextPinnedState });
+        
+        if (result && result.id === id) {
+          setResult(prev => prev ? { ...prev, isPinnedProfile: nextPinnedState } : null);
+        }
+
+        if (nextPinnedState) {
+          setToast({ message: t.profileSavedAsDefault, type: "success" });
+        } else {
+          setToast({ message: language === 'id' ? "Profil dikosongkan!" : "Profile cleared!", type: "success" });
+        }
+      } else {
+        const nextPinnedState = !isCurrentlyPinned;
+        const updatedHistory = history.map((item) => ({
+          ...item,
+          isPinnedProfile: item.id === id ? nextPinnedState : false
+        }));
+        localStorage.setItem('varnally_history', JSON.stringify(updatedHistory));
+        setHistory(updatedHistory);
+        
+        if (result && result.id === id) {
+          setResult(prev => prev ? { ...prev, isPinnedProfile: nextPinnedState } : null);
+        }
+
+        if (nextPinnedState) {
+          setToast({ message: t.profileSavedAsDefault, type: "success" });
+        } else {
+          setToast({ message: language === 'id' ? "Profil dikosongkan!" : "Profile cleared!", type: "success" });
+        }
+      }
+    } catch (error) {
+      console.error("Pin profile failed", error);
+      setToast({ message: "Failed to update profile pin.", type: "error" });
     }
   };
 
@@ -358,30 +445,73 @@ export default function App() {
     setShowWelcomeModal(false);
   };
 
+  const sortedHistory = [...history].sort((a, b) => {
+    const aPin = a.isPinnedProfile ? 1 : 0;
+    const bPin = b.isPinnedProfile ? 1 : 0;
+    return bPin - aPin;
+  });
+
+  const pinnedProfile = history.find(item => item.isPinnedProfile);
+
   return (
     <div className="min-h-screen bg-white sm:bg-neutral-50 font-sans selection:bg-brand-primary/20 flex flex-col">
       <Header 
         user={user}
         historyLength={history.length}
         showHistory={showHistory}
-        onLogoClick={() => { setResult(null); setShowHistory(false); setShowUploader(false); }}
-        onHistoryToggle={() => setShowHistory(!showHistory)}
+        onLogoClick={() => { setResult(null); setShowHistory(false); setShowUploader(false); setShowHub(false); }}
+        onHistoryToggle={() => { setShowHistory(!showHistory); setShowHub(false); }}
         onLogin={handleLogin}
         onLogout={handleLogout}
+        pinnedProfile={pinnedProfile}
+        onPinnedProfileClick={(profile) => {
+          setResult(profile);
+          setShowHistory(false);
+          setShowUploader(false);
+          setShowWelcomeModal(false);
+          setShowHub(false);
+        }}
+        showHub={showHub}
+        onHubClick={() => {
+          if (!pinnedProfile) {
+            setToast({
+              message: t.hubLockedWarning || "Please complete a scan and select/set a Varna as your active profile to unlock Varnally Hub!",
+              type: "info"
+            });
+            return;
+          }
+          setShowHub(true);
+          setShowHistory(false);
+          setResult(null);
+          setShowUploader(false);
+        }}
       />
 
       <main className={`pt-24 pb-12 w-full flex-1 ${
-        showHistory || result || showUploader 
+        showHistory || result || showUploader || showHub
           ? "px-3 sm:px-6 md:px-8 max-w-full md:max-w-[85%] lg:max-w-7xl mx-auto" 
           : ""
       }`}>
         <AnimatePresence mode="wait">
-          {showHistory ? (
+          {showHub ? (
+            <VarnallyHub 
+              onBack={() => setShowHub(false)}
+              onSelectFeature={(featureId) => {
+                setToast({
+                  message: language === 'id' 
+                    ? `Fitur '${featureId === 'glow_me_up' ? 'Glow Me Up' : 'Stylize Me'}' segera hadir di update berikutnya!` 
+                    : `Feature '${featureId === 'glow_me_up' ? 'Glow Me Up' : 'Stylize Me'}' is coming soon in the next update!`,
+                  type: "success"
+                });
+              }}
+            />
+          ) : showHistory ? (
             <HistoryList 
-              history={history}
+              history={sortedHistory}
               onBack={() => setShowHistory(false)}
               onDelete={deleteAnalysis}
               onView={(item) => { setResult(item); setShowHistory(false); }}
+              onPin={pinProfile}
             />
           ) : result ? (
             <AnalysisResult 
@@ -391,6 +521,7 @@ export default function App() {
               previewUrl={previewUrl}
               onBack={() => setResult(null)}
               onSave={saveToHistory}
+              onPin={pinProfile}
               getFaceShapeImage={getFaceShapeImage}
             />
           ) : showUploader ? (

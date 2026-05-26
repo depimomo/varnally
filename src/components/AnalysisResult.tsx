@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, Share2 } from 'lucide-react';
+import { Sparkles, Share2, Star } from 'lucide-react';
 import { Analysis } from '../types';
 import archetypes from '../data/archetypes.json';
 import { ColorDrape } from './ColorDrape';
@@ -19,7 +19,8 @@ interface AnalysisResultProps {
   loading: boolean;
   previewUrl: string | null;
   onBack: () => void;
-  onSave: () => void;
+  onSave: (shouldPin?: boolean) => void;
+  onPin: (id: string) => void;
   getFaceShapeImage: (shape: string) => string;
 }
 
@@ -30,6 +31,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
   previewUrl,
   onBack,
   onSave,
+  onPin,
   getFaceShapeImage
 }) => {
   const { language, t } = useLanguage();
@@ -72,7 +74,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
         shadowColor: 'shadow-orange-400/20',
         cardBg: 'bg-white/80 backdrop-blur-xl bg-gradient-to-tr from-white via-white/95 to-[#FFF8E1]/30',
         cardBorder: 'sm:border-[#FFE0B2]/60',
-        badgeStyle: 'bg-amber-150 text-amber-800 border-amber-200/50',
+        badgeStyle: 'bg-amber-100 text-amber-800 border-amber-200/50',
         textAccent: 'text-amber-600',
         titleTagColor: 'text-amber-600 bg-amber-50 border-amber-200',
         glowOrbs: [
@@ -90,7 +92,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
         shadowColor: 'shadow-sky-500/20',
         cardBg: 'bg-white/80 backdrop-blur-xl bg-gradient-to-tr from-white via-white/95 to-[#E1F5FE]/35',
         cardBorder: 'sm:border-[#B3E5FC]/60',
-        badgeStyle: 'bg-sky-105 text-sky-800 border-sky-200/50',
+        badgeStyle: 'bg-sky-100 text-sky-800 border-sky-200/50',
         textAccent: 'text-sky-600',
         titleTagColor: 'text-sky-600 bg-sky-50 border-sky-100',
         glowOrbs: [
@@ -108,7 +110,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
         shadowColor: 'shadow-orange-700/20',
         cardBg: 'bg-white/80 backdrop-blur-xl bg-gradient-to-tr from-white via-white/95 to-[#EFEBE9]/45',
         cardBorder: 'sm:border-[#D7CCC8]/60',
-        badgeStyle: 'bg-orange-105 text-orange-800 border-orange-200/50',
+        badgeStyle: 'bg-orange-100 text-orange-800 border-orange-200/50',
         textAccent: 'text-orange-600',
         titleTagColor: 'text-orange-700 bg-orange-50 border-orange-200',
         glowOrbs: [
@@ -127,7 +129,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
         shadowColor: 'shadow-indigo-950/20',
         cardBg: 'bg-white/80 backdrop-blur-xl bg-gradient-to-tr from-white via-white/95 to-[#E8EAF6]/35',
         cardBorder: 'sm:border-[#C5CAE9]/60',
-        badgeStyle: 'bg-indigo-105 text-indigo-800 border-indigo-200/50',
+        badgeStyle: 'bg-indigo-100 text-indigo-800 border-indigo-200/50',
         textAccent: 'text-indigo-600',
         titleTagColor: 'text-indigo-600 bg-indigo-50 border-indigo-200',
         glowOrbs: [
@@ -285,13 +287,67 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
                   <span className="px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider">
                     {localizedSubType}
                   </span>
-                  <span className={`px-2.5 py-1 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider ${result.jewelry === 'Gold' ? 'bg-amber-450/40 text-amber-50' : 'bg-slate-300/40 text-slate-50'}`}>
+                  <span className={`px-2.5 py-1 backdrop-blur-md rounded-lg text-[10px] font-bold uppercase tracking-wider ${result.jewelry === 'Gold' ? 'bg-amber-500/40 text-amber-50' : 'bg-slate-300/40 text-slate-50'}`}>
                     {localizedJewerly}
                   </span>
                 </div>
               </div>
             </motion.div>
           )}
+
+          {/* Active Profile Pinning Action Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`p-6 rounded-[2rem] border ${
+              result.isPinnedProfile
+                ? 'bg-amber-50/50 border-amber-300 shadow-md shadow-amber-100'
+                : `bg-transparent sm:${theme.cardBg} sm:border ${theme.cardBorder} hover:border-amber-200 transition-colors`
+            } flex items-center justify-between gap-4`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`p-3 rounded-2xl shrink-0 ${
+                result.isPinnedProfile 
+                  ? 'bg-amber-100 text-amber-600 font-bold' 
+                  : 'bg-gray-100 text-gray-400'
+              }`}>
+                <Star size={18} className={result.isPinnedProfile ? "fill-amber-400 text-amber-500 animate-pulse" : ""} />
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <h4 className="text-xs font-display font-black text-gray-900 uppercase tracking-wide">
+                  {result.isPinnedProfile ? t.pinnedBadge : t.setAsMyProfile}
+                </h4>
+                <p className="text-[10px] text-gray-500 font-semibold leading-normal">
+                  {result.isPinnedProfile 
+                    ? (language === 'id' ? "Dipakai sebagai acuan utama" : "Main active template profile") 
+                    : (language === 'id' ? "Jadikan Varna ini profil utama" : "Set as your main active profile")}
+                </p>
+              </div>
+            </div>
+
+            {result.id ? (
+              <button
+                type="button"
+                onClick={() => onPin(result.id!)}
+                className={`px-3 py-1.5 rounded-full font-black text-[10px] tracking-wider uppercase transition-all shrink-0 cursor-pointer ${
+                  result.isPinnedProfile
+                    ? 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-100 hover:border-rose-200 active:scale-95'
+                    : 'bg-amber-500 hover:bg-amber-600 text-white shadow-md shadow-amber-500/10 active:scale-95'
+                }`}
+              >
+                {result.isPinnedProfile ? (language === 'id' ? "Batal" : "Unpin") : (language === 'id' ? "Pilih" : "Select")}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => onSave(true)}
+                disabled={loading}
+                className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-full font-black text-[10px] tracking-wider uppercase shadow-md shadow-orange-500/10 active:scale-95 transition-all shrink-0 cursor-pointer"
+              >
+                {(language === 'id' ? "Pilih" : "Set Profile")}
+              </button>
+            )}
+          </motion.div>
 
           <ObservationCard
             skinUndertone={result.skinUndertone}

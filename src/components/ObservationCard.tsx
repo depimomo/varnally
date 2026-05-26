@@ -57,7 +57,7 @@ export const ObservationCard: React.FC<ObservationCardProps> = ({ skinUndertone,
           </div>
         </div>
         <div className="flex items-start gap-3">
-          <div className="w-2 h-2 rounded-full bg-amber-805 mt-2" />
+          <div className="w-2 h-2 rounded-full bg-amber-800 mt-2" />
           <div>
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest font-mono">
               {t.hairColor}

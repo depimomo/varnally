@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Trash2, AlertTriangle, X } from 'lucide-react';
+import { ChevronLeft, Trash2, AlertTriangle, X, Star } from 'lucide-react';
 import { Analysis } from '../types';
 import archetypes from '../data/archetypes.json';
 import { useLanguage } from '../lib/LanguageContext';
@@ -11,13 +11,15 @@ interface HistoryListProps {
   onBack: () => void;
   onDelete: (id: string) => void;
   onView: (item: Analysis) => void;
+  onPin: (id: string) => void;
 }
 
 export const HistoryList: React.FC<HistoryListProps> = ({
   history,
   onBack,
   onDelete,
-  onView
+  onView,
+  onPin
 }) => {
   const { language, t } = useLanguage();
   const [deleteItemId, setDeleteItemId] = React.useState<string | null>(null);
@@ -52,7 +54,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in flex-wrap">
           {history.map((item) => {
             // Localize archetypes name if user chosen indonesian language
             const rawArchetype = (archetypes.color_archetypes as any)[item.season]?.[`${item.subType} ${item.season}`];
@@ -62,8 +64,13 @@ export const HistoryList: React.FC<HistoryListProps> = ({
               <motion.div 
                 key={item.id}
                 layoutId={item.id}
-                className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm hover:shadow-md transition-all group relative"
+                className={`p-6 rounded-3xl transition-all group relative ${
+                  item.isPinnedProfile 
+                    ? 'border-2 border-amber-300 shadow-md shadow-amber-100 bg-gradient-to-tr from-white via-white to-amber-50/20' 
+                    : 'bg-white border border-black/5 shadow-sm hover:shadow-md'
+                }`}
               >
+                {/* Delete button */}
                 <button 
                   type="button"
                   onClick={(e) => { 
@@ -76,13 +83,38 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 >
                   <Trash2 size={14} />
                 </button>
+
+                {/* Star Pin profile button */}
+                <button 
+                  type="button"
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    if (item.id) onPin(item.id); 
+                  }}
+                  className={`absolute top-2 right-12 p-2.5 transition-all z-35 shadow-sm rounded-full border cursor-pointer ${
+                    item.isPinnedProfile 
+                      ? 'bg-amber-50 text-amber-500 border-amber-200 hover:bg-amber-100' 
+                      : 'bg-white text-gray-400 hover:text-amber-500 hover:bg-amber-50/50 border-gray-100'
+                  }`}
+                  aria-label={t.pinButtonTooltip || "Pin as active profile"}
+                  title={t.pinButtonTooltip || "Pin as active profile"}
+                >
+                  <Star size={14} className={item.isPinnedProfile ? "fill-amber-400 text-amber-500" : ""} />
+                </button>
+
                 <div className="flex items-center gap-4 mb-4">
                   {item.imageUrl && (
                     <div className="w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-black/5 shrink-0">
                       <img src={item.imageUrl} alt="Thumbnail" className="w-full h-full object-cover" />
                     </div>
                   )}
-                  <div className="min-w-0 pr-6">
+                  <div className="min-w-0 pr-16">
+                    {item.isPinnedProfile && (
+                      <span className="inline-flex items-center gap-1 mb-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200 font-mono animate-pulse">
+                        <Star size={10} className="fill-amber-500 text-amber-600" />
+                        {t.pinnedBadge || "My Profile"}
+                      </span>
+                    )}
                     <p className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] mb-0.5">
                       {getFormattedVarnaTitle(item.name, language)}
                     </p>

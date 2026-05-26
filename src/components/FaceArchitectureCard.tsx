@@ -18,12 +18,12 @@ const getLocalizedFaceShape = (faceShape: string, originalDesc: string, lang: st
   }
 
   const shapeMap: Record<string, string> = {
-    'Oval': 'Oval (Bulat Telur)',
-    'Square': 'Square (Kotak)',
-    'Round': 'Round (Bulat)',
-    'Heart': 'Heart (Hati)',
-    'Diamond': 'Diamond (Berlian)',
-    'Oblong': 'Oblong (Lonjong)'
+    'Oval': 'Oval',
+    'Square': 'Kotak',
+    'Round': 'Bulat',
+    'Heart': 'Hati',
+    'Diamond': 'Berlian',
+    'Oblong': 'Lonjong'
   };
 
   const descMap: Record<string, string> = {

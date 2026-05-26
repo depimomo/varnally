@@ -20,4 +20,5 @@ export interface Analysis {
   imageUrl?: string;
   cleanedImageUrl?: string;
   createdAt: any;
+  isPinnedProfile?: boolean;
 }
