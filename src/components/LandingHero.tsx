@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { 
   Sparkles, 
   Palette, 
@@ -19,36 +19,7 @@ interface LandingHeroProps {
 }
 
 // Seasonal Archetypes, extracted static descriptors and default background color schemes config
-const SEASONS_DATA = landingSeasons.seasons_data;
 const DEFAULT_PALETTES = landingSeasons.default_palettes;
-
-// Helper to translate core physical seasons definitions dynamically using localizations keys
-const getLocalizedSeason = (season: any, t: any) => {
-  const translations: Record<string, { name: string; nature: string; description: string }> = {
-    'spring': {
-      name: t.seasonSpringName || 'Spring',
-      nature: t.seasonSpringNature || 'Warm & Bright',
-      description: t.seasonSpringDesc || 'Fresh colors capturing the first morning sun light, crisp buttercup yellow, and warm peach tints.'
-    },
-    'summer': {
-      name: t.seasonSummerName || 'Summer',
-      nature: t.seasonSummerNature || 'Cool & Soft',
-      description: t.seasonSummerDesc || 'Gentle pastel shades refreshed by ocean waters, misty lavender mountains, and powdery rose garden blossoms.'
-    },
-    'autumn': {
-      name: t.seasonAutumnName || 'Autumn',
-      nature: t.seasonAutumnNature || 'Warm & Muted',
-      description: t.seasonAutumnDesc || 'Earthy tones capturing spiced cinnamon, baked terracotta, roasted pecan nuts, and olive tree leaves.'
-    },
-    'winter': {
-      name: t.seasonWinterName || 'Winter',
-      nature: t.seasonWinterNature || 'Cool & Brilliant',
-      description: t.seasonWinterDesc || 'High-contrast vivid jewel tones like royal cobalt blue, deep royal crimson, and platinum glacier crystal.'
-    }
-  };
-  const localized = translations[season.id];
-  return localized ? { ...season, ...localized } : season;
-};
 
 const getBenefits = (t: any) => {
   return [
@@ -68,18 +39,6 @@ const getBenefits = (t: any) => {
       desc: t.benefit3Desc || "Our brand pays tribute to the term Varna (Sanskrit for color and light spectrum). We don't paint a generic cover on your beautiful facial base—we empower your native organic shades."
     }
   ];
-};
-
-const getLocalizedColorName = (name: string, t: any) => {
-  const map: Record<string, string> = {
-    'Young Mint': t.colorYoungMint || 'Young Mint',
-    'Golden Marigold': t.colorGoldenMarigold || 'Golden Marigold',
-    'Coral Poppy': t.colorCoralPoppy || 'Coral Poppy',
-    'Powder Breeze': t.colorPowderBreeze || 'Powder Breeze',
-    'Toasted Pecan': t.colorToastedPecan || 'Toasted Pecan',
-    'Spiced Clay': t.colorSpicedClay || 'Spiced Clay',
-  };
-  return map[name] || name;
 };
 
 // Extract seasonal color palettes from archetypes.json dynamically
