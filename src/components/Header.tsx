@@ -74,10 +74,13 @@ export const Header: React.FC<HeaderProps> = ({
     <>
       <header className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-black/5 z-40 px-4 md:px-8 flex items-center justify-between animate-fade-in select-none">
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => { onLogoClick(); setIsMenuOpen(false); }}>
-            <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center text-white shadow-lg">
-              <Sparkles size={18} />
-            </div>
+          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => { onLogoClick(); setIsMenuOpen(false); }}>
+            <img 
+              src="/icon.png" 
+              alt="Varnally Logo" 
+              className="w-8 h-8 object-cover rounded-lg shadow-md"
+              referrerPolicy="no-referrer"
+            />
             <span className="font-display font-bold text-xl tracking-tight">{t.logoName}</span>
           </div>
 
