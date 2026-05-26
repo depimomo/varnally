@@ -13,12 +13,15 @@ import {
   Info, 
   RefreshCw,
   Gauge,
-  HelpCircle
+  HelpCircle,
+  X,
+  ChevronRight,
+  EyeOff
 } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
 import { Analysis } from '../types';
 import makeupPresetsData from '../data/makeup_presets.json';
-import { analyzeMakeupSwatches } from '../services/gemini';
+import { analyzeMakeupSwatches, visualizeMakeup } from '../services/gemini';
 
 const MAKEUP_PRESETS = makeupPresetsData as Record<string, any>;
 
@@ -33,6 +36,7 @@ interface MatchResult {
   shadeName: string;
   reasoning: string;
   matchScore: number;
+  hexColor?: string;
 }
 
 interface SwatchAnalysisResponse {
@@ -54,6 +58,12 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SwatchAnalysisResponse | null>(null);
   const [loaderSentenceIndex, setLoaderSentenceIndex] = useState(0);
+
+  // Try-on Modal State Management
+  const [visualizingMatch, setVisualizingMatch] = useState<MatchResult | null>(null);
+  const [visualizedImageUrl, setVisualizedImageUrl] = useState<string | null>(null);
+  const [isVisualizing, setIsVisualizing] = useState(false);
+  const [visualizationError, setVisualizationError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -95,7 +105,22 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
     resetBtn: { en: 'Scan Another Photo', id: 'Pindai Foto Lain' },
     scores: { en: 'Match Score', id: 'Skor Kecocokan' },
     errorImage: { en: 'Please select or capture a valid image first.', id: 'Silakan pilih atau unggah foto yang valid terlebih dahulu.' },
-    errorMatch: { en: 'Analysis failed. Please ensure the image is clear and try again.', id: 'Analisis gagal. Pastikan gambar cukup jelas dan coba lagi.' }
+    errorMatch: { en: 'Analysis failed. Please ensure the image is clear and try again.', id: 'Analisis gagal. Pastikan gambar cukup jelas dan coba lagi.' },
+    tryOnBtn: { en: 'See it in action', id: 'Simulasi Try-On' },
+    tryOnTitle: { en: 'AI Makeup Try-On', id: 'Simulasi Riasan AI' },
+    tryOnSubtitle: { 
+      en: 'See this matching shade applied naturally onto your profile face photo.', 
+      id: 'Lihat bagaimana warna cantik ini diaplikasikan secara alami pada foto profil wajah Anda.' 
+    },
+    tryOnNoPhoto: { 
+      en: 'An active face photo is required. Please make sure you have scanned your color season with a face photo first!', 
+      id: 'Dibutuhkan foto wajah aktif. Pastikan Anda telah melakukan analisis musim warna dengan foto wajah terlebih dahulu!' 
+    },
+    tryOnGenerating: { en: 'Simulating makeup shade with AI...', id: 'Mensimulasikan warna riasan dengan AI...' },
+    beforeLabel: { en: 'Original Face', id: 'Wajah Asli' },
+    afterLabel: { en: 'Virtual Try-On', id: 'Simulasi Riasan' },
+    closeBtn: { en: 'Close View', id: 'Tutup Tampilan' },
+    tryOnError: { en: 'Failed to generate virtual try-on. Please try again.', id: 'Gagal mensimulasikan riasan. Silakan coba lagi.' }
   };
 
   const tLocal = (key: keyof typeof dict) => {
@@ -173,6 +198,40 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
     setPreviewUrl(null);
     setResult(null);
     setError(null);
+    setVisualizingMatch(null);
+    setVisualizedImageUrl(null);
+    setIsVisualizing(false);
+    setVisualizationError(null);
+  };
+
+  const handleTryOn = async (match: MatchResult) => {
+    const testImageUrl = pinnedProfile?.cleanedImageUrl || pinnedProfile?.imageUrl;
+    if (!testImageUrl) {
+      setVisualizationError(tLocal('tryOnNoPhoto'));
+      setVisualizingMatch(match);
+      setVisualizedImageUrl(null);
+      return;
+    }
+
+    setVisualizingMatch(match);
+    setIsVisualizing(true);
+    setVisualizedImageUrl(null);
+    setVisualizationError(null);
+
+    try {
+      const generatedUrl = await visualizeMakeup(
+        testImageUrl,
+        result?.detectedCategory || 'Lip',
+        match.shadeName,
+        match.hexColor || '#ff0000'
+      );
+      setVisualizedImageUrl(generatedUrl);
+    } catch (err: any) {
+      console.error(err);
+      setVisualizationError(tLocal('tryOnError'));
+    } finally {
+      setIsVisualizing(false);
+    }
   };
 
   const handleAnalyze = async () => {
@@ -549,6 +608,17 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
                         <p className="text-xs text-neutral-550 leading-relaxed font-semibold">
                           {match.reasoning}
                         </p>
+
+                        {/* Try-on Action Trigger */}
+                        <div className="mt-4 pt-3.5 border-t border-neutral-150/40 flex justify-end">
+                          <button
+                            onClick={() => handleTryOn(match)}
+                            className="inline-flex items-center gap-1.5 px-4.5 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-[10px] sm:text-[11px] font-black uppercase tracking-wider font-mono transition-all duration-200 hover:scale-[1.01] shadow-sm cursor-pointer select-none"
+                          >
+                            <Sparkles size={11} className="text-amber-400 animate-pulse" />
+                            <span>{tLocal('tryOnBtn')}</span>
+                          </button>
+                        </div>
                       </motion.div>
                     ))}
                   </div>
@@ -567,6 +637,165 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
         </div>
 
       </div>
+
+      {/* AI VIRTUAL MAKEUP TRY-ON REVOLUTIONARY DIALOG MODAL */}
+      <AnimatePresence>
+        {visualizingMatch && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-neutral-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white rounded-[2.5rem] border border-neutral-200/50 shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              {/* Modal Header */}
+              <div className="px-6 py-5 border-b border-neutral-100 flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={16} className="text-amber-500 animate-pulse" />
+                    <h3 className="text-base font-display font-black uppercase text-neutral-900 tracking-tight">
+                      {tLocal('tryOnTitle')}
+                    </h3>
+                  </div>
+                  <p className="text-[10px] text-neutral-400 font-semibold mt-0.5">
+                    {tLocal('tryOnSubtitle')}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setVisualizingMatch(null)}
+                  className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 hover:text-neutral-900 transition-colors cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Modal Body Scroll Container */}
+              <div className="p-6 overflow-y-auto flex-1 space-y-6">
+                {isVisualizing ? (
+                  /* Loading State */
+                  <div className="py-12 flex flex-col items-center justify-center space-y-4">
+                    <div className="relative w-20 h-20">
+                      {/* Concentric spinning loaders */}
+                      <div className="absolute inset-0 rounded-full border-4 border-neutral-100" />
+                      <div className="absolute inset-0 rounded-full border-4 border-amber-400 border-t-transparent animate-spin" />
+                      <div className="absolute inset-2 rounded-full border-4 border-neutral-100" />
+                      <div className="absolute inset-2 rounded-full border-4 border-neutral-900 border-b-transparent animate-spin [animation-duration:1.5s]" />
+                    </div>
+                    <div className="text-center space-y-1">
+                      <p className="text-xs font-bold text-neutral-800 animate-pulse">
+                        {tLocal('tryOnGenerating')}
+                      </p>
+                      <p className="text-[10px] text-neutral-400 font-mono font-medium">
+                        {visualizingMatch.shadeName} • {result?.detectedCategory}
+                      </p>
+                    </div>
+                  </div>
+                ) : visualizationError ? (
+                  /* Error State */
+                  <div className="p-5 bg-rose-50 border border-rose-100 rounded-3xl text-center space-y-4">
+                    <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 mx-auto">
+                      <EyeOff size={20} />
+                    </div>
+                    <div className="space-y-1.5 max-w-md mx-auto">
+                      <h4 className="text-xs font-black uppercase tracking-wider text-rose-800 font-mono">
+                        Simulation Error
+                      </h4>
+                      <p className="text-xs text-rose-600 font-semibold leading-relaxed">
+                        {visualizationError}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setVisualizingMatch(null)}
+                      className="px-5 py-2 bg-rose-950 text-white rounded-xl text-[10px] font-black uppercase tracking-wider font-mono hover:bg-rose-900 cursor-pointer select-none"
+                    >
+                      {tLocal('closeBtn')}
+                    </button>
+                  </div>
+                ) : visualizedImageUrl ? (
+                  /* Double image comparison */
+                  <div className="space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Left: Before */}
+                      <div className="space-y-2">
+                        <div className="text-[10px] uppercase font-black tracking-widest text-neutral-400 font-mono flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-neutral-300" />
+                          {tLocal('beforeLabel')}
+                        </div>
+                        <div className="aspect-[4/5] rounded-[2rem] overflow-hidden border border-neutral-200/50 bg-neutral-50 shadow-inner relative group">
+                          <img
+                            src={pinnedProfile.cleanedImageUrl || pinnedProfile.imageUrl}
+                            alt="Before"
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Right: After Try on */}
+                      <div className="space-y-2">
+                        <div className="text-[10px] uppercase font-black tracking-widest text-amber-500 font-mono flex items-center gap-1.5 animate-pulse">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                          {tLocal('afterLabel')}
+                        </div>
+                        <div className="aspect-[4/5] rounded-[2rem] overflow-hidden border border-amber-100 bg-amber-50 shadow-md relative group">
+                          <img
+                            src={visualizedImageUrl}
+                            alt="Makeup try-on simulation"
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Meta info block */}
+                    <div className="bg-neutral-50 p-4 rounded-3xl border border-neutral-100 flex flex-col sm:flex-row items-center gap-4">
+                      {visualizingMatch.hexColor && (
+                        <div 
+                          className="w-10 h-10 rounded-full border border-neutral-200 shadow-md flex-shrink-0 relative"
+                          style={{ backgroundColor: visualizingMatch.hexColor }}
+                        >
+                          <div className="absolute inset-0 rounded-full border border-white/30" />
+                        </div>
+                      )}
+                      <div className="min-w-0 text-center sm:text-left flex-1 space-y-0.5 animate-fade-in">
+                        <div className="flex flex-wrap justify-center sm:justify-start items-center gap-2">
+                          <h4 className="text-xs font-display font-black uppercase text-neutral-900">
+                            {visualizingMatch.shadeName}
+                          </h4>
+                          {result?.detectedCategory && (
+                            <span className="text-[8px] bg-neutral-900 text-white font-mono uppercase font-black px-1.5 py-0.5 rounded-md">
+                              {result.detectedCategory}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-neutral-500 font-semibold leading-relaxed">
+                          {visualizingMatch.reasoning}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-6 py-4.5 bg-neutral-50 border-t border-neutral-100 flex justify-end gap-2.5">
+                <button
+                  onClick={() => setVisualizingMatch(null)}
+                  className="px-6 py-3 bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 rounded-2xl text-xs uppercase font-black tracking-wider transition-colors font-mono cursor-pointer select-none"
+                >
+                  {tLocal('closeBtn')}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </motion.div>
   );

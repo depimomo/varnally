@@ -309,3 +309,72 @@ Output MUST be a valid JSON object matching this schema exactly. Do not output a
     throw new Error("Could not parse matching results. Please make sure the photo contains clear swatch colors.");
   }
 }
+
+export async function visualizeMakeup(
+  faceImageUrl: string,
+  category: string,
+  shadeName: string,
+  hexColor: string
+): Promise<string> {
+  // Obtain base64 encoded image and mime type
+  let base64Data = "";
+  let mimeType = "image/png";
+
+  if (faceImageUrl.startsWith("data:")) {
+    const parts = faceImageUrl.split(",");
+    mimeType = parts[0].split(":")[1].split(";")[0];
+    base64Data = parts[1];
+  } else {
+    // Fetch external URL if any
+    const response = await fetch(faceImageUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    mimeType = response.headers.get("content-type") || "image/png";
+    base64Data = btoa(
+      new Uint8Array(arrayBuffer).reduce(
+        (data, byte) => data + String.fromCharCode(byte),
+        ""
+      )
+    );
+  }
+
+  const promptText = `Analyze the person's face in the photo and apply the following makeup product naturally:
+Product Category: ${category}
+Product Shade Name: ${shadeName}
+Approximate Color Hex Code: ${hexColor}
+
+Instructions:
+1. Apply this makeup carefully, subtly, and beautifully onto the corresponding facial area (e.g. lips for Lip category, cheeks/blush area for Blush, eyelids/eyeshadow area for Eye, or a flattering matched skin tone foundation all over the face for Foundation).
+2. Ensure the facial features, expressions, eye gaze, hair/hijab, and background remain completely identical. Only overlay the makeup product smoothly to show how it looks "in action" on their skin.
+3. Keep the application flawless and professional like a high-end cosmetic advertisement try-on.
+4. Output ONLY the edited, regenerated face image.`;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash-image',
+    contents: [
+      {
+        parts: [
+          {
+            inlineData: {
+              data: base64Data,
+              mimeType,
+            },
+          },
+          {
+            text: promptText,
+          },
+        ],
+      },
+    ],
+  });
+
+  const parts = response.candidates?.[0]?.content?.parts;
+  if (parts) {
+    for (const part of parts) {
+      if (part.inlineData?.data) {
+        return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
+      }
+    }
+  }
+
+  throw new Error("No image data returned from image editing model");
+}
