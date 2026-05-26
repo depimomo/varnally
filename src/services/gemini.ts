@@ -197,3 +197,106 @@ export async function regenerateIdPhoto(imageBuffer: ArrayBuffer, mimeType: stri
 
   throw new Error("No image data returned from image editing model");
 }
+
+export async function analyzeMakeupSwatches(
+  imageBuffer: ArrayBuffer,
+  mimeType: string,
+  season: 'Winter' | 'Spring' | 'Summer' | 'Autumn',
+  subType: string,
+  category: 'Foundation' | 'Lip' | 'Eye' | 'Blush',
+  presetsText: string
+) {
+  const base64Data = btoa(
+    new Uint8Array(imageBuffer).reduce(
+      (data, byte) => data + String.fromCharCode(byte),
+      ""
+    )
+  );
+
+  const prompt = `
+You are an expert personal color analyst and makeup matching system.
+The user has a personal color season of: **${subType} ${season}**.
+Here is a description of makeup colors recommended for their season in this category (**${category}**):
+${presetsText}
+
+The user has uploaded an image of cosmetics, swatches, or shade variants. Your task is to analyze the image and find which swatches/options (if any) are suitable matches for the user's personal color season.
+
+CRITICAL DIRECTIVES:
+1. Examine the image carefully. Identify names, shade codes, or labeled brand swatches (e.g., "Shade 01 Pink", "Nude Amber Co", "Fair 110", or numbered icons).
+2. Evaluate these options against their personal color profile:
+   - Winter matches deep/cool, high saturation, clear contrast tones.
+   - Summer matches cool/muted, pastel, dusty pink/mauve tones.
+   - Spring matches bright/warm, yellow-gold, coral, peach peach tones.
+   - Autumn matches warm, muted tones, earth pigments, terracotta, or golden bronze tones.
+3. If NONE of the shades suit the user (e.g., all swatches are too warm for a Winter profile, or too cool for an Autumn profile), set "matchFound" to false, explain why in the "explanation", and return empty array for "matches".
+4. If there are suitable options, select between 1 and 3 matching shades (never select shades that contrast with their seasonal profile, even if they look pretty!). Provide specific, human-friendly reasons why they complement this color profile's undertone, skin type, and overall visual balance.
+5. For each match, supply an estimated "hexColor" (e.g., "#FFB7B2" or similar) representing this color swatch in the image, so we can render a visual swatch selector/indicator in our interface.
+6. Set "explanation" to summarize the matching assessment.
+
+Output MUST be a valid JSON object matching this schema exactly. Do not output anything other than JSON:
+{
+  "matchFound": boolean,
+  "explanation": string,
+  "matches": [
+    {
+      "shadeName": string,
+      "reasoning": string,
+      "matchScore": number,
+      "hexColor": string
+    }
+  ]
+}
+`;
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3.5-flash",
+    contents: [
+      {
+        parts: [
+          { text: prompt },
+          {
+            inlineData: {
+              data: base64Data,
+              mimeType,
+            },
+          },
+        ],
+      },
+    ],
+    config: {
+      systemInstruction: "You are a professional makeup color matching system. Output MUST be valid JSON according to the schema provided.",
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          matchFound: { type: Type.BOOLEAN, description: "Whether any suitable shades were found matching the user color season" },
+          explanation: { type: Type.STRING, description: "Summarize findings: no match found, or how the matching swatches compare to their color profile" },
+          matches: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                shadeName: { type: Type.STRING, description: "Color shade name, brand code, or label as identified on swatches" },
+                reasoning: { type: Type.STRING, description: "The specific why this shade makes a great match for their skin/season" },
+                matchScore: { type: Type.INTEGER, description: "Rating from 0 to 100 on correctness" },
+                hexColor: { type: Type.STRING, description: "Estimated hex code of this matching color swatch (e.g. #E05F66)" }
+              },
+              required: ["shadeName", "reasoning", "matchScore", "hexColor"]
+            }
+          }
+        },
+        required: ["matchFound", "explanation", "matches"]
+      }
+    }
+  });
+
+  const text = response.text;
+  if (!text) throw new Error("No response from AI");
+
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error("Failed to parse matching response:", text);
+    throw new Error("Could not parse matching results. Please make sure the photo contains clear swatch colors.");
+  }
+}

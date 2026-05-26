@@ -32,6 +32,7 @@ import { useLanguage } from './lib/LanguageContext';
 import { Github, Linkedin } from 'lucide-react';
 import { WelcomeOverlay } from './components/WelcomeOverlay';
 import { VarnallyHub } from './components/VarnallyHub';
+import { GlowMeUp } from './components/GlowMeUp';
 
 export default function App() {
   const { language, t } = useLanguage();
@@ -48,6 +49,7 @@ export default function App() {
   const [showHistory, setShowHistory] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
   const [showHub, setShowHub] = useState(false);
+  const [hubSubPage, setHubSubPage] = useState<'menu' | 'glow_me_up'>('menu');
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -459,7 +461,7 @@ export default function App() {
         user={user}
         historyLength={history.length}
         showHistory={showHistory}
-        onLogoClick={() => { setResult(null); setShowHistory(false); setShowUploader(false); setShowHub(false); }}
+        onLogoClick={() => { setResult(null); setShowHistory(false); setShowUploader(false); setShowHub(false); setHubSubPage('menu'); }}
         onHistoryToggle={() => { setShowHistory(!showHistory); setShowHub(false); }}
         onLogin={handleLogin}
         onLogout={handleLogout}
@@ -470,6 +472,7 @@ export default function App() {
           setShowUploader(false);
           setShowWelcomeModal(false);
           setShowHub(false);
+          setHubSubPage('menu');
         }}
         showHub={showHub}
         onHubClick={() => {
@@ -481,6 +484,7 @@ export default function App() {
             return;
           }
           setShowHub(true);
+          setHubSubPage('menu');
           setShowHistory(false);
           setResult(null);
           setShowUploader(false);
@@ -494,17 +498,28 @@ export default function App() {
       }`}>
         <AnimatePresence mode="wait">
           {showHub ? (
-            <VarnallyHub 
-              onBack={() => setShowHub(false)}
-              onSelectFeature={(featureId) => {
-                setToast({
-                  message: language === 'id' 
-                    ? `Fitur '${featureId === 'glow_me_up' ? 'Glow Me Up' : 'Stylize Me'}' segera hadir di update berikutnya!` 
-                    : `Feature '${featureId === 'glow_me_up' ? 'Glow Me Up' : 'Stylize Me'}' is coming soon in the next update!`,
-                  type: "success"
-                });
-              }}
-            />
+            hubSubPage === 'glow_me_up' ? (
+              <GlowMeUp 
+                pinnedProfile={pinnedProfile!}
+                onBack={() => setHubSubPage('menu')}
+              />
+            ) : (
+              <VarnallyHub 
+                onBack={() => setShowHub(false)}
+                onSelectFeature={(featureId) => {
+                  if (featureId === 'glow_me_up') {
+                    setHubSubPage('glow_me_up');
+                  } else {
+                    setToast({
+                      message: language === 'id' 
+                        ? `Fitur '${featureId === 'glow_me_up' ? 'Glow Me Up' : 'Stylize Me'}' segera hadir di update berikutnya!` 
+                        : `Feature '${featureId === 'glow_me_up' ? 'Glow Me Up' : 'Stylize Me'}' is coming soon in the next update!`,
+                      type: "success"
+                    });
+                  }
+                }}
+              />
+            )
           ) : showHistory ? (
             <HistoryList 
               history={sortedHistory}
