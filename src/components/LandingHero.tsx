@@ -291,156 +291,6 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
         </div>
       </div>
 
-
-
-      {/* Archetypes & Mascots Showcase Section - Premium Character Showcase */}
-      <div className="space-y-12 w-full relative z-10">
-        <div className="max-w-5xl mx-auto px-4 text-center space-y-2.5">
-          <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
-            {t.exploreArchetypesTag || "THE 12 ARCHETYPES"}
-          </p>
-          <h2 className="text-3xl md:text-4xl font-display font-black text-gray-900 leading-tight">
-            {t.exploreArchetypesTitle || "Discover Your Color Archetype"}
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-500 max-w-lg mx-auto font-semibold leading-relaxed">
-            {t.exploreArchetypesSub || "We map your natural traits onto 12 fine-tuned seasons and persona archetypes. Explore the beautiful ecosystem below."}
-          </p>
-        </div>
-
-        <div className="w-full">
-          {[
-            { 
-              key: 'Spring', 
-              bgClass: 'from-[#EBF8F0] via-[#FCFBE5] to-[#E3F7EB]', 
-              glowClass: 'bg-emerald-400/12', 
-              tagBg: 'bg-emerald-50/80 text-emerald-800 border-emerald-100/50',
-              accentColor: 'text-emerald-950',
-              seasonNature: t.seasonSpringNature || 'Warm & Bright'
-            },
-            { 
-              key: 'Summer', 
-              bgClass: 'from-[#E6F0FA] via-[#FAEDF6] to-[#E4EEFA]', 
-              glowClass: 'bg-sky-400/10', 
-              tagBg: 'bg-indigo-50/80 text-indigo-800 border-indigo-100/50',
-              accentColor: 'text-indigo-950',
-              seasonNature: t.seasonSummerNature || 'Cool & Soft'
-            },
-            { 
-              key: 'Autumn', 
-              bgClass: 'from-[#FBF1E6] via-[#FCFAF0] to-[#FCE7D9]', 
-              glowClass: 'bg-amber-400/12', 
-              tagBg: 'bg-orange-50/80 text-orange-800 border-orange-100/50',
-              accentColor: 'text-orange-950',
-              seasonNature: t.seasonAutumnNature || 'Warm & Muted'
-            },
-            { 
-              key: 'Winter', 
-              bgClass: 'from-[#E1ECFD] via-[#F0F5FE] to-[#E5EDFC]', 
-              glowClass: 'bg-blue-400/10', 
-              tagBg: 'bg-blue-50/80 text-blue-800 border-blue-100/50',
-              accentColor: 'text-blue-950',
-              seasonNature: t.seasonWinterNature || 'Cool & Brilliant'
-            }
-          ].map((season) => {
-            let seasonName = "";
-            if (season.key === 'Spring') {
-              seasonName = t.seasonSpringName || 'Spring';
-            } else if (season.key === 'Summer') {
-              seasonName = t.seasonSummerName || 'Summer';
-            } else if (season.key === 'Autumn') {
-              seasonName = t.seasonAutumnName || 'Autumn';
-            } else if (season.key === 'Winter') {
-              seasonName = t.seasonWinterName || 'Winter';
-            }
-
-            const seasonArchetypes = (archetypes.color_archetypes as any)[season.key] || {};
-
-            return (
-              <div 
-                key={season.key} 
-                className={`w-full bg-gradient-to-r ${season.bgClass} animate-gradient-bg py-16 sm:py-24 relative overflow-hidden`}
-              >
-                {/* 16Personalities style large faint backdrop watermark name - positioned physically higher so it is readable and not fully blocked */}
-                <div className="absolute top-10 sm:top-14 left-0 right-0 flex justify-center select-none pointer-events-none z-0 w-full px-4 overflow-hidden">
-                  <span className="font-display font-black text-[13vw] sm:text-8xl md:text-[10rem] lg:text-[12rem] tracking-[0.06em] sm:tracking-[0.12em] leading-none uppercase text-white/60 text-center whitespace-nowrap block">
-                    {seasonName}
-                  </span>
-                </div>
-
-                {/* Mascot profiles with float animations, pedestal shadows, and glowing backlights */}
-                <div className="max-w-5xl mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-3 gap-y-16 gap-x-10 sm:gap-x-12 pt-16 sm:pt-20">
-                  {Object.entries(seasonArchetypes).map(([fullName, data]: [string, any]) => {
-                    const nicknameLower = data.nickname.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_');
-                    
-                    const parts = fullName.split(' ');
-                    const subPart = parts[0]; 
-                    const seasonPart = parts[1] || ''; 
-                    
-                    const subTypeMap: Record<string, string> = {
-                      'Bright': t.subTypeBright || 'Bright',
-                      'True': t.subTypeTrue || 'True',
-                      'Dark': t.subTypeDark || 'Dark',
-                      'Light': t.subTypeLight || 'Light',
-                      'Soft': t.subTypeSoft || 'Soft'
-                    };
-                    const seasonMap: Record<string, string> = {
-                      'Spring': t.seasonSpringName || 'Spring',
-                      'Summer': t.seasonSummerName || 'Summer',
-                      'Autumn': t.seasonAutumnName || 'Autumn',
-                      'Winter': t.seasonWinterName || 'Winter'
-                    };
-                    const localizedFullName = `${subTypeMap[subPart] || subPart} ${seasonMap[seasonPart] || seasonPart}`;
-
-                    return (
-                      <div 
-                        key={fullName} 
-                        className="transition-all duration-300 group flex flex-col items-center text-center h-full focus:outline-none select-none relative z-10"
-                      >
-                        {/* Elegant Mascot Frame - crop transparent spacing & zoom */}
-                        <div className="w-28 h-28 sm:w-32 sm:h-32 mx-auto relative flex items-end justify-center mb-5">
-                          {/* Ambient radial color glow background of standard premium layouts */}
-                          <div className={`absolute inset-2 rounded-full blur-2xl opacity-80 scale-90 ${season.glowClass} transition-transform duration-500 group-hover:scale-110`} />
-                          
-                          {/* Radial floor pedestal shadow under floating character */}
-                          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-16 h-2 bg-black/[0.08] blur-[5px] rounded-full transition-all duration-500 group-hover:w-20 group-hover:opacity-45" />
-
-                          {/* Mascot with float on hover */}
-                          <img 
-                            src={`/mascot/${nicknameLower}.png`}
-                            alt={data.nickname}
-                            className="w-36 h-36 object-contain max-w-none relative z-10 select-none pointer-events-none scale-[1.35] transform transition-all duration-500 group-hover:scale-[1.45] group-hover:-translate-y-3"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              (e.target as HTMLElement).style.display = 'none';
-                            }}
-                          />
-                        </div>
-                        
-                        {/* Text Information block with balanced typography */}
-                        <div className="space-y-2 pointer-events-none">
-                          <div className="space-y-1">
-                            <span className="text-[10px] font-mono font-bold tracking-widest text-[#FF8A65] uppercase leading-none block">
-                              {localizedFullName}
-                            </span>
-                            <h4 className="text-xl font-display font-black text-gray-950 leading-snug transition-colors duration-300 group-hover:text-brand-primary">
-                              {data.nickname}
-                            </h4>
-                          </div>
-                          
-                          <p className="text-xs text-gray-650 font-semibold leading-relaxed max-w-[240px] mx-auto line-clamp-3">
-                            {data.description}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
       {/* 4. Complete System Feature Grid */}
       <div className="space-y-10 max-w-5xl mx-auto px-4 relative z-10">
         <div className="text-center space-y-3">
@@ -886,6 +736,154 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
           </div>
 
+        </div>
+      </div>
+
+      {/* Archetypes & Mascots Showcase Section - Premium Character Showcase */}
+      <div className="space-y-12 w-full relative z-10">
+        <div className="max-w-5xl mx-auto px-4 text-center space-y-2.5">
+          <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono">
+            {t.exploreArchetypesTag || "THE 12 ARCHETYPES"}
+          </p>
+          <h2 className="text-3xl md:text-4xl font-display font-black text-gray-900 leading-tight">
+            {t.exploreArchetypesTitle || "Discover Your Color Archetype"}
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-500 max-w-lg mx-auto font-semibold leading-relaxed">
+            {t.exploreArchetypesSub || "We map your natural traits onto 12 fine-tuned seasons and persona archetypes. Explore the beautiful ecosystem below."}
+          </p>
+        </div>
+
+        <div className="w-full">
+          {[
+            { 
+              key: 'Spring', 
+              bgClass: 'from-[#EBF8F0] via-[#FCFBE5] to-[#E3F7EB]', 
+              glowClass: 'bg-emerald-400/12', 
+              tagBg: 'bg-emerald-50/80 text-emerald-800 border-emerald-100/50',
+              accentColor: 'text-emerald-950',
+              seasonNature: t.seasonSpringNature || 'Warm & Bright'
+            },
+            { 
+              key: 'Summer', 
+              bgClass: 'from-[#E6F0FA] via-[#FAEDF6] to-[#E4EEFA]', 
+              glowClass: 'bg-sky-400/10', 
+              tagBg: 'bg-indigo-50/80 text-indigo-800 border-indigo-100/50',
+              accentColor: 'text-indigo-950',
+              seasonNature: t.seasonSummerNature || 'Cool & Soft'
+            },
+            { 
+              key: 'Autumn', 
+              bgClass: 'from-[#FBF1E6] via-[#FCFAF0] to-[#FCE7D9]', 
+              glowClass: 'bg-amber-400/12', 
+              tagBg: 'bg-orange-50/80 text-orange-800 border-orange-100/50',
+              accentColor: 'text-orange-950',
+              seasonNature: t.seasonAutumnNature || 'Warm & Muted'
+            },
+            { 
+              key: 'Winter', 
+              bgClass: 'from-[#E1ECFD] via-[#F0F5FE] to-[#E5EDFC]', 
+              glowClass: 'bg-blue-400/10', 
+              tagBg: 'bg-blue-50/80 text-blue-800 border-blue-100/50',
+              accentColor: 'text-blue-950',
+              seasonNature: t.seasonWinterNature || 'Cool & Brilliant'
+            }
+          ].map((season) => {
+            let seasonName = "";
+            if (season.key === 'Spring') {
+              seasonName = t.seasonSpringName || 'Spring';
+            } else if (season.key === 'Summer') {
+              seasonName = t.seasonSummerName || 'Summer';
+            } else if (season.key === 'Autumn') {
+              seasonName = t.seasonAutumnName || 'Autumn';
+            } else if (season.key === 'Winter') {
+              seasonName = t.seasonWinterName || 'Winter';
+            }
+
+            const seasonArchetypes = (archetypes.color_archetypes as any)[season.key] || {};
+
+            return (
+              <div 
+                key={season.key} 
+                className={`w-full bg-gradient-to-r ${season.bgClass} animate-gradient-bg py-16 sm:py-24 relative overflow-hidden`}
+              >
+                {/* 16Personalities style large faint backdrop watermark name - positioned physically higher so it is readable and not fully blocked */}
+                <div className="absolute top-10 sm:top-14 left-0 right-0 flex justify-center select-none pointer-events-none z-0 w-full px-4 overflow-hidden">
+                  <span className="font-display font-black text-[13vw] sm:text-8xl md:text-[10rem] lg:text-[12rem] tracking-[0.06em] sm:tracking-[0.12em] leading-none uppercase text-white/60 text-center whitespace-nowrap block">
+                    {seasonName}
+                  </span>
+                </div>
+
+                {/* Mascot profiles with float animations, pedestal shadows, and glowing backlights */}
+                <div className="max-w-5xl mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-3 gap-y-16 gap-x-10 sm:gap-x-12 pt-16 sm:pt-20">
+                  {Object.entries(seasonArchetypes).map(([fullName, data]: [string, any]) => {
+                    const nicknameLower = data.nickname.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_');
+                    
+                    const parts = fullName.split(' ');
+                    const subPart = parts[0]; 
+                    const seasonPart = parts[1] || ''; 
+                    
+                    const subTypeMap: Record<string, string> = {
+                      'Bright': t.subTypeBright || 'Bright',
+                      'True': t.subTypeTrue || 'True',
+                      'Dark': t.subTypeDark || 'Dark',
+                      'Light': t.subTypeLight || 'Light',
+                      'Soft': t.subTypeSoft || 'Soft'
+                    };
+                    const seasonMap: Record<string, string> = {
+                      'Spring': t.seasonSpringName || 'Spring',
+                      'Summer': t.seasonSummerName || 'Summer',
+                      'Autumn': t.seasonAutumnName || 'Autumn',
+                      'Winter': t.seasonWinterName || 'Winter'
+                    };
+                    const localizedFullName = `${subTypeMap[subPart] || subPart} ${seasonMap[seasonPart] || seasonPart}`;
+
+                    return (
+                      <div 
+                        key={fullName} 
+                        className="transition-all duration-300 group flex flex-col items-center text-center h-full focus:outline-none select-none relative z-10"
+                      >
+                        {/* Elegant Mascot Frame - crop transparent spacing & zoom */}
+                        <div className="w-28 h-28 sm:w-32 sm:h-32 mx-auto relative flex items-end justify-center mb-5">
+                          {/* Ambient radial color glow background of standard premium layouts */}
+                          <div className={`absolute inset-2 rounded-full blur-2xl opacity-80 scale-90 ${season.glowClass} transition-transform duration-500 group-hover:scale-110`} />
+                          
+                          {/* Radial floor pedestal shadow under floating character */}
+                          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-16 h-2 bg-black/[0.08] blur-[5px] rounded-full transition-all duration-500 group-hover:w-20 group-hover:opacity-45" />
+
+                          {/* Mascot with float on hover */}
+                          <img 
+                            src={`/mascot/${nicknameLower}.png`}
+                            alt={data.nickname}
+                            className="w-36 h-36 object-contain max-w-none relative z-10 select-none pointer-events-none scale-[1.35] transform transition-all duration-500 group-hover:scale-[1.45] group-hover:-translate-y-3"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
+                        
+                        {/* Text Information block with balanced typography */}
+                        <div className="space-y-2 pointer-events-none">
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-mono font-bold tracking-widest text-[#FF8A65] uppercase leading-none block">
+                              {localizedFullName}
+                            </span>
+                            <h4 className="text-xl font-display font-black text-gray-950 leading-snug transition-colors duration-300 group-hover:text-brand-primary">
+                              {data.nickname}
+                            </h4>
+                          </div>
+                          
+                          <p className="text-xs text-gray-650 font-semibold leading-relaxed max-w-[240px] mx-auto line-clamp-3">
+                            {data.description}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
