@@ -63,6 +63,11 @@ export default function App() {
     }
   }, [toast]);
 
+  // Reset viewport scroll to top upon page navigation state shifts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [showHub, hubSubPage, showHistory, result, showUploader]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
