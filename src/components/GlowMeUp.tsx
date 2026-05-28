@@ -25,8 +25,11 @@ import { analyzeMakeupSwatches, visualizeMakeup } from '../services/gemini';
 
 const MAKEUP_PRESETS = makeupPresetsData as Record<string, any>;
 
+const DEFAULT_MODEL_IMAGE = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=650";
+
 interface GlowMeUpProps {
-  pinnedProfile: Analysis;
+  pinnedProfile: Analysis | null;
+  history?: Analysis[];
   onBack: () => void;
 }
 
@@ -46,9 +49,17 @@ interface SwatchAnalysisResponse {
   matches: MatchResult[];
 }
 
-export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => {
+export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBack }) => {
   const { language } = useLanguage();
   const isIndo = language === 'id';
+
+  const [selectedProfile, setSelectedProfile] = useState<Analysis | null>(pinnedProfile || null);
+
+  useEffect(() => {
+    if (pinnedProfile) {
+      setSelectedProfile(pinnedProfile);
+    }
+  }, [pinnedProfile]);
 
   // State Management
   const [dragActive, setDragActive] = useState(false);
@@ -68,8 +79,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const fullType = `${pinnedProfile.subType} ${pinnedProfile.season}`;
-  const preset = MAKEUP_PRESETS[fullType] || MAKEUP_PRESETS["True Winter"];
+  const fullType = selectedProfile ? `${selectedProfile.subType} ${selectedProfile.season}` : '';
+  const preset = selectedProfile ? (MAKEUP_PRESETS[fullType] || MAKEUP_PRESETS["True Winter"]) : null;
 
   // Dictionaries
   const dict = {
@@ -206,7 +217,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
   };
 
   const handleTryOn = async (match: MatchResult) => {
-    const testImageUrl = pinnedProfile?.cleanedImageUrl || pinnedProfile?.imageUrl;
+    const testImageUrl = selectedProfile?.cleanedImageUrl || selectedProfile?.imageUrl || DEFAULT_MODEL_IMAGE;
     if (!testImageUrl) {
       setVisualizationError(tLocal('tryOnNoPhoto'));
       setVisualizingMatch(match);
@@ -253,8 +264,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
       const response = await analyzeMakeupSwatches(
         arrayBuffer,
         mimeType,
-        pinnedProfile.season,
-        pinnedProfile.subType,
+        selectedProfile!.season,
+        selectedProfile!.subType,
         preset
       );
 
@@ -266,6 +277,169 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
       setAnalyzing(false);
     }
   };
+
+  if (!selectedProfile) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -15 }}
+        transition={{ duration: 0.3 }}
+        className="max-w-4xl mx-auto px-4 py-8 space-y-10"
+      >
+        <div className="flex items-center justify-between">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-full text-xs font-black uppercase tracking-wider transition-all cursor-pointer font-mono select-none"
+          >
+            <ArrowLeft size={14} />
+            {isIndo ? 'Kembali' : 'Back'}
+          </button>
+        </div>
+
+        <div className="text-center max-w-2xl mx-auto space-y-4">
+          <div className="inline-flex p-4 bg-amber-50 rounded-3xl border border-amber-100/50 shadow-sm text-brand-primary">
+            <Sparkles className="animate-pulse" size={32} />
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight text-neutral-900 uppercase">
+            {isIndo ? 'Glow Me Up Try-On' : 'Glow Me Up Try-On'}
+          </h1>
+          <p className="text-xs sm:text-sm text-neutral-500 font-semibold leading-relaxed max-w-xl mx-auto">
+            {isIndo 
+              ? 'Sebelum menguji coba produk riasan Anda secara virtual, pilih salah satu profil Varna tersimpan Anda atau pilih dari 12 palet musiman utama kami.' 
+              : 'Before testing your cosmetics virtually, choose one of your saved scan history profiles or explore our 12 master seasonal palettes.'}
+          </p>
+        </div>
+
+        {/* 1. Saved Profiles Section */}
+        {history && history.length > 0 && (
+          <div className="space-y-4 bg-amber-50/20 border border-amber-200/30 p-6 sm:p-8 rounded-[2.5rem]">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
+              <h2 className="text-xs font-black text-neutral-800 uppercase tracking-widest font-mono">
+                {isIndo ? 'Gunakan Hasil Pindai Wajah Anda' : 'Use Your Scanned Profiles'}
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {history.map((item, idx) => {
+                const itemType = `${item.subType} ${item.season}`;
+                const itemPreset = MAKEUP_PRESETS[itemType] || MAKEUP_PRESETS["True Winter"];
+                return (
+                  <button
+                    key={item.id || idx}
+                    onClick={() => setSelectedProfile(item)}
+                    className="p-5 bg-white border border-neutral-200/50 rounded-2xl text-left hover:border-amber-400 hover:shadow-lg transition-all duration-300 group flex flex-col justify-between h-full cursor-pointer relative overflow-hidden"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-[9px] font-mono font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          Varna #{idx + 1}
+                        </span>
+                        {(item.cleanedImageUrl || item.imageUrl) && (
+                          <img 
+                            src={item.cleanedImageUrl || item.imageUrl} 
+                            alt="" 
+                            className="w-8 h-8 rounded-full object-cover border border-neutral-100 shadow-sm"
+                            referrerPolicy="no-referrer"
+                          />
+                        )}
+                      </div>
+                      <h3 className="font-display font-black text-gray-900 text-sm uppercase tracking-wide group-hover:text-brand-primary transition-colors">
+                        {item.subType} {item.season}
+                      </h3>
+                      <p className="text-[10px] text-neutral-400 font-bold font-mono mt-1">
+                        {isIndo ? 'Dasar Kulit / Logam:' : 'Base / Jewelry:'} {item.skinUndertone} • {item.jewelry}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1 mt-5 pt-3 border-t border-neutral-100 w-full">
+                      {(itemPreset?.lipColors || []).slice(0, 3).map((col: any, sIdx: number) => (
+                        <div 
+                          key={sIdx} 
+                          className="w-4 h-4 rounded-full border border-black/5 shrink-0"
+                          style={{ backgroundColor: col.hex }}
+                          title={col.name}
+                        />
+                      ))}
+                      <span className="text-[9px] text-[#A0AEC0] font-black font-mono ml-auto tracking-wider uppercase group-hover:text-amber-500 transition-colors">
+                        {isIndo ? 'Pilih →' : 'Select →'}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 2. 12 Seasonal Presets Section */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse shrink-0" />
+            <h2 className="text-xs font-black text-neutral-800 uppercase tracking-widest font-mono">
+              {isIndo ? 'Eksplor 12 Musim Warna Utama' : 'Explore the 12 Master Seasons'}
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {Object.keys(MAKEUP_PRESETS).map((key) => {
+              const itemPreset = MAKEUP_PRESETS[key];
+              const seasonParts = key.split(' ');
+              const chosenSubType = seasonParts[0];
+              const chosenSeason = (seasonParts[1] || 'Winter') as any;
+              
+              return (
+                <button
+                  key={key}
+                  onClick={() => {
+                    const mockAnalysis: Analysis = {
+                      userId: "static",
+                      season: chosenSeason,
+                      subType: chosenSubType,
+                      bestColors: [],
+                      avoidColors: [],
+                      jewelry: (chosenSeason === 'Spring' || chosenSeason === 'Autumn') ? 'Gold' : 'Silver',
+                      faceShape: "Oval",
+                      faceShapeDescription: "Standard Oval Face Shape",
+                      skinUndertone: (chosenSeason === 'Spring' || chosenSeason === 'Autumn') ? 'Warm' : 'Cool',
+                      eyeColor: "Brown",
+                      hairColor: "Black",
+                      createdAt: new Date().toISOString(),
+                    };
+                    setSelectedProfile(mockAnalysis);
+                  }}
+                  className="p-5 bg-white border border-neutral-200/50 rounded-2xl text-left hover:border-brand-primary hover:shadow-lg transition-all duration-300 group flex flex-col justify-between h-full cursor-pointer"
+                >
+                  <div className="space-y-1.5">
+                    <span className="text-[9px] font-mono font-black text-brand-primary bg-brand-primary/5 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      {chosenSeason}
+                    </span>
+                    <h3 className="font-display font-black text-gray-900 text-xs sm:text-sm uppercase tracking-tight group-hover:text-brand-primary transition-colors leading-tight">
+                      {key}
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center gap-1 mt-5 pt-3 border-t border-neutral-100 w-full">
+                    {(itemPreset?.lipColors || []).slice(0, 3).map((col: any, sIdx: number) => (
+                      <div 
+                        key={sIdx} 
+                        className="w-4 h-4 rounded-full border border-black/5 shrink-0"
+                        style={{ backgroundColor: col.hex }}
+                        title={col.name}
+                      />
+                    ))}
+                    <span className="text-[10px] text-neutral-400 font-bold ml-auto group-hover:text-brand-primary transition-colors font-mono">
+                      →
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -306,13 +480,21 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
             <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono block">
               {tLocal('personalProfile')}
             </span>
-            <h2 className="text-xl sm:text-2xl font-display font-black text-neutral-900 uppercase tracking-tight">
-              {pinnedProfile.subType} {pinnedProfile.season}
-            </h2>
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-xl sm:text-2xl font-display font-black text-neutral-900 uppercase tracking-tight">
+                {selectedProfile!.subType} {selectedProfile!.season}
+              </h2>
+              <button 
+                onClick={() => setSelectedProfile(null)}
+                className="text-[10px] font-mono font-bold bg-neutral-200 rounded-full text-neutral-700 hover:bg-neutral-300 px-3 py-1 cursor-pointer select-none transition-colors uppercase tracking-wider shrink-0"
+              >
+                {isIndo ? 'Ganti ✎' : 'Change ✎'}
+              </button>
+            </div>
             <p className="text-xs text-neutral-500 font-medium max-w-md">
               {isIndo 
-                ? `Ditampilkan dengan warna dasar ${pinnedProfile.skinUndertone.toLowerCase()} dengan kacamata perhiasan ${pinnedProfile.jewelry.toLowerCase()}.` 
-                : `Matched with ${pinnedProfile.skinUndertone.toLowerCase()} undertones and recommended ${pinnedProfile.jewelry.toLowerCase()} accents.`}
+                ? `Ditampilkan dengan warna dasar ${selectedProfile!.skinUndertone.toLowerCase()} dengan kacamata perhiasan ${selectedProfile!.jewelry.toLowerCase()}.` 
+                : `Matched with ${selectedProfile!.skinUndertone.toLowerCase()} undertones and recommended ${selectedProfile!.jewelry.toLowerCase()} accents.`}
             </p>
           </div>
 
@@ -737,7 +919,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
                       <div className="aspect-[4/5] w-full rounded-[2.5rem] overflow-hidden border border-neutral-200/60 bg-neutral-50 shadow-md relative group select-none touch-none">
                         {/* Before Image (Background Layer) */}
                         <img
-                          src={pinnedProfile.cleanedImageUrl || pinnedProfile.imageUrl}
+                          src={selectedProfile?.cleanedImageUrl || selectedProfile?.imageUrl || DEFAULT_MODEL_IMAGE}
                           alt="Before"
                           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                           referrerPolicy="no-referrer"

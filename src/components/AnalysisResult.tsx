@@ -22,6 +22,7 @@ interface AnalysisResultProps {
   onSave: (shouldPin?: boolean) => void;
   onPin: (id: string) => void;
   getFaceShapeImage: (shape: string) => string;
+  onGlowMeUp?: () => void;
 }
 
 export const AnalysisResult: React.FC<AnalysisResultProps> = ({
@@ -32,7 +33,8 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
   onBack,
   onSave,
   onPin,
-  getFaceShapeImage
+  getFaceShapeImage,
+  onGlowMeUp
 }) => {
   const { language, t } = useLanguage();
   const [isPosterOpen, setIsPosterOpen] = React.useState(false);
@@ -401,6 +403,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
             season={result.season as any} 
             subType={result.subType} 
             className={`bg-transparent sm:${theme.cardBg} sm:border ${theme.cardBorder}`}
+            onGlowMeUp={onGlowMeUp}
           />
 
           <FaceArchitectureCard
@@ -429,7 +432,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
       {!isPosterOpen && (
         <button
           onClick={() => setIsPosterOpen(true)}
-          className="fixed bottom-6 right-6 md:hidden z-40 p-4 bg-gradient-to-r from-purple-600 via-rose-500 to-amber-500 text-white rounded-full shadow-xl shadow-rose-500/30 active:scale-95 hover:scale-105 transition-all duration-150 flex items-center justify-center cursor-pointer border border-white/25 shadow-black/10"
+          className="fixed bottom-6 right-6 md:hidden z-40 p-4 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-full shadow-xl shadow-brand-primary/30 active:scale-95 hover:scale-105 transition-all duration-150 flex items-center justify-center cursor-pointer border border-white/20 shadow-black/10"
           id="floating-mobile-share"
           aria-label="Create shareable story poster"
         >

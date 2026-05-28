@@ -51,6 +51,7 @@ export default function App() {
   const [showUploader, setShowUploader] = useState(false);
   const [showHub, setShowHub] = useState(false);
   const [hubSubPage, setHubSubPage] = useState<'menu' | 'glow_me_up'>('menu');
+  const [glowMeUpOverrideProfile, setGlowMeUpOverrideProfile] = useState<Analysis | null>(null);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -563,13 +564,6 @@ export default function App() {
         }}
         showHub={showHub}
         onHubClick={() => {
-          if (!pinnedProfile) {
-            setToast({
-              message: t.hubLockedWarning || "Please complete a scan and select/set a Varna as your active profile to unlock Varnally Hub!",
-              type: "info"
-            });
-            return;
-          }
           setShowHub(true);
           setHubSubPage('menu');
           setShowHistory(false);
@@ -587,8 +581,17 @@ export default function App() {
           {showHub ? (
             hubSubPage === 'glow_me_up' ? (
               <GlowMeUp 
-                pinnedProfile={pinnedProfile!}
-                onBack={() => setHubSubPage('menu')}
+                pinnedProfile={pinnedProfile || glowMeUpOverrideProfile || null}
+                history={history}
+                onBack={() => {
+                  if (glowMeUpOverrideProfile) {
+                    setShowHub(false);
+                    // Do NOT reset the main result, just clear the override state so we return to result render mode
+                    setGlowMeUpOverrideProfile(null);
+                  } else {
+                    setHubSubPage('menu');
+                  }
+                }}
               />
             ) : (
               <VarnallyHub 
@@ -625,6 +628,11 @@ export default function App() {
               onSave={saveToHistory}
               onPin={pinProfile}
               getFaceShapeImage={getFaceShapeImage}
+              onGlowMeUp={() => {
+                setGlowMeUpOverrideProfile(result);
+                setShowHub(true);
+                setHubSubPage('glow_me_up');
+              }}
             />
           ) : showUploader ? (
             <ImageUploader 

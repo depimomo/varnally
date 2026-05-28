@@ -25,9 +25,10 @@ interface MakeupRecommendationCardProps {
   season: 'Winter' | 'Spring' | 'Summer' | 'Autumn';
   subType: string;
   className?: string;
+  onGlowMeUp?: () => void;
 }
 
-export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> = ({ season, subType, className }) => {
+export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> = ({ season, subType, className, onGlowMeUp }) => {
   const { language, t } = useLanguage();
   const fullType = `${subType} ${season}`;
   const makeupDetails = MAKEUP_PRESETS[fullType] || MAKEUP_PRESETS["True Winter"]; // safe fallback
@@ -127,6 +128,26 @@ export const MakeupRecommendationCard: React.FC<MakeupRecommendationCardProps> =
         />
 
       </div>
+
+      {onGlowMeUp && (
+        <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6 bg-gradient-to-r from-brand-primary/5 via-brand-secondary/5 to-transparent p-5 rounded-3xl border border-brand-primary/10">
+          <div className="space-y-1 text-center sm:text-left">
+            <h4 className="text-sm font-display font-black text-gray-900 flex items-center justify-center sm:justify-start gap-1.5 uppercase tracking-wide">
+              <Sparkles className="text-brand-primary" size={16} />
+              {t.makeupTryOnCta}
+            </h4>
+            <p className="text-xs text-neutral-500 font-medium leading-relaxed max-w-xl">
+              {t.makeupTryOnDesc}
+            </p>
+          </div>
+          <button
+            onClick={onGlowMeUp}
+            className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-2xl font-black text-xs font-mono uppercase tracking-widest hover:scale-103 active:scale-97 transition-all shadow-md hover:shadow-brand-primary/20 shrink-0 cursor-pointer"
+          >
+            {t.makeupTryOnBtn}
+          </button>
+        </div>
+      )}
     </motion.div>
   );
 };

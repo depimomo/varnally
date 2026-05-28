@@ -87,22 +87,16 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => { onHubClick?.(); setIsMenuOpen(false); }}
             className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer select-none ${
-              !pinnedProfile
-                ? 'bg-neutral-50 border border-neutral-200/40 text-neutral-400/80 hover:text-neutral-500 hover:border-neutral-300'
-                : showHub 
-                  ? 'bg-neutral-950 text-white shadow-md' 
-                  : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-600 hover:text-neutral-900 border border-neutral-200/40'
+              showHub 
+                ? 'bg-neutral-950 text-white shadow-md' 
+                : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-600 hover:text-neutral-900 border border-neutral-200/40'
             }`}
           >
             <span>Varnally Hub</span>
-            {!pinnedProfile ? (
-              <Lock size={12} className="text-neutral-400/80 shrink-0" />
-            ) : (
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-secondary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-primary"></span>
-              </span>
-            )}
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-secondary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-primary"></span>
+            </span>
           </button>
         </div>
 
@@ -248,24 +242,18 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     onClick={() => { onHubClick?.(); setIsMenuOpen(false); }}
                     className={`w-full flex items-center justify-between p-3.5 border rounded-2xl transition-all cursor-pointer text-left font-semibold text-xs ${
-                      !pinnedProfile
-                        ? 'bg-neutral-50 border-neutral-200 text-neutral-400'
-                        : showHub
-                          ? 'bg-neutral-950 border-neutral-950 text-white shadow-md'
-                          : 'bg-white hover:bg-neutral-50 border-neutral-100 text-neutral-700'
+                      showHub
+                        ? 'bg-neutral-950 border-neutral-950 text-white shadow-md'
+                        : 'bg-white hover:bg-neutral-50 border-neutral-100 text-neutral-700'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <Sparkles size={16} className={!pinnedProfile ? "text-neutral-400" : showHub ? "text-amber-400 animate-pulse" : "text-brand-primary"} />
+                      <Sparkles size={16} className={showHub ? "text-amber-400 animate-pulse" : "text-brand-primary"} />
                       <span>Varnally Hub</span>
                     </div>
-                    {!pinnedProfile ? (
-                      <Lock size={12} className="text-neutral-400 shrink-0" />
-                    ) : (
-                      <span className="bg-brand-secondary text-white text-[9px] font-black uppercase tracking-wider py-0.5 px-1.5 rounded-full animate-pulse shrink-0">
-                        NEW
-                      </span>
-                    )}
+                    <span className="bg-brand-secondary text-white text-[9px] font-black uppercase tracking-wider py-0.5 px-1.5 rounded-full animate-pulse shrink-0">
+                      NEW
+                    </span>
                   </button>
                 </div>
 
