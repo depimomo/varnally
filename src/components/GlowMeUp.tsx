@@ -77,6 +77,14 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
   const [visualizationError, setVisualizationError] = useState<string | null>(null);
   const [sliderPosition, setSliderPosition] = useState(50);
 
+  // Try-on Cache State (maps unique cache key to generated try-on image URL)
+  const [tryOnCache, setTryOnCache] = useState<Record<string, string>>({});
+
+  // Reset try-on cache when the selected profile changes
+  useEffect(() => {
+    setTryOnCache({});
+  }, [selectedProfile]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fullType = selectedProfile ? `${selectedProfile.subType} ${selectedProfile.season}` : '';
@@ -93,6 +101,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
     personalProfile: { en: 'My Active Color Profile', id: 'Profil Warna Aktif Saya' },
     idealFinish: { en: 'Ideal Finish', id: 'Hasil Akhir Ideal' },
     uploadTitle: { en: 'Upload Swatch Photos', id: 'Unggah Foto Swatch' },
+    orChooseSample: { en: 'Or choose a sample swatch:', id: 'Atau pilih swatch sampel:' },
     dragActiveText: { en: 'Drop your image here...', id: 'Lepaskan gambar Anda di sini...' },
     dragInactiveText: { 
       en: 'Drag & drop a swatch photo here, or click to browse', 
@@ -204,9 +213,29 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
     fileInputRef.current?.click();
   };
 
+  const selectSampleImage = async (url: string, filename: string) => {
+    setAnalyzing(true);
+    setError(null);
+    setResult(null);
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const file = new File([blob], filename, { type: blob.type || 'image/webp' });
+      setSelectedFile(file);
+      setPreviewUrl(url);
+    } catch (err: any) {
+      console.error("Failed to load sample image:", err);
+      setError(isIndo ? "Gagal memuat gambar sampel." : "Failed to load sample image.");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
   const handleReset = () => {
     setSelectedFile(null);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    if (previewUrl && previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setPreviewUrl(null);
     setResult(null);
     setError(null);
@@ -214,6 +243,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
     setVisualizedImageUrl(null);
     setIsVisualizing(false);
     setVisualizationError(null);
+    setTryOnCache({}); // Clear try-on cache when resetting/scanning another photo
   };
 
   const handleTryOn = async (match: MatchResult) => {
@@ -222,6 +252,19 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
       setVisualizationError(tLocal('tryOnNoPhoto'));
       setVisualizingMatch(match);
       setVisualizedImageUrl(null);
+      return;
+    }
+
+    // Generate a unique cache key based on the image, category, and shade details
+    const cacheKey = `${testImageUrl}-${result?.detectedCategory || 'Lip'}-${match.shadeName}-${match.hexColor || '#ff0000'}`;
+
+    // If already generated and cached, use it immediately avoiding costly regeneration
+    if (tryOnCache[cacheKey]) {
+      setVisualizingMatch(match);
+      setVisualizedImageUrl(tryOnCache[cacheKey]);
+      setIsVisualizing(false);
+      setVisualizationError(null);
+      setSliderPosition(50);
       return;
     }
 
@@ -239,6 +282,12 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
         match.hexColor || '#ff0000'
       );
       setVisualizedImageUrl(generatedUrl);
+      
+      // Cache the successfully generated try-on image
+      setTryOnCache(prev => ({
+        ...prev,
+        [cacheKey]: generatedUrl
+      }));
     } catch (err: any) {
       console.error(err);
       setVisualizationError(tLocal('tryOnError'));
@@ -569,36 +618,79 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
             </h3>
 
             {!previewUrl ? (
-              <div
-                onDragEnter={handleDrag}
-                onDragOver={handleDrag}
-                onDragLeave={handleDrag}
-                onDrop={handleDrop}
-                onClick={triggerFileSelect}
-                className={`aspect-[4/3] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 relative select-none ${
-                  dragActive
-                    ? 'border-brand-primary bg-brand-primary/5 scale-98'
-                    : 'border-neutral-200 hover:border-brand-primary hover:bg-neutral-50/50'
-                }`}
-              >
-                <div className="w-12 h-12 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center justify-center text-neutral-400 group-hover:bg-white mb-4 animate-bounce">
-                  <UploadCloud size={20} className="text-brand-primary" />
+              <div className="space-y-4">
+                <div
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                  onClick={triggerFileSelect}
+                  className={`aspect-[4/3] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 relative select-none ${
+                    dragActive
+                      ? 'border-brand-primary bg-brand-primary/5 scale-98'
+                      : 'border-neutral-200 hover:border-brand-primary hover:bg-neutral-50/50'
+                  }`}
+                >
+                  <div className="w-12 h-12 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center justify-center text-neutral-400 group-hover:bg-white mb-4 animate-bounce">
+                    <UploadCloud size={20} className="text-brand-primary" />
+                  </div>
+                  <div className="space-y-1.5 max-w-xs">
+                    <p className="text-xs font-bold text-neutral-700">
+                      {dragActive ? tLocal('dragActiveText') : tLocal('dragInactiveText')}
+                    </p>
+                    <p className="text-[10px] text-neutral-400 font-medium">
+                      JPEG, PNG, WEBP files
+                    </p>
+                  </div>
+                  <input 
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
                 </div>
-                <div className="space-y-1.5 max-w-xs">
-                  <p className="text-xs font-bold text-neutral-700">
-                    {dragActive ? tLocal('dragActiveText') : tLocal('dragInactiveText')}
-                  </p>
-                  <p className="text-[10px] text-neutral-400 font-medium">
-                    JPEG, PNG, WEBP files
-                  </p>
+
+                {/* Sample Swatches Picker */}
+                <div className="space-y-2.5 pt-2 border-t border-neutral-100/50">
+                  <div className="flex items-center gap-1.5 px-0.5">
+                    <Sparkles size={11} className="text-brand-primary animate-pulse" />
+                    <span className="text-[10px] font-mono font-black text-brand-primary uppercase tracking-widest block">
+                      {tLocal('orChooseSample')}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-3">
+                    {[
+                      { url: '/sample/shade_1.webp', name: 'shade_1.webp', label: 'Sample 1' },
+                      { url: '/sample/shade_2.webp', name: 'shade_2.webp', label: 'Sample 2' },
+                      { url: '/sample/shade_3.webp', name: 'shade_3.webp', label: 'Sample 3' },
+                      { url: '/sample/shade_4.webp', name: 'shade_4.webp', label: 'Sample 4' },
+                    ].map((samp, sIdx) => (
+                      <button
+                        key={sIdx}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          selectSampleImage(samp.url, samp.name);
+                        }}
+                        disabled={analyzing}
+                        className="group aspect-square rounded-2xl overflow-hidden border-2 border-neutral-200/50 hover:border-brand-primary active:scale-95 transition-all relative cursor-pointer bg-neutral-50 flex items-center justify-center shadow-sm"
+                        title={samp.label}
+                      >
+                        <img 
+                          src={samp.url} 
+                          alt={samp.label} 
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                        />
+                        <div className="absolute inset-x-0 bottom-0 bg-neutral-900/60 py-0.5 text-center">
+                          <span className="text-[8.5px] font-mono font-bold text-white tracking-tight">
+                            {isIndo ? `Sampel ${sIdx + 1}` : `Sample ${sIdx + 1}`}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <input 
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="hidden"
-                />
               </div>
             ) : (
               <div className="space-y-4">

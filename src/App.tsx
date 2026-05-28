@@ -232,7 +232,69 @@ export default function App() {
     setAnalyzing(true);
     setAnalysisError(null);
     try {
-      const buffer = await selectedFile.arrayBuffer();
+      // Automatically compress and resize large inputs (such as photos taken on iPhone)
+      // to 1000px max dimensions to prevent high bandwidth lag and memory issues.
+      let fileToAnalyze = selectedFile;
+      if (selectedFile.size > 500 * 1024) { // larger than 500KB
+        try {
+          const optimizeLargeFile = (file: File, maxDim: number = 1000, quality: number = 0.82): Promise<File> => {
+            return new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                  const canvas = document.createElement('canvas');
+                  let width = img.width;
+                  let height = img.height;
+
+                  if (width > height) {
+                    if (width > maxDim) {
+                      height = Math.round(height * maxDim / width);
+                      width = maxDim;
+                    }
+                  } else {
+                    if (height > maxDim) {
+                      width = Math.round(width * maxDim / height);
+                      height = maxDim;
+                    }
+                  }
+
+                  canvas.width = width;
+                  canvas.height = height;
+                  const ctx = canvas.getContext('2d');
+                  if (!ctx) {
+                    resolve(file);
+                    return;
+                  }
+
+                  ctx.drawImage(img, 0, 0, width, height);
+                  canvas.toBlob((blob) => {
+                    if (blob) {
+                      const compressedFile = new File([blob], file.name, {
+                        type: 'image/jpeg',
+                        lastModified: Date.now()
+                      });
+                      resolve(compressedFile);
+                    } else {
+                      resolve(file);
+                    }
+                  }, 'image/jpeg', quality);
+                };
+                img.onerror = () => resolve(file);
+                img.src = e.target?.result as string;
+              };
+              reader.onerror = () => resolve(file);
+              reader.readAsDataURL(file);
+            });
+          };
+
+          fileToAnalyze = await optimizeLargeFile(selectedFile);
+        } catch (err) {
+          console.warn("Client-side optimization failed, falling back to original image:", err);
+        }
+      }
+
+      const buffer = await fileToAnalyze.arrayBuffer();
       
       const generateThumbnail = (file: File): Promise<string> => {
         return new Promise((resolve) => {
@@ -304,9 +366,9 @@ export default function App() {
         });
       };
 
-      const thumbnailUrl = await generateThumbnail(selectedFile);
+      const thumbnailUrl = await generateThumbnail(fileToAnalyze);
       
-      const analysisResult = await analyzeColor(buffer, selectedFile.type);
+      const analysisResult = await analyzeColor(buffer, fileToAnalyze.type);
       
       if (analysisResult.isValid === false) {
         setAnalysisError(analysisResult.errorMessage || t.suitableError);

@@ -50,7 +50,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [lightingStatus, setLightingStatus] = React.useState<string>(t.calibrating);
   const [focusStatus, setFocusStatus] = React.useState<string>(t.calibrating);
-  const [sampleSrc, setSampleSrc] = React.useState("/face-shape/sample.jpeg");
+  const [sampleSrc, setSampleSrc] = React.useState("/sample/potrait.jpeg");
 
   React.useEffect(() => {
     if (!stream) {
@@ -463,7 +463,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 {!analyzing && (
                   <button 
                     onClick={onReset}
-                    className="absolute top-4 right-4 p-2.5 bg-red-500 text-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-20 cursor-pointer"
+                    className="absolute top-4 right-4 p-2.5 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg z-20 cursor-pointer transition-all active:scale-95"
                     title={t.resetBtn}
                   >
                     <Trash2 size={16} />

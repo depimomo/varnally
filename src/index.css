@@ -35,6 +35,36 @@ body {
   }
 }
 
+@keyframes slow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.55;
+  }
+}
+
+.animate-slow-spin {
+  animation: slow-spin 16s linear infinite;
+  will-change: transform;
+}
+
+.animate-gentle-pulse {
+  animation: gentle-pulse 3s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
 @media (min-width: 768px) {
   .animate-gradient-bg {
     background-size: 200% 200%;

@@ -127,7 +127,7 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({
       />
 
       {/* Floating Orbs for extra luxury feels */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <div className="hidden sm:block absolute inset-0 overflow-hidden pointer-events-none z-0">
         <motion.div 
           animate={{ 
             scale: [1, 1.2, 0.9, 1],
@@ -194,19 +194,15 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({
 
         {/* Beautiful Dynamic Profile Photo Frame with Spinning Conic Gradient */}
         <div className="relative mb-8 flex justify-center items-center">
-          {/* Outer Rotating Chroma Halo Ring */}
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
-            className="w-44 h-44 sm:w-48 sm:h-48 rounded-full p-[3px] shadow-2xl relative"
+          {/* Outer Rotating Chroma Halo Ring using performance-friendly GPU/CSS animations */}
+          <div 
+            className="w-44 h-44 sm:w-48 sm:h-48 rounded-full p-[3px] shadow-2xl relative animate-slow-spin"
             style={{ background: ringGradientStyle }}
           />
 
-          {/* Faint Glowing Pulse Circle under frame */}
-          <motion.div 
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 2.5, repeat: Infinity }}
-            className="absolute inset-0 rounded-full blur-xl filter opacity-40 mix-blend-screen"
+          {/* Faint Glowing Pulse Circle under frame using CSS scale/opacity */}
+          <div 
+            className="absolute inset-0 rounded-full blur-xl filter opacity-45 mix-blend-screen animate-gentle-pulse"
             style={{ background: ringGradientStyle }}
           />
 
