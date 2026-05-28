@@ -34,6 +34,7 @@ import { Github, Linkedin } from 'lucide-react';
 import { WelcomeOverlay } from './components/WelcomeOverlay';
 import { VarnallyHub } from './components/VarnallyHub';
 import { GlowMeUp } from './components/GlowMeUp';
+import { StylizeMe } from './components/StylizeMe';
 
 export default function App() {
   const { language, t } = useLanguage();
@@ -655,19 +656,27 @@ export default function App() {
                   }
                 }}
               />
+            ) : hubSubPage === 'stylize_me' ? (
+              <StylizeMe 
+                pinnedProfile={pinnedProfile || glowMeUpOverrideProfile || null}
+                history={history}
+                onBack={() => {
+                  if (glowMeUpOverrideProfile) {
+                    setShowHub(false);
+                    setGlowMeUpOverrideProfile(null);
+                  } else {
+                    setHubSubPage('menu');
+                  }
+                }}
+              />
             ) : (
               <VarnallyHub 
                 onBack={() => setShowHub(false)}
                 onSelectFeature={(featureId) => {
                   if (featureId === 'glow_me_up') {
                     setHubSubPage('glow_me_up');
-                  } else {
-                    setToast({
-                      message: language === 'id' 
-                        ? `Fitur '${featureId === 'glow_me_up' ? 'Glow Me Up' : 'Stylize Me'}' segera hadir di update berikutnya!` 
-                        : `Feature '${featureId === 'glow_me_up' ? 'Glow Me Up' : 'Stylize Me'}' is coming soon in the next update!`,
-                      type: "success"
-                    });
+                  } else if (featureId === 'stylize_me') {
+                    setHubSubPage('stylize_me');
                   }
                 }}
               />

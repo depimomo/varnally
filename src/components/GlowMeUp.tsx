@@ -86,6 +86,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
   }, [selectedProfile]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const fullType = selectedProfile ? `${selectedProfile.subType} ${selectedProfile.season}` : '';
   const preset = selectedProfile ? (MAKEUP_PRESETS[fullType] || MAKEUP_PRESETS["True Winter"]) : null;
@@ -319,6 +320,13 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
       );
 
       setResult(response);
+
+      // Auto-scroll on completion for mobile viewport sizes so users see the results instantly
+      if (window.innerWidth < 1024) {
+        setTimeout(() => {
+          resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
+      }
     } catch (err: any) {
       console.error(err);
       setError(err?.message || tLocal('errorMatch'));
@@ -760,7 +768,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
         </div>
 
         {/* Right Side: Analysis Results & Matched Recommendations */}
-        <div className="md:col-span-12 lg:col-span-6 space-y-6">
+        <div ref={resultsRef} className="md:col-span-12 lg:col-span-6 space-y-6">
           <AnimatePresence mode="wait">
             {!result ? (
               <motion.div
@@ -886,15 +894,17 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         </p>
 
                         {/* Try-on Action Trigger */}
-                        <div className="mt-4 pt-3.5 border-t border-neutral-150/40 flex justify-end">
-                          <button
-                            onClick={() => handleTryOn(match)}
-                            className="inline-flex items-center gap-1.5 px-4.5 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-[10px] sm:text-[11px] font-black uppercase tracking-wider font-mono transition-all duration-200 hover:scale-[1.01] shadow-sm cursor-pointer select-none"
-                          >
-                            <Sparkles size={11} className="text-amber-400 animate-pulse" />
-                            <span>{tLocal('tryOnBtn')}</span>
-                          </button>
-                        </div>
+                        {(selectedProfile?.cleanedImageUrl || selectedProfile?.imageUrl) && (
+                          <div className="mt-4 pt-3.5 border-t border-neutral-150/40 flex justify-end">
+                            <button
+                              onClick={() => handleTryOn(match)}
+                              className="inline-flex items-center gap-1.5 px-4.5 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-[10px] sm:text-[11px] font-black uppercase tracking-wider font-mono transition-all duration-200 hover:scale-[1.01] shadow-sm cursor-pointer select-none"
+                            >
+                              <Sparkles size={11} className="text-amber-400 animate-pulse" />
+                              <span>{tLocal('tryOnBtn')}</span>
+                            </button>
+                          </div>
+                        )}
                       </motion.div>
                     ))}
                   </div>
@@ -1060,7 +1070,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         {/* Micro-hint banner overlay disappearing on first move */}
                         {sliderPosition === 50 && (
                           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[9px] font-mono uppercase tracking-widest text-white/90 font-black pointer-events-none z-20 animate-bounce">
-                            {isIndo ? '← SERET UNTUK BANDINGKAN →' : '← SLIDE TO COMPARE →'}
+                            {isIndo ? '← GESER →' : '← SLIDE →'}
                           </div>
                         )}
                       </div>

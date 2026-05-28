@@ -32,8 +32,8 @@ export const VarnallyHub: React.FC<VarnallyHubProps> = ({ onBack, onSelectFeatur
       description: isIndo
         ? 'Dapetin best OOTD-mu. Masukkan foto varian warna baju incaranmu, dan biarkan AI kami jadi personal stylist yang menganalisis warna soulmate buat kamu.'
         : 'Unlock your perfect OOTD. Drop a photo of the clothing color variants, and let our AI act as your personal stylist, analyzing the exact soulmate color for you.',
-      badge: isIndo ? 'Perencanaan' : 'In Planning',
-      badgeBg: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+      badge: isIndo ? 'Baru' : 'New',
+      badgeBg: 'bg-rose-100 text-rose-800 border-rose-200',
       icon: <Shirt className="text-indigo-500" size={24} />,
       colorClass: 'from-indigo-500/10 via-purple-500/5 to-pink-500/10',
       borderHover: 'hover:border-indigo-300',

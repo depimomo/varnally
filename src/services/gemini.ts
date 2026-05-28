@@ -378,3 +378,114 @@ Instructions:
 
   throw new Error("No image data returned from image editing model");
 }
+
+export interface ClothingImageInput {
+  buffer: ArrayBuffer;
+  mimeType: string;
+  filename: string;
+}
+
+export async function analyzeClothingColors(
+  images: ClothingImageInput[],
+  season: 'Winter' | 'Spring' | 'Summer' | 'Autumn',
+  subType: string,
+  bestColors: { hex: string; name: string }[],
+  avoidColors: { hex: string; name: string }[]
+) {
+  const parts: any[] = [];
+  
+  const prompt = `
+You are an expert personal fashion color analyst and personal stylist.
+We have user color profile: **${subType} ${season}**.
+Their recommended seasonal colors are: ${JSON.stringify(bestColors)}
+Colors they should avoid: ${JSON.stringify(avoidColors)}
+
+We are providing you with ${images.length} clothing images to analyze.
+They are provided in the content parts in order. Associated filenames are:
+${images.map((img, i) => `${i + 1}. "${img.filename}"`).join('\n')}
+
+For each image, your tasks are:
+1. Examine the image and identify the primary color(s) of the clothing.
+2. Determine if the clothing's color harmonizes well with the user's seasonal palette (**${subType} ${season}**).
+3. Rate the compatibility of the clothing color with a matchScore from 0 to 100.
+4. Provide a fashion-focused reasoning explaining why this color works or doesn't work for their undertone and overall season.
+5. Set "isCompatible" to true if it matches their season and is flattering.
+
+Finally, compare all analyzed clothes and choose the best overall match among them, recording its exact filename in "bestItemFilename".
+
+Your output MUST be valid JSON according to this schema:
+{
+  "explanation": "Brief overview comparing all the clothes and summarized styling advice",
+  "bestItemFilename": "The filename of the clothing image with the highest match score",
+  "items": [
+    {
+      "filename": "Matching filename from the provided list",
+      "detectedColorName": "e.g. Olive Green",
+      "hexColor": "e.g. #556B2F",
+      "isCompatible": boolean,
+      "matchScore": number,
+      "reasoning": "Detailed, professional styling explanation why it fits or conflicts"
+    }
+  ]
+}
+`;
+
+  parts.push({ text: prompt });
+
+  images.forEach(img => {
+    const base64Data = btoa(
+      new Uint8Array(img.buffer).reduce(
+        (data, byte) => data + String.fromCharCode(byte),
+        ""
+      )
+    );
+    parts.push({
+      inlineData: {
+        data: base64Data,
+        mimeType: img.mimeType,
+      },
+    });
+  });
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3.5-flash",
+    contents: [{ parts }],
+    config: {
+      systemInstruction: "You are a professional fashion and style color matching coordinator. Output MUST be valid JSON according to the schema provided.",
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          explanation: { type: Type.STRING },
+          bestItemFilename: { type: Type.STRING },
+          items: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                filename: { type: Type.STRING },
+                detectedColorName: { type: Type.STRING },
+                hexColor: { type: Type.STRING },
+                isCompatible: { type: Type.BOOLEAN },
+                matchScore: { type: Type.INTEGER },
+                reasoning: { type: Type.STRING }
+              },
+              required: ["filename", "detectedColorName", "hexColor", "isCompatible", "matchScore", "reasoning"]
+            }
+          }
+        },
+        required: ["explanation", "bestItemFilename", "items"]
+      }
+    }
+  });
+
+  const text = response.text;
+  if (!text) throw new Error("No response from AI clothing analysis model");
+
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error("Failed to parse clothing matching response:", text);
+    throw new Error("Could not parse clothing colors. Please make sure the clothing colors are clearly visible.");
+  }
+}
