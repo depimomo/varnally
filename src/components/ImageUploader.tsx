@@ -193,6 +193,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       canvas.height = video.videoHeight || 640;
       const ctx = canvas.getContext('2d');
       if (ctx) {
+        // Mirror the canvas capture context to match the mirrored live preview
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         canvas.toBlob((blob) => {
           if (blob) {
@@ -295,17 +298,17 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="aspect-square bg-gray-950 rounded-[2.5rem] overflow-hidden relative shadow-inner border border-neutral-800 flex flex-col justify-between">
+                  <div className="fixed inset-0 w-full h-full z-50 md:relative md:inset-auto md:w-auto md:h-auto md:aspect-square md:rounded-[2.5rem] bg-gray-950 overflow-hidden shadow-inner md:border md:border-neutral-800 flex flex-col justify-between animate-fade-in">
                     {/* Live Video Preview inside box */}
                     <video 
                       ref={videoRef}
                       autoPlay
                       playsInline
-                      className="absolute inset-0 w-full h-full object-cover rounded-[2.5rem]"
+                      className="absolute inset-0 w-full h-full object-cover rounded-none md:rounded-[2.5rem] scale-x-[-1]"
                     />
 
                     {cameraError && (
-                      <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-6 text-center z-20 rounded-[2.5rem] space-y-4">
+                      <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-6 text-center z-50 rounded-none md:rounded-[2.5rem] space-y-4">
                         <p className="text-xs text-red-200 font-semibold leading-relaxed">{cameraError}</p>
                         <button
                           onClick={(e) => { e.stopPropagation(); stopCamera(); }}
@@ -317,46 +320,75 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     )}
 
                     {/* Top Bar overlays inside Video */}
-                    <div className="relative z-10 p-5 w-full flex justify-between items-center bg-gradient-to-b from-black/60 to-transparent">
+                    <div className="relative z-15 pt-12 md:pt-5 pb-5 px-6 md:px-5 w-full flex justify-between items-center bg-gradient-to-b from-black/75 to-transparent">
                       <button 
                         onClick={(e) => { e.stopPropagation(); stopCamera(); }}
-                        className="px-3.5 py-1.5 bg-black/50 hover:bg-black/80 text-white font-bold text-[11px] rounded-full backdrop-blur-md border border-white/20 cursor-pointer"
+                        className="px-4 py-2 bg-black/50 hover:bg-black/80 text-white font-bold text-xs md:text-[11px] rounded-full backdrop-blur-md border border-white/20 cursor-pointer transition-all active:scale-95"
                       >
                         {t.cancelCamera}
                       </button>
                       
-                      <span className="px-3 py-1 bg-brand-primary text-white font-bold text-[10px] rounded-full uppercase tracking-wider font-mono">
+                      <span className="px-3.5 py-1.5 bg-brand-primary text-white font-bold text-[10px] rounded-full uppercase tracking-wider font-mono">
                         {t.liveStream}
                       </span>
                     </div>
 
                     {/* Oval blueprint outline guides */}
                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-30 z-10">
-                      <div className="w-48 h-64 rounded-[50%] border-2 border-dashed border-white" />
+                      <div className="w-52 h-72 md:w-48 md:h-64 rounded-[50%] border-2 border-dashed border-white" />
                     </div>
 
-                    {/* Shutter controls bar */}
-                    <div className="relative z-10 p-5 bg-gradient-to-t from-black/85 to-transparent flex justify-center w-full">
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); capturePhoto(); }}
-                        className="w-16 h-16 rounded-full bg-white border-4 border-neutral-300 hover:border-brand-primary flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 group"
-                        title="Capture Photo"
-                      >
-                        <div className="w-10 h-10 rounded-full bg-brand-primary group-hover:scale-105 transition-transform" />
-                      </button>
+                    <div className="w-full flex flex-col z-15">
+                      {/* Real-time Environment Assist Indicator FLOATING for mobile inside the black viewport HUD */}
+                      {!cameraError && stream && (
+                        <div className="mx-6 md:mx-5 mb-2 bg-black/45 backdrop-blur-md rounded-2xl p-2 px-4 border border-white/10 flex md:hidden items-center justify-around text-white text-xs shadow-md">
+                          <div className="flex flex-col items-center text-center">
+                            <span className="text-[8px] text-white/60 uppercase font-mono tracking-wider">
+                              {t.lightingMatch}
+                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className={`w-1.5 h-1.5 rounded-full ${lightingStatus === "Optimal" ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                              <span className="font-bold font-mono text-[10px] text-white/95">{lightingStatus}</span>
+                            </div>
+                          </div>
+
+                          <div className="w-[1px] h-4 bg-white/20" />
+
+                          <div className="flex flex-col items-center text-center">
+                            <span className="text-[8px] text-white/60 uppercase font-mono tracking-wider">
+                              {t.focusClarity}
+                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className={`w-1.5 h-1.5 rounded-full ${focusStatus === "Optimal" ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                              <span className="font-bold font-mono text-[10px] text-white/95">{focusStatus}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Shutter controls bar */}
+                      <div className="pb-12 pt-4 md:p-5 bg-gradient-to-t from-black/85 to-transparent flex justify-center w-full">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); capturePhoto(); }}
+                          className="w-18 h-18 rounded-full bg-white border-4 border-neutral-300 hover:border-brand-primary flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 group"
+                          title="Capture Photo"
+                        >
+                          <div className="w-11 h-11 rounded-full bg-brand-primary group-hover:scale-105 transition-transform" />
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Real-time Environment Assist Indicator */}
+                  {/* Real-time Environment Assist Indicator outside for desktop only */}
                   {!cameraError && stream && (
-                    <div className="bg-neutral-50 rounded-2xl p-3 px-4 border border-gray-100 flex items-center justify-around text-gray-700 text-xs shadow-sm">
+                    <div className="hidden md:flex bg-neutral-50 rounded-2xl p-3 px-4 border border-gray-150 items-center justify-around text-gray-700 text-xs shadow-sm select-none animate-fade-in">
                       <div className="flex flex-col items-center text-center">
                         <span className="text-[9px] text-gray-400 uppercase font-mono tracking-wider">
                           {t.lightingMatch}
                         </span>
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className={`w-2 h-2 rounded-full ${lightingStatus === "Optimal" ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`} />
-                          <span className="font-bold font-mono text-xs text-gray-850">{lightingStatus}</span>
+                          <span className="font-bold font-mono text-xs text-gray-800">{lightingStatus}</span>
                         </div>
                       </div>
 
@@ -368,7 +400,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                         </span>
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className={`w-2 h-2 rounded-full ${focusStatus === "Optimal" ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`} />
-                          <span className="font-bold font-mono text-xs text-gray-850">{focusStatus}</span>
+                          <span className="font-bold font-mono text-xs text-gray-800">{focusStatus}</span>
                         </div>
                       </div>
                     </div>

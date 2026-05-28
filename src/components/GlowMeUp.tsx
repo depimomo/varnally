@@ -64,6 +64,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
   const [visualizedImageUrl, setVisualizedImageUrl] = useState<string | null>(null);
   const [isVisualizing, setIsVisualizing] = useState(false);
   const [visualizationError, setVisualizationError] = useState<string | null>(null);
+  const [sliderPosition, setSliderPosition] = useState(50);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -217,6 +218,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
     setIsVisualizing(true);
     setVisualizedImageUrl(null);
     setVisualizationError(null);
+    setSliderPosition(50);
 
     try {
       const generatedUrl = await visualizeMakeup(
@@ -717,39 +719,76 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, onBack }) => 
                     </button>
                   </div>
                 ) : visualizedImageUrl ? (
-                  /* Double image comparison */
-                  <div className="space-y-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Left: Before */}
-                      <div className="space-y-2">
-                        <div className="text-[10px] uppercase font-black tracking-widest text-neutral-400 font-mono flex items-center gap-1.5">
+                  /* Double image comparison with Interactive Slider overlay */
+                  <div className="space-y-5 flex flex-col items-center">
+                    <div className="w-full max-w-sm space-y-2 mx-auto">
+                      <div className="flex justify-between items-center text-[10px] uppercase font-black tracking-widest font-mono text-neutral-400 select-none px-1">
+                        <span className="flex items-center gap-1.5 text-neutral-500">
                           <span className="w-1.5 h-1.5 rounded-full bg-neutral-300" />
                           {tLocal('beforeLabel')}
-                        </div>
-                        <div className="aspect-[4/5] rounded-[2rem] overflow-hidden border border-neutral-200/50 bg-neutral-50 shadow-inner relative group">
-                          <img
-                            src={pinnedProfile.cleanedImageUrl || pinnedProfile.imageUrl}
-                            alt="Before"
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
-                            referrerPolicy="no-referrer"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Right: After Try on */}
-                      <div className="space-y-2">
-                        <div className="text-[10px] uppercase font-black tracking-widest text-amber-500 font-mono flex items-center gap-1.5 animate-pulse">
+                        </span>
+                        <span className="flex items-center gap-1.5 text-amber-500 animate-pulse">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                           {tLocal('afterLabel')}
-                        </div>
-                        <div className="aspect-[4/5] rounded-[2rem] overflow-hidden border border-amber-100 bg-amber-50 shadow-md relative group">
+                        </span>
+                      </div>
+
+                      {/* Interactive Dragging Slider Container */}
+                      <div className="aspect-[4/5] w-full rounded-[2.5rem] overflow-hidden border border-neutral-200/60 bg-neutral-50 shadow-md relative group select-none touch-none">
+                        {/* Before Image (Background Layer) */}
+                        <img
+                          src={pinnedProfile.cleanedImageUrl || pinnedProfile.imageUrl}
+                          alt="Before"
+                          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                          referrerPolicy="no-referrer"
+                        />
+
+                        {/* After Image (Clipped overlay layer on top) */}
+                        <div 
+                          className="absolute inset-0 overflow-hidden pointer-events-none"
+                          style={{ 
+                            clipPath: `polygon(${sliderPosition}% 0, 100% 0, 100% 100%, ${sliderPosition}% 100%)` 
+                          }}
+                        >
                           <img
                             src={visualizedImageUrl}
-                            alt="Makeup try-on simulation"
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
+                            alt="Virtual Try-On"
+                            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                             referrerPolicy="no-referrer"
                           />
                         </div>
+
+                        {/* Slide handle and split divider line */}
+                        <div 
+                          className="absolute top-0 bottom-0 w-1 bg-white/90 shadow-xl cursor-ew-resize z-25 pointer-events-none"
+                          style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+                        >
+                          {/* Pulsing visual handle indicator */}
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white border border-neutral-200 shadow-xl flex items-center justify-center text-neutral-800 transition-transform duration-150 group-hover:scale-110">
+                            <span className="flex items-center gap-[2.5px]">
+                              <span className="w-[2.5px] h-3 bg-neutral-400 rounded-full" />
+                              <span className="w-[2.5px] h-3 bg-neutral-400 rounded-full" />
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Interactive Drag Overlay (Native Invisible input taking up full card aspect) */}
+                        <input 
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={sliderPosition}
+                          onChange={(e) => setSliderPosition(Number(e.target.value))}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30 touch-none"
+                          aria-label="Before/After overlay slider"
+                        />
+
+                        {/* Micro-hint banner overlay disappearing on first move */}
+                        {sliderPosition === 50 && (
+                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[9px] font-mono uppercase tracking-widest text-white/90 font-black pointer-events-none z-20 animate-bounce">
+                            {isIndo ? '← SERET UNTUK BANDINGKAN →' : '← SLIDE TO COMPARE →'}
+                          </div>
+                        )}
                       </div>
                     </div>
 
