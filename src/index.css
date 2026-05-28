@@ -35,9 +35,11 @@ body {
   }
 }
 
-.animate-gradient-bg {
-  background-size: 200% 200%;
-  animation: gradient-shift 8s ease-in-out infinite;
+@media (min-width: 768px) {
+  .animate-gradient-bg {
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
 }
 
 .group:hover .group-hover\:animate-shine {

@@ -21,26 +21,6 @@ interface LandingHeroProps {
 // Seasonal Archetypes, extracted static descriptors and default background color schemes config
 const DEFAULT_PALETTES = landingSeasons.default_palettes;
 
-const getBenefits = (t: any) => {
-  return [
-    {
-      emoji: "✨",
-      title: t.benefit1Title || "Styling Confidence",
-      desc: t.benefit1Desc || "Stop guessing lipstick keys, hair tints, or jackets that leave you feeling washed out. Locking down your precise season alignment saves you time and secures total wardrobe certainty."
-    },
-    {
-      emoji: "📐",
-      title: t.benefit2Title || "Geometric Equilibrium",
-      desc: t.benefit2Desc || "Your face is a beautiful biological machine of lines, ratios, and anchors. We define your structural parameters to isolate the matching glasses shapes that balance your chin and cheekbones."
-    },
-    {
-      emoji: "🪞",
-      title: t.benefit3Title || "Origins of Varna",
-      desc: t.benefit3Desc || "Our brand pays tribute to the term Varna (Sanskrit for color and light spectrum). We don't paint a generic cover on your beautiful facial base—we empower your native organic shades."
-    }
-  ];
-};
-
 // Extract seasonal color palettes from archetypes.json dynamically
 const getSeasonPalette = (seasonKey: string, subtypeKey: string): string[] => {
   const border = (archetypes.color_archetypes as any)[seasonKey]?.[subtypeKey]?.border || [];
@@ -56,6 +36,16 @@ const PALETTES = [
 
 const VarnaColorRaysBackdrop: React.FC = () => {
   const [paletteIndex, setPaletteIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -65,6 +55,27 @@ const VarnaColorRaysBackdrop: React.FC = () => {
   }, []);
 
   const activePalette = PALETTES[paletteIndex] || DEFAULT_PALETTES[0];
+
+  if (isMobile) {
+    // Ultra-lightweight background representation for mobile/low-end devices.
+    // Absolutely no multi-layer dynamic rotators, keyframes, or rays to avoid browser compositing lag.
+    return (
+      <div className="absolute inset-0 flex items-center justify-center -z-15 overflow-hidden pointer-events-none select-none">
+        <div 
+          className="absolute w-72 h-72 rounded-full blur-[65px] opacity-25 transition-all duration-[2000ms] ease-in-out"
+          style={{
+            backgroundColor: activePalette[0] || '#FF8A65'
+          }}
+        />
+        <div 
+          className="absolute w-56 h-56 rounded-full blur-[55px] opacity-20 transition-all duration-[2000ms] ease-in-out ml-6 mt-6"
+          style={{
+            backgroundColor: activePalette[1] || '#4DB6AC'
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="absolute inset-0 flex items-center justify-center -z-15 overflow-visible pointer-events-none select-none">
@@ -156,61 +167,81 @@ const VarnaColorRaysBackdrop: React.FC = () => {
 
 export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
   const { t } = useLanguage();
-  const benefits = getBenefits(t);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <div className="relative space-y-16 py-4 md:py-8 overflow-hidden min-h-screen">
       
       {/* Dynamic Ambient Background Glow Orbs */}
       <div className="absolute inset-x-0 top-0 h-full overflow-hidden pointer-events-none -z-20">
-        <motion.div 
-          animate={{
-            x: [0, 45, -25, 0],
-            y: [0, -35, 25, 0],
-          }}
-          transition={{
-            duration: 16,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-20 left-[10%] w-72 h-72 rounded-full bg-brand-primary/20 blur-[110px]"
-        />
-        <motion.div 
-          animate={{
-            x: [0, -35, 35, 0],
-            y: [0, 45, -45, 0],
-          }}
-          transition={{
-            duration: 19,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-60 right-[15%] w-96 h-96 rounded-full bg-brand-secondary/25 blur-[130px]"
-        />
-        <motion.div 
-          animate={{
-            x: [0, 50, -35, 0],
-            y: [0, 25, 55, 0],
-          }}
-          transition={{
-            duration: 23,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute bottom-40 left-[20%] w-80 h-80 rounded-full bg-indigo-500/15 blur-[120px]"
-        />
-        <motion.div 
-          animate={{
-            x: [0, -45, 25, 0],
-            y: [0, -55, 25, 0],
-          }}
-          transition={{
-            duration: 21,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute bottom-10 right-[25%] w-85 h-85 rounded-full bg-pink-500/15 blur-[110px]"
-        />
+        {!isMobile ? (
+          <>
+            <motion.div 
+              animate={{
+                x: [0, 45, -25, 0],
+                y: [0, -35, 25, 0],
+              }}
+              transition={{
+                duration: 16,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-20 left-[10%] w-72 h-72 rounded-full bg-brand-primary/20 blur-[110px]"
+            />
+            <motion.div 
+              animate={{
+                x: [0, -35, 35, 0],
+                y: [0, 45, -45, 0],
+              }}
+              transition={{
+                duration: 19,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-60 right-[15%] w-96 h-96 rounded-full bg-brand-secondary/25 blur-[130px]"
+            />
+            <motion.div 
+              animate={{
+                x: [0, 50, -35, 0],
+                y: [0, 25, 55, 0],
+              }}
+              transition={{
+                duration: 23,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute bottom-40 left-[20%] w-80 h-80 rounded-full bg-indigo-500/15 blur-[120px]"
+            />
+            <motion.div 
+              animate={{
+                x: [0, -45, 25, 0],
+                y: [0, -55, 25, 0],
+              }}
+              transition={{
+                duration: 21,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute bottom-10 right-[25%] w-85 h-85 rounded-full bg-pink-500/15 blur-[110px]"
+            />
+          </>
+        ) : (
+          /* Simple, static lightweight orbs for mobile - zero frame processing and dynamic layout repaints */
+          <>
+            <div className="absolute top-20 left-[5%] w-52 h-52 rounded-full bg-brand-primary/10 blur-[80px]" />
+            <div className="absolute top-60 right-[10%] w-64 h-64 rounded-full bg-brand-secondary/12 blur-[90px]" />
+            <div className="absolute bottom-32 left-[10%] w-56 h-56 rounded-full bg-indigo-500/8 blur-[80px]" />
+          </>
+        )}
       </div>
 
       {/* 1. Hero Title Section */}
