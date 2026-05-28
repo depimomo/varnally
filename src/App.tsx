@@ -255,7 +255,8 @@ export default function App() {
     }
   };
 
-  const saveToHistory = async (shouldPin = false) => {
+  const saveToHistory = async (shouldPinArg: boolean | any = false) => {
+    const shouldPin = shouldPinArg === true;
     if (!result) return;
     
     setLoading(true);

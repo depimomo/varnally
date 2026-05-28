@@ -166,7 +166,7 @@ const VarnaColorRaysBackdrop: React.FC = () => {
 
 
 export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -528,37 +528,49 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
             </div>
           </div>
 
-          {/* Feature 5: Saved Varna Records */}
-          <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-sky-500/5 rounded-[2rem] border border-black/5 hover:border-sky-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
+          {/* Feature 5: Glow Me Up */}
+          <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-amber-500/5 rounded-[2rem] border border-black/5 hover:border-amber-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
             <div className="space-y-3">
-              <div className="w-12 h-12 bg-sky-50 text-sky-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                <History size={24} />
+              <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
+                <Sparkles size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat5Title}</h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat5Title}</h3>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white font-mono animate-pulse">
+                  {language === 'id' ? 'BARU' : 'NEW'}
+                </span>
+              </div>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
                 {t.feat5Desc}
               </p>
             </div>
             <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
-              <span className="text-[9px] font-bold text-sky-600 font-mono uppercase">Local database</span>
-              <span className="text-[10px] font-bold text-emerald-600 font-mono">PERSISTED</span>
+              <span className="text-[9px] font-bold text-amber-600 font-mono uppercase">Interactive Try-on</span>
+              <span className="text-[10px] font-bold text-emerald-600 font-mono flex items-center gap-1">
+                <Sparkles size={10} className="text-amber-500 animate-pulse" /> AI POWERED
+              </span>
             </div>
           </div>
 
-          {/* Feature 6: Custom Shareable Poster */}
+          {/* Feature 6: Stylize Me */}
           <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-rose-500/5 rounded-[2rem] border border-black/5 hover:border-rose-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
             <div className="space-y-3">
               <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
                 <Share2 size={24} />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat6Title}</h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat6Title}</h3>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-500 border border-neutral-200 font-mono">
+                  {language === 'id' ? 'DIRENCANAKAN' : 'IN PLANNING'}
+                </span>
+              </div>
               <p className="text-xs text-gray-500 leading-relaxed font-semibold">
                 {t.feat6Desc}
               </p>
             </div>
             <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
-              <span className="text-[9px] font-bold text-rose-600 font-mono uppercase">Ready to share</span>
-              <span className="text-[10px] font-bold text-purple-600 font-mono">9:16 RATIO</span>
+              <span className="text-[9px] font-bold text-rose-600 font-mono uppercase">Wardrobe & Style</span>
+              <span className="text-[10px] font-bold text-purple-600 font-mono">COMING SOON</span>
             </div>
           </div>
 

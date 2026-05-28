@@ -137,18 +137,19 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
+          <button 
+            onClick={onHistoryToggle}
+            className={`p-2 rounded-full transition-colors relative cursor-pointer ${showHistory ? 'bg-gray-100 text-brand-primary' : 'text-gray-600 hover:bg-gray-100'}`}
+            title={t.historyTitle}
+          >
+            <History size={18} />
+            {historyLength > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-brand-primary rounded-full" />
+            )}
+          </button>
+
           {user ? (
             <div className="flex items-center gap-2 sm:gap-3">
-              <button 
-                onClick={onHistoryToggle}
-                className={`p-2 rounded-full transition-colors relative cursor-pointer ${showHistory ? 'bg-gray-100 text-brand-primary' : 'text-gray-600 hover:bg-gray-100'}`}
-                title={t.historyTitle}
-              >
-                <History size={18} />
-                {historyLength > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-brand-primary rounded-full" />
-                )}
-              </button>
               <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 shrink-0">
                 <img src={user.photoURL || ''} alt={user.displayName || 'User'} className="w-full h-full object-cover" />
               </div>
@@ -298,27 +299,25 @@ export const Header: React.FC<HeaderProps> = ({
                 )}
 
                 {/* 3. History Navigation Link */}
-                {user && (
-                  <div className="space-y-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8] block px-1">
-                      {t.historyTitle || "History"}
-                    </span>
-                    <button
-                      onClick={handleMobileHistoryToggle}
-                      className="w-full flex items-center justify-between p-3.5 bg-white hover:bg-neutral-50 border border-neutral-100 rounded-2xl text-neutral-700 transition-all cursor-pointer text-left font-semibold text-xs text-brand-primary"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <History size={16} />
-                        <span>{t.historyTitle || "Scan History"}</span>
-                      </div>
-                      {historyLength > 0 && (
-                        <span className="bg-brand-primary text-white text-[10px] py-0.5 px-2 rounded-full font-mono font-black shrink-0">
-                          {historyLength}
-                        </span>
-                      )}
-                    </button>
-                  </div>
-                )}
+                <div className="space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8] block px-1">
+                    {t.historyTitle || "History"}
+                  </span>
+                  <button
+                    onClick={handleMobileHistoryToggle}
+                    className="w-full flex items-center justify-between p-3.5 bg-white hover:bg-neutral-50 border border-neutral-100 rounded-2xl text-neutral-700 transition-all cursor-pointer text-left font-semibold text-xs text-brand-primary"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <History size={16} />
+                      <span>{t.historyTitle || "Scan History"}</span>
+                    </div>
+                    {historyLength > 0 && (
+                      <span className="bg-brand-primary text-white text-[10px] py-0.5 px-2 rounded-full font-mono font-black shrink-0">
+                        {historyLength}
+                      </span>
+                    )}
+                  </button>
+                </div>
 
                 {/* 4. Language Selector Section */}
                 <div className="space-y-2">
