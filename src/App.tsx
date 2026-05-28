@@ -728,6 +728,20 @@ export default function App() {
           ) : (
             <LandingHero 
               onStart={() => setShowUploader(true)}
+              onGlowMeUp={() => {
+                setShowHub(true);
+                setHubSubPage('glow_me_up');
+                setShowHistory(false);
+                setResult(null);
+                setShowUploader(false);
+              }}
+              onStylizeMe={() => {
+                setShowHub(true);
+                setHubSubPage('stylize_me');
+                setShowHistory(false);
+                setResult(null);
+                setShowUploader(false);
+              }}
             />
           )}
         </AnimatePresence>

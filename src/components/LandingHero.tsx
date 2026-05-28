@@ -8,7 +8,9 @@ import {
   Heart, 
   History,
   Share2,
-  ArrowRight
+  ArrowRight,
+  Check,
+  X
 } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
 import archetypes from '../data/archetypes.json';
@@ -16,6 +18,8 @@ import landingSeasons from '../data/landing_seasons.json';
 
 interface LandingHeroProps {
   onStart: () => void;
+  onGlowMeUp?: () => void;
+  onStylizeMe?: () => void;
 }
 
 // Seasonal Archetypes, extracted static descriptors and default background color schemes config
@@ -165,9 +169,11 @@ const VarnaColorRaysBackdrop: React.FC = () => {
 };
 
 
-export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
+export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, onStylizeMe }) => {
   const { language, t } = useLanguage();
   const [isMobile, setIsMobile] = useState(false);
+  const [sliderPos, setSliderPos] = useState(50);
+  const [clickedStyle, setClickedStyle] = useState<'left' | 'right' | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -489,23 +495,6 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
             </div>
           </div>
 
-          {/* Feature 3: Glasses Frames */}
-          <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-amber-500/5 rounded-[2rem] border border-black/5 hover:border-amber-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
-            <div className="space-y-3">
-              <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                <Glasses size={24} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat3Title}</h3>
-              <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                {t.feat3Desc}
-              </p>
-            </div>
-            <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
-              <span className="text-[9px] font-bold text-amber-600 font-mono uppercase">Optical Showcase</span>
-              <span className="text-[10px] font-black text-gray-400 font-mono">AXIS FIT</span>
-            </div>
-          </div>
-
           {/* Feature 4: Cosmetics */}
           <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-purple-500/5 rounded-[2rem] border border-black/5 hover:border-purple-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
             <div className="space-y-3">
@@ -528,50 +517,373 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart }) => {
             </div>
           </div>
 
-          {/* Feature 5: Glow Me Up */}
-          <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-amber-500/5 rounded-[2rem] border border-black/5 hover:border-amber-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
-            <div className="space-y-3">
-              <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                <Sparkles size={24} />
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat5Title}</h3>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white font-mono animate-pulse">
+        </div>
+      </div>
+
+      {/* 4.5 Varnally Hub Showcase Section */}
+      <div className="space-y-16 max-w-6xl mx-auto px-4 relative z-10 pt-14 pb-10">
+        
+        {/* Playful Ambient Background Blobs */}
+        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none select-none">
+          <div className="absolute top-1/4 left-10 w-80 h-80 bg-amber-300/25 rounded-full blur-[80px] animate-pulse" />
+          <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-rose-400/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-[60%] left-1/3 w-64 h-64 bg-indigo-300/15 rounded-full blur-[70px]" />
+        </div>
+
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100/50 shadow-sm animate-bounce">
+            <span className="w-2 h-2 rounded-full bg-brand-secondary animate-ping" />
+            <span className="text-[10px] font-black text-brand-secondary uppercase tracking-widest font-mono">
+              {language === 'id' ? 'TAMAN BERMAIN GAYA INTERAKTIF' : 'INTERACTIVE STYLING PLAYGROUND'}
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-display font-black text-gray-900 tracking-tight uppercase">
+            Varnally Hub
+          </h2>
+          <p className="text-sm md:text-base text-gray-500 max-w-xl mx-auto font-semibold leading-relaxed">
+            {language === 'id' 
+              ? 'Lepaskan batasan frame biasa! Eksplorasi fitur interaktif kami dengan desain melengkung organik yang dirancang khusus untuk kenyamanan visual Anda.'
+              : 'Break free from rigid grids. Dive into our playful interactive sandboxes wrapped in responsive organic shapes and fluid energy.'}
+          </p>
+        </div>
+
+        {/* Asymmetrical organic-shaped items */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          {/* Sub-section 1: Glow Me Up */}
+          <div className="lg:col-span-6 p-8 md:p-10 bg-white/70 backdrop-blur-md rounded-[5rem_3rem_6rem_2.5rem] border-2 border-amber-300/40 hover:border-amber-400/70 shadow-[0_20px_50px_rgba(245,158,11,0.06)] hover:shadow-[0_30px_60px_rgba(245,158,11,0.12)] transition-all duration-500 flex flex-col justify-between space-y-8 relative overflow-hidden group">
+            
+            {/* Soft internal liquid background */}
+            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-amber-100/30 rounded-full blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-700" />
+            
+            <div className="space-y-4 relative z-10">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-black text-amber-600 uppercase tracking-widest font-mono flex items-center gap-1.5 bg-amber-100/60 px-3 py-1 rounded-full">
+                  <Sparkles size={13} className="animate-spin text-amber-500" /> {language === 'id' ? 'COBA RIASAN' : 'MAKEUP TRY-ON'}
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[9px] font-mono font-black uppercase tracking-wider bg-amber-500 text-white animate-pulse shadow-md shadow-amber-500/20">
                   {language === 'id' ? 'BARU' : 'NEW'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                {t.feat5Desc}
+              <h3 className="text-3xl font-black text-neutral-900 font-display tracking-tight flex items-center gap-2">
+                Glow Me Up
+              </h3>
+              <p className="text-xs md:text-sm text-neutral-500 leading-relaxed font-semibold">
+                {language === 'id'
+                  ? 'Uji paduan riasan wajah terbaik Anda secara virtual dengan AI instan. Gunakan slider pembanding super mulus di bawah untuk mengamati perubahan menakjubkan pada wajah!'
+                  : 'Immersive artificial cosmetics visualization. Slide left and right to inspect customized, hyper-realistic makeup overlays mapped perfectly over portrait geometries.'}
               </p>
             </div>
-            <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
-              <span className="text-[9px] font-bold text-amber-600 font-mono uppercase">Interactive Try-on</span>
-              <span className="text-[10px] font-bold text-emerald-600 font-mono flex items-center gap-1">
-                <Sparkles size={10} className="text-amber-500 animate-pulse" /> AI POWERED
-              </span>
-            </div>
-          </div>
 
-          {/* Feature 6: Stylize Me */}
-          <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-rose-500/5 rounded-[2rem] border border-black/5 hover:border-rose-500/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
-            <div className="space-y-3">
-              <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                <Share2 size={24} />
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-lg font-bold text-gray-900 font-display">{t.feat6Title}</h3>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-500 border border-neutral-200 font-mono">
-                  {language === 'id' ? 'DIRENCANAKAN' : 'IN PLANNING'}
+            {/* Slider container with custom surrounding fluid aesthetic */}
+            <div className="w-full max-w-xs mx-auto space-y-3 select-none relative z-10">
+              <div className="flex justify-between items-center text-[10px] uppercase font-black tracking-widest font-mono text-neutral-500 px-2 bg-neutral-100/50 py-1.5 rounded-full border border-neutral-250/30">
+                <span className="flex items-center gap-1.5 text-neutral-600">
+                  <span className="w-2 h-2 rounded-full bg-neutral-400" />
+                  {language === 'id' ? 'SEBELUM' : 'BEFORE'}
+                </span>
+                <span className="flex items-center gap-1.5 text-amber-600 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                  {language === 'id' ? 'SESUDAH' : 'AFTER'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                {t.feat6Desc}
+
+              {/* Interactive Dragging Slider inside an asymmetrical capsule */}
+              <div className="aspect-[4/5] relative w-full rounded-[3.5rem_2rem_3rem_2.5rem] overflow-hidden border-2 border-amber-300 shadow-[0_15px_30px_rgba(0,0,0,0.08)] bg-neutral-100 group/slider touch-none">
+                {/* Before Image */}
+                <img
+                  src="/sample/potrait.jpeg"
+                  alt="Original Portrait"
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                  referrerPolicy="no-referrer"
+                />
+
+                {/* After Image (Clipped) */}
+                <div 
+                  className="absolute inset-0 overflow-hidden pointer-events-none"
+                  style={{ 
+                    clipPath: `polygon(${sliderPos}% 0, 100% 0, 100% 100%, ${sliderPos}% 100%)` 
+                  }}
+                >
+                  <img
+                    src="/sample/potrait_after.png"
+                    alt="Makeup Try-On Preview"
+                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+
+                {/* Divider Line & Handle */}
+                <div 
+                  className="absolute top-0 bottom-0 w-[3px] bg-gradient-to-b from-amber-400 to-amber-200 shadow-xl cursor-ew-resize z-2 pointer-events-none"
+                  style={{ left: `${sliderPos}%`, transform: 'translateX(-50%)' }}
+                >
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-amber-400 border-2 border-white shadow-2xl flex items-center justify-center text-white transition-transform duration-150 group-hover/slider:scale-110">
+                    <span className="flex items-center gap-[2.5px]">
+                      <span className="w-[3px] h-3.5 bg-white rounded-full" />
+                      <span className="w-[3px] h-3.5 bg-white rounded-full" />
+                    </span>
+                  </div>
+                </div>
+
+                {/* Invisible input range overlay */}
+                <input 
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={sliderPos}
+                  onChange={(e) => setSliderPos(Number(e.target.value))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-10 touch-none"
+                  aria-label="Before/After interactive slider"
+                />
+
+                {sliderPos === 50 && (
+                  <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-amber-500 text-white font-mono px-4 py-1.5 rounded-full text-[9px] uppercase tracking-widest font-black pointer-events-none z-5 shadow-lg border border-amber-300 animate-bounce">
+                    {language === 'id' ? '← GESER UNTUK COBA →' : '← SLIDE TO TRY →'}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Playful call-to-action button */}
+            <div className="pt-2 text-center relative z-10">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onGlowMeUp}
+                className="w-full max-w-xs mx-auto py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-2xl flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-amber-500/20 text-xs tracking-wider uppercase"
+              >
+                <span>{language === 'id' ? 'Coba Riasan Virtual ✧' : 'Launch Virtual Try-On ✧'}</span>
+                <ArrowRight size={14} />
+              </motion.button>
+            </div>
+
+          </div>
+
+          {/* Sub-section 2: Stylize Me - with counter curves */}
+          <div className="lg:col-span-6 p-8 md:p-10 bg-white/70 backdrop-blur-md rounded-[3rem_6rem_2.5rem_5rem] border-2 border-rose-300/40 hover:border-rose-400/70 shadow-[0_20px_50px_rgba(244,63,94,0.06)] hover:shadow-[0_30px_60px_rgba(244,63,94,0.12)] transition-all duration-500 flex flex-col justify-between space-y-8 relative overflow-hidden group">
+            
+            {/* Soft internal liquid background */}
+            <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-rose-100/30 rounded-full blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-700" />
+
+            <div className="space-y-4 relative z-10">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-black text-rose-600 uppercase tracking-widest font-mono flex items-center gap-1.5 bg-rose-100/60 px-3 py-1 rounded-full">
+                  <Palette size={13} className="text-rose-500" /> {language === 'id' ? 'ASISTEN STYLING' : 'PERSONAL STYLIST'}
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[9px] font-mono font-black uppercase tracking-wider bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/20">
+                  {language === 'id' ? 'TREN VIRAL 🔥' : 'HOT TREND 🔥'}
+                </span>
+              </div>
+              <h3 className="text-3xl font-black text-neutral-900 font-display tracking-tight flex items-center gap-2">
+                Stylize Me
+              </h3>
+              <p className="text-xs md:text-sm text-neutral-500 leading-relaxed font-semibold">
+                {language === 'id'
+                  ? 'Temukan harmoni busana impian secara presisi. Sangat disesuaikan dengan tipe warna kulit Anda sendiri guna menghindari kesalahan mix-and-match!'
+                  : 'Establish perfect wardrobe synchronicities. Compare seasonal apparel options side-by-side to understand which styles amplify your glowing nature.'}
               </p>
             </div>
-            <div className="flex bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 items-center justify-between">
-              <span className="text-[9px] font-bold text-rose-600 font-mono uppercase">Wardrobe & Style</span>
-              <span className="text-[10px] font-bold text-purple-600 font-mono">COMING SOON</span>
+
+            {/* Speech Bubble Chat Style Question */}
+            <div className="w-full max-w-xs mx-auto flex flex-col items-center pt-2 relative z-10">
+              <motion.div 
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={`relative w-full rounded-3xl p-4 text-xs text-center border font-bold transition-all duration-300 shadow-md ${
+                  clickedStyle === null 
+                    ? 'bg-gradient-to-r from-rose-50/80 to-amber-50/80 border-rose-100 text-rose-850' 
+                    : clickedStyle === 'right'
+                      ? 'bg-gradient-to-r from-emerald-50/95 to-teal-50/95 border-emerald-100 text-emerald-850'
+                      : 'bg-gradient-to-r from-rose-50 to-rose-100/50 border-rose-200 text-rose-900'
+                }`}
+              >
+                {clickedStyle === null ? (
+                  <>
+                    <p className="leading-relaxed text-[13px]">
+                      {language === 'id' 
+                        ? '✨ "Yang mana busana paling cocok untuk tipe warna Light Summer?"' 
+                        : '✨ "Which style is most suitable for the Light Summer season?"'}
+                    </p>
+                    <span className="text-[9px] font-black tracking-wider uppercase text-rose-500/70 block mt-1.5 animate-pulse">
+                      {language === 'id' ? '👉 Coba Tebak! Klik salah satu foto di bawah!' : '👉 Click an image below to guess!'}
+                    </span>
+                  </>
+                ) : clickedStyle === 'right' ? (
+                  <>
+                    <p className="leading-relaxed text-[13px]">
+                      {language === 'id'
+                        ? '🎉 Benar Sekali! Tipe warna Light Summer bercahaya maksimal dengan warna cerah, dingin, dan lembut di kanan!'
+                        : '🎉 Bingo! Light Summer seasonal palettes thrive with clear, light, cool-undertoned coordinates on the right!'}
+                    </p>
+                    <button 
+                      type="button"
+                      onClick={() => setClickedStyle(null)}
+                      className="mt-2 text-[10px] font-black uppercase text-emerald-600 bg-white border border-emerald-200 px-3 py-1 rounded-full shadow-sm hover:bg-emerald-50 transition-colors cursor-pointer block mx-auto"
+                    >
+                      {language === 'id' ? 'Main Lagi ↺' : 'Try Another ↺'}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p className="leading-relaxed text-[13px]">
+                      {language === 'id'
+                        ? '😅 Belum Tepat! Warna baju kiri bertabrakan dengan rona alami Light Summer yang lembut, membuat kulit kusam.'
+                        : '😅 Not matching! The heavy warm profile on the left clashes with delicate Light Summer hues, casting shadows.'}
+                    </p>
+                    <button 
+                      type="button"
+                      onClick={() => setClickedStyle(null)}
+                      className="mt-2 text-[10px] font-black uppercase text-rose-600 bg-white border border-rose-200 px-3 py-1 rounded-full shadow-sm hover:bg-rose-50 transition-colors cursor-pointer block mx-auto"
+                    >
+                      {language === 'id' ? 'Coba Lagi ↺' : 'Try Again ↺'}
+                    </button>
+                  </>
+                )}
+                {/* Bubble speech tail orientation pointing downward */}
+                <div className={`absolute top-full left-1/2 -translate-x-1/2 -translate-y-1.5 w-3.5 h-3.5 rotate-45 border-r border-b transition-colors duration-300 ${
+                  clickedStyle === null 
+                    ? 'bg-amber-50 border-rose-100' 
+                    : clickedStyle === 'right'
+                      ? 'bg-teal-50 border-emerald-100'
+                      : 'bg-rose-100/50 border-rose-200'
+                }`} />
+              </motion.div>
             </div>
+
+            {/* Stylize Me Comparison Row with asymmetric picture mounts */}
+            <div className="w-full max-w-xs mx-auto grid grid-cols-2 gap-5 select-none pt-2 relative z-10">
+              
+              {/* Clashing style (style_1.webp) */}
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (clickedStyle === null) setClickedStyle('left');
+                  }}
+                  disabled={clickedStyle !== null}
+                  className={`relative aspect-[4/5] rounded-[3rem_1.5rem_2rem_2.5rem] overflow-hidden border-2 bg-neutral-100 transition-all duration-300 text-left block w-full outline-none shadow-[0_10px_20px_rgba(0,0,0,0.06)] ${
+                    clickedStyle === null 
+                      ? 'border-neutral-200 hover:border-rose-400 hover:scale-[1.04] active:scale-95 cursor-pointer hover:shadow-lg' 
+                      : clickedStyle === 'left'
+                        ? 'border-rose-450 ring-4 ring-rose-500/20'
+                        : 'border-neutral-200/50 opacity-50 filter grayscale'
+                  }`}
+                >
+                  <img
+                    src="/sample/style_1.webp"
+                    alt="Clashing Style"
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                  
+                  {/* Subtle red overlay when answer is revealed */}
+                  {clickedStyle !== null && (
+                    <div className="absolute inset-0 bg-rose-500/10" />
+                  )}
+
+                  {/* Red X icon - revealed only after a selection has been made */}
+                  {clickedStyle !== null && (
+                    <motion.div 
+                      initial={{ scale: 0, rotate: -45 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      className="absolute top-4 left-4 bg-rose-500 text-white p-1.5 rounded-full shadow-lg border border-white flex items-center justify-center"
+                    >
+                      <X size={15} className="stroke-[3.5px]" />
+                    </motion.div>
+                  )}
+                </button>
+
+                {/* Left Description Revealed after Click */}
+                {clickedStyle !== null && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center bg-rose-50 py-1.5 px-2 rounded-2xl border border-rose-100/70"
+                  >
+                    <span className="text-[11px] font-mono font-black uppercase tracking-wider text-rose-600 block">
+                      {language === 'id' ? 'Clashing' : 'Clashing Tone'}
+                    </span>
+                    <span className="text-[9px] text-neutral-500 font-semibold block mt-0.5">
+                      {language === 'id' ? 'Kulit tampak kusam' : 'Slightly washes out'}
+                    </span>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Matching style (style_2.webp) */}
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (clickedStyle === null) setClickedStyle('right');
+                  }}
+                  disabled={clickedStyle !== null}
+                  className={`relative aspect-[4/5] rounded-[1.5rem_3rem_2.5rem_2rem] overflow-hidden border-2 bg-neutral-100 transition-all duration-300 text-left block w-full outline-none shadow-[0_10px_20px_rgba(0,0,0,0.06)] ${
+                    clickedStyle === null 
+                      ? 'border-neutral-200 hover:border-emerald-400 hover:scale-[1.04] active:scale-95 cursor-pointer hover:shadow-lg' 
+                      : clickedStyle === 'right'
+                        ? 'border-emerald-450 ring-4 ring-emerald-500/20 shadow-emerald-200'
+                        : 'border-neutral-200/50 opacity-50 filter grayscale'
+                  }`}
+                >
+                  <img
+                    src="/sample/style_2.webp"
+                    alt="Harmony Style"
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                  
+                  {/* Subtle green overlay when answer is revealed */}
+                  {clickedStyle !== null && (
+                    <div className="absolute inset-0 bg-emerald-500/5" />
+                  )}
+
+                  {/* Green check icon - revealed only after a selection has been made */}
+                  {clickedStyle !== null && (
+                    <motion.div 
+                      initial={{ scale: 0, rotate: 45 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      className="absolute top-4 left-4 bg-emerald-500 text-white p-1.5 rounded-full shadow-lg border border-white flex items-center justify-center"
+                    >
+                      <Check size={15} className="stroke-[3.5px]" />
+                    </motion.div>
+                  )}
+                </button>
+
+                {/* Right Description Revealed after Click */}
+                {clickedStyle !== null && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center bg-emerald-50 py-1.5 px-2 rounded-2xl border border-emerald-100/70"
+                  >
+                    <span className="text-[11px] font-mono font-black uppercase tracking-wider text-emerald-700 block">
+                      {language === 'id' ? 'Harmonis!' : 'Perfect Gold!'}
+                    </span>
+                    <span className="text-[9px] text-neutral-500 font-semibold block mt-0.5">
+                      {language === 'id' ? 'Instan bercahaya!' : 'Instantly illuminates!'}
+                    </span>
+                  </motion.div>
+                )}
+              </div>
+
+            </div>
+
+            {/* Playful call-to-action button */}
+            <div className="pt-2 text-center relative z-10">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onStylizeMe}
+                className="w-full max-w-xs mx-auto py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-2xl flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-rose-500/20 text-xs tracking-wider uppercase"
+              >
+                <span>{language === 'id' ? 'Coba Pilih Busana ✧' : 'Launch Style Matcher ✧'}</span>
+                <ArrowRight size={14} />
+              </motion.button>
+            </div>
+
           </div>
 
         </div>
