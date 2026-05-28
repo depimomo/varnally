@@ -17,7 +17,8 @@ import {
   deleteDoc,
   doc,
   serverTimestamp,
-  updateDoc
+  updateDoc,
+  getDocs
 } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from './lib/firebase';
 import { analyzeColor } from './services/gemini';
@@ -68,12 +69,92 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, [showHub, hubSubPage, showHistory, result, showUploader]);
 
+  const syncLocalStorageToFirestore = async (userInstance: User) => {
+    const localData = localStorage.getItem('varnally_history');
+    if (!localData) return;
+
+    try {
+      const parsed = JSON.parse(localData);
+      if (!Array.isArray(parsed) || parsed.length === 0) return;
+
+      // Check if a pinned profile already exists in the cloud database for this user
+      const q = query(
+        collection(db, 'analyses'),
+        where('userId', '==', userInstance.uid),
+        where('isPinnedProfile', '==', true)
+      );
+      const querySnapshot = await getDocs(q);
+      let cloudHasPinned = !querySnapshot.empty;
+
+      for (const item of parsed) {
+        const trimmedBestColors = (item.bestColors || []).slice(0, 5);
+        while (trimmedBestColors.length < 5) {
+          trimmedBestColors.push({ hex: "#FFFFFF", name: "Off White" });
+        }
+        const trimmedAvoidColors = (item.avoidColors || []).slice(0, 5);
+        while (trimmedAvoidColors.length < 5) {
+          trimmedAvoidColors.push({ hex: "#000000", name: "Black" });
+        }
+
+        // Prioritize original cloud profile.
+        // If cloud already has a pinned profile, sync this item with isPinnedProfile = false.
+        // If cloud doesn't have a pinned profile yet, allow one synced local profile to be pinned,
+        // and set cloudHasPinned to true so any subsequent local profiles in the same batch won't be pinned.
+        let shouldBePinned = false;
+        if (item.isPinnedProfile === true) {
+          if (!cloudHasPinned) {
+            shouldBePinned = true;
+            cloudHasPinned = true;
+          }
+        }
+
+        const validResult = {
+          userId: userInstance.uid,
+          season: item.season,
+          subType: item.subType || "General",
+          bestColors: trimmedBestColors,
+          avoidColors: trimmedAvoidColors,
+          jewelry: item.jewelry || "Gold & Silver",
+          faceShape: item.faceShape || "Oval",
+          faceShapeDescription: item.faceShapeDescription || "",
+          skinUndertone: item.skinUndertone || "Neutral",
+          eyeColor: item.eyeColor || "Brown",
+          hairColor: item.hairColor || "Black",
+          name: item.name || null,
+          imageUrl: item.imageUrl || null,
+          cleanedImageUrl: item.cleanedImageUrl || null,
+          createdAt: serverTimestamp(),
+          isPinnedProfile: shouldBePinned,
+        };
+
+        try {
+          await addDoc(collection(db, 'analyses'), validResult);
+        } catch (error) {
+          console.error("Failed to sync local item to Firebase:", error);
+        }
+      }
+
+      localStorage.removeItem('varnally_history');
+      setToast({ 
+        message: language === 'id' 
+          ? "Histori lokal berhasil disimpan ke akun Google Anda!" 
+          : "Successfully synced local history to your Google account!", 
+        type: "success" 
+      });
+    } catch (e) {
+      console.error("Error parsing local storage history during sync:", e);
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
+      if (u) {
+        syncLocalStorageToFirestore(u);
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     if (!user) {
