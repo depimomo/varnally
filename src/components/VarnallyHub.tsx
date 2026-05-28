@@ -9,18 +9,14 @@ interface VarnallyHubProps {
 }
 
 export const VarnallyHub: React.FC<VarnallyHubProps> = ({ onBack, onSelectFeature }) => {
-  const { language } = useLanguage();
-
-  const isIndo = language === 'id';
+  const { t } = useLanguage();
 
   const menuItems = [
     {
       id: 'glow_me_up',
       title: 'Glow Me Up',
-      description: isIndo
-        ? 'Upload swatch-nya, kami pilihin! Tahu persis warna apa yang paling cocok sama personal color kamu.'
-        : 'Upload the swatch, we\'ll pick the match! Paralyzed by the shade options? Our AI will tell you exactly which one fits your personal color season.',
-      badge: isIndo ? 'Baru' : 'New',
+      description: t.glowMeUpDesc || 'Upload the swatch, we\'ll pick the match! Paralyzed by the shade options? Our AI will tell you exactly which one fits your personal color season.',
+      badge: t.newTag || 'New',
       badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-200',
       icon: <Sparkles className="text-amber-500 animate-pulse" size={24} />,
       colorClass: 'from-amber-500/10 via-orange-500/5 to-rose-500/10',
@@ -29,10 +25,8 @@ export const VarnallyHub: React.FC<VarnallyHubProps> = ({ onBack, onSelectFeatur
     {
       id: 'stylize_me',
       title: 'Stylize Me',
-      description: isIndo
-        ? 'Dapetin best OOTD-mu. Masukkan foto varian warna baju incaranmu, dan biarkan AI kami jadi personal stylist yang menganalisis warna soulmate buat kamu.'
-        : 'Unlock your perfect OOTD. Drop a photo of the clothing color variants, and let our AI act as your personal stylist, analyzing the exact soulmate color for you.',
-      badge: isIndo ? 'Baru' : 'New',
+      description: t.stylizeMeDesc || 'Unlock your perfect OOTD. Drop a photo of the clothing color variants, and let our AI act as your personal stylist, analyzing the exact soulmate color for you.',
+      badge: t.newTag || 'New',
       badgeBg: 'bg-rose-100 text-rose-800 border-rose-200',
       icon: <Shirt className="text-indigo-500" size={24} />,
       colorClass: 'from-indigo-500/10 via-purple-500/5 to-pink-500/10',
@@ -55,7 +49,7 @@ export const VarnallyHub: React.FC<VarnallyHubProps> = ({ onBack, onSelectFeatur
           className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-full text-xs font-black uppercase tracking-wider transition-all cursor-pointer font-mono"
         >
           <ArrowLeft size={14} />
-          {isIndo ? 'Kembali ke Pemindai' : 'Back to Scanner'}
+          {t.backToScanner || 'Back to Scanner'}
         </button>
       </div>
 
@@ -65,9 +59,7 @@ export const VarnallyHub: React.FC<VarnallyHubProps> = ({ onBack, onSelectFeatur
           Varnally Hub
         </h1>
         <p className="text-sm text-neutral-500 font-semibold leading-relaxed">
-          {isIndo
-            ? 'Pusat integrasi khusus untuk mengoptimalkan penampilan Anda. Temukan makeup dan gaya pakaian terbaik yang disinkronisasikan langsung dengan karakter Varna unik Anda.'
-            : 'Explore advanced styling playgrounds powered by your exact color season. Find matches for makeup tones or clothing styles aligned with your unique Varna template.'}
+          {t.varnallyHubSub || 'Explore advanced styling playgrounds powered by your exact color season. Find matches for makeup tones or clothing styles aligned with your unique Varna template.'}
         </p>
       </div>
 
@@ -105,7 +97,7 @@ export const VarnallyHub: React.FC<VarnallyHubProps> = ({ onBack, onSelectFeatur
 
             {/* Bottom arrow CTA to convey action state */}
             <div className="flex items-center justify-between pt-4 border-t border-neutral-200/30 text-[10px] font-black uppercase tracking-wider font-mono text-neutral-400 group-hover:text-brand-primary transition-colors mt-auto">
-              <span>{isIndo ? 'Info Lanjut' : 'Learn More'}</span>
+              <span>{t.learnMore || 'Learn More'}</span>
               <ChevronRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
             </div>
           </motion.div>

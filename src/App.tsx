@@ -138,9 +138,7 @@ export default function App() {
 
       localStorage.removeItem('varnally_history');
       setToast({ 
-        message: language === 'id' 
-          ? "Histori lokal berhasil disimpan ke akun Google Anda!" 
-          : "Successfully synced local history to your Google account!", 
+        message: t.historySynced || "Successfully synced local history to your Google account!", 
         type: "success" 
       });
     } catch (e) {
@@ -530,7 +528,7 @@ export default function App() {
         if (nextPinnedState) {
           setToast({ message: t.profileSavedAsDefault, type: "success" });
         } else {
-          setToast({ message: language === 'id' ? "Profil dikosongkan!" : "Profile cleared!", type: "success" });
+          setToast({ message: t.profileCleared || "Profile cleared!", type: "success" });
         }
       } else {
         const nextPinnedState = !isCurrentlyPinned;
@@ -548,7 +546,7 @@ export default function App() {
         if (nextPinnedState) {
           setToast({ message: t.profileSavedAsDefault, type: "success" });
         } else {
-          setToast({ message: language === 'id' ? "Profil dikosongkan!" : "Profile cleared!", type: "success" });
+          setToast({ message: t.profileCleared || "Profile cleared!", type: "success" });
         }
       }
     } catch (error) {

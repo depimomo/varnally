@@ -321,8 +321,8 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
                 </h4>
                 <p className="text-[10px] text-gray-500 font-semibold leading-normal">
                   {result.isPinnedProfile 
-                    ? (language === 'id' ? "Dipakai sebagai acuan utama" : "Main active template profile") 
-                    : (language === 'id' ? "Jadikan Varna ini profil utama" : "Set as your main active profile")}
+                    ? (t.mainActiveTemplateProfile || "Main active template profile") 
+                    : (t.setAsMainActiveProfile || "Set as your main active profile")}
                 </p>
               </div>
             </div>
@@ -337,7 +337,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
                     : 'bg-amber-500 hover:bg-amber-600 text-white shadow-md shadow-amber-500/10 active:scale-95'
                 }`}
               >
-                {result.isPinnedProfile ? (language === 'id' ? "Batal" : "Unpin") : (language === 'id' ? "Pilih" : "Select")}
+                {result.isPinnedProfile ? (t.unpin || "Unpin") : (t.select || "Select")}
               </button>
             ) : (
               <button
@@ -346,7 +346,7 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({
                 disabled={loading}
                 className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-full font-black text-[10px] tracking-wider uppercase shadow-md shadow-orange-500/10 active:scale-95 transition-all shrink-0 cursor-pointer"
               >
-                {(language === 'id' ? "Pilih" : "Set Profile")}
+                {(t.setProfile || "Set Profile")}
               </button>
             )}
           </motion.div>

@@ -50,8 +50,7 @@ interface SwatchAnalysisResponse {
 }
 
 export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBack }) => {
-  const { language } = useLanguage();
-  const isIndo = language === 'id';
+  const { t } = useLanguage();
 
   const [selectedProfile, setSelectedProfile] = useState<Analysis | null>(pinnedProfile || null);
 
@@ -91,75 +90,12 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
   const fullType = selectedProfile ? `${selectedProfile.subType} ${selectedProfile.season}` : '';
   const preset = selectedProfile ? (MAKEUP_PRESETS[fullType] || MAKEUP_PRESETS["True Winter"]) : null;
 
-  // Dictionaries
-  const dict = {
-    title: { en: 'Glow Me Up', id: 'Glow Me Up' },
-    backBtn: { en: 'Back to Hub', id: 'Kembali ke Hub' },
-    subtitle: { 
-      en: 'Find the absolute perfect cosmetics. Upload any product swatches (lip, foundation, eye, or blush), and our AI will auto-detect the product and match it against your seasonal palette.', 
-      id: 'Temukan kosmetik yang benar-benar sempurna. Unggah foto swatch kosmetik apa pun (lipstik, foundation, eyeshadow, atau blush), dan AI kami akan mendeteksi jenis produk serta mencocokkannya dengan musim personal Anda secara instan.' 
-    },
-    personalProfile: { en: 'My Active Color Profile', id: 'Profil Warna Aktif Saya' },
-    idealFinish: { en: 'Ideal Finish', id: 'Hasil Akhir Ideal' },
-    uploadTitle: { en: 'Upload Swatch Photos', id: 'Unggah Foto Swatch' },
-    orChooseSample: { en: 'Or choose a sample swatch:', id: 'Atau pilih swatch sampel:' },
-    dragActiveText: { en: 'Drop your image here...', id: 'Lepaskan gambar Anda di sini...' },
-    dragInactiveText: { 
-      en: 'Drag & drop a swatch photo here, or click to browse', 
-      id: 'Seret & letakkan foto swatch Anda di sini, atau klik untuk memilih file' 
-    },
-    instructions: { 
-      en: 'You can upload photos of lipsticks, foundations, eyeshadows, or blush swatches. Ensure shade names or colors are clearly visible.', 
-      id: 'Anda dapat mengunggah foto swatch lipstik, foundation, eyeshadow, atau blush. Pastikan warna swatch dan teks shade terlihat jelas.' 
-    },
-    analyzeBtn: { en: 'Analyze Swatches', id: 'Analisis Swatch' },
-    analyzingText: { en: 'Processing...', id: 'Memproses...' },
-    noMatchTitle: { en: 'No Match Found', id: 'Tidak Ada Cocok' },
-    noMatchDesc: { 
-      en: 'None of these shades are recommended for your color season. Sticking to your recommended palette will prevent feeling washed out.', 
-      id: 'Tidak ada dari shade tersebut yang direkomendasikan untuk musim warna Anda. Memilih warna di palet ideal mencegah penampilan terlihat kusam.' 
-    },
-    matchSuccessTitle: { en: 'Found Match for You!', id: 'Ditemukan Shade yang Cocok!' },
-    matchSuccessDesc: { 
-      en: 'We found these shades that harmonize beautifully with your undertones:', 
-      id: 'Kami menemukan shade berikut yang menyatu secara harmonis dengan warna dasar kulit Anda:' 
-    },
-    resetBtn: { en: 'Scan Another Photo', id: 'Pindai Foto Lain' },
-    scores: { en: 'Match Score', id: 'Skor Kecocokan' },
-    errorImage: { en: 'Please select or capture a valid image first.', id: 'Silakan pilih atau unggah foto yang valid terlebih dahulu.' },
-    errorMatch: { en: 'Analysis failed. Please ensure the image is clear and try again.', id: 'Analisis gagal. Pastikan gambar cukup jelas dan coba lagi.' },
-    tryOnBtn: { en: 'See it in action', id: 'Simulasi Try-On' },
-    tryOnTitle: { en: 'AI Makeup Try-On', id: 'Simulasi Riasan AI' },
-    tryOnSubtitle: { 
-      en: 'See this matching shade applied naturally onto your profile face photo.', 
-      id: 'Lihat bagaimana warna cantik ini diaplikasikan secara alami pada foto profil wajah Anda.' 
-    },
-    tryOnNoPhoto: { 
-      en: 'An active face photo is required. Please make sure you have scanned your color season with a face photo first!', 
-      id: 'Dibutuhkan foto wajah aktif. Pastikan Anda telah melakukan analisis musim warna dengan foto wajah terlebih dahulu!' 
-    },
-    tryOnGenerating: { en: 'Simulating makeup shade with AI...', id: 'Mensimulasikan warna riasan dengan AI...' },
-    beforeLabel: { en: 'Original Face', id: 'Wajah Asli' },
-    afterLabel: { en: 'Virtual Try-On', id: 'Simulasi Riasan' },
-    closeBtn: { en: 'Close View', id: 'Tutup Tampilan' },
-    tryOnError: { en: 'Failed to generate virtual try-on. Please try again.', id: 'Gagal mensimulasikan riasan. Silakan coba lagi.' }
-  };
-
-  const tLocal = (key: keyof typeof dict) => {
-    return dict[key][isIndo ? 'id' : 'en'];
-  };
-
   // Random loading phrases to keep users engaged
-  const loadingSentences = isIndo ? [
-    "Menganalisis kemurnian swatch...",
-    "Mencocokkan undertone kulit...",
-    "Memeriksa keselarasan palet warna...",
-    "Menghitung skor kecocokan..."
-  ] : [
-    "Analyzing swatches...",
-    "Matching skin undertones...",
-    "Checking season alignment...",
-    "Calculating compatibility scores..."
+  const loadingSentences = [
+    t.analysisPurity || "Analyzing swatches...",
+    t.matchingUndertone || "Matching skin undertones...",
+    t.checkingSeasonAlignment || "Checking season alignment...",
+    t.calculatingCompatibility || "Calculating compatibility scores..."
   ];
 
   useEffect(() => {
@@ -194,7 +130,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
         setError(null);
         setResult(null);
       } else {
-        setError(isIndo ? "Mohon unggah file gambar." : "Please upload an image file.");
+        setError(t.pleaseUploadImageClothing || "Please upload an image file.");
       }
     }
   };
@@ -226,7 +162,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
       setPreviewUrl(url);
     } catch (err: any) {
       console.error("Failed to load sample image:", err);
-      setError(isIndo ? "Gagal memuat gambar sampel." : "Failed to load sample image.");
+      setError(t.failLoadSampleImage || "Failed to load sample image.");
     } finally {
       setAnalyzing(false);
     }
@@ -250,7 +186,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
   const handleTryOn = async (match: MatchResult) => {
     const testImageUrl = selectedProfile?.cleanedImageUrl || selectedProfile?.imageUrl || DEFAULT_MODEL_IMAGE;
     if (!testImageUrl) {
-      setVisualizationError(tLocal('tryOnNoPhoto'));
+      setVisualizationError(t.tryOnNoPhoto || "An active face photo is required...");
       setVisualizingMatch(match);
       setVisualizedImageUrl(null);
       return;
@@ -291,7 +227,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
       }));
     } catch (err: any) {
       console.error(err);
-      setVisualizationError(tLocal('tryOnError'));
+      setVisualizationError(t.tryOnError || "Failed to generate virtual try-on. Please try again.");
     } finally {
       setIsVisualizing(false);
     }
@@ -299,7 +235,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
 
   const handleAnalyze = async () => {
     if (!selectedFile) {
-      setError(tLocal('errorImage'));
+      setError(t.errorImage || "Please select or capture a valid image first.");
       return;
     }
 
@@ -329,7 +265,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
       }
     } catch (err: any) {
       console.error(err);
-      setError(err?.message || tLocal('errorMatch'));
+      setError(err?.message || (t.errorMatch || "Analysis failed. Please ensure the image is clear and try again."));
     } finally {
       setAnalyzing(false);
     }
@@ -350,7 +286,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
             className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-full text-xs font-black uppercase tracking-wider transition-all cursor-pointer font-mono select-none"
           >
             <ArrowLeft size={14} />
-            {isIndo ? 'Kembali' : 'Back'}
+            {t.back || 'Back'}
           </button>
         </div>
 
@@ -359,12 +295,10 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
             <Sparkles className="animate-pulse" size={32} />
           </div>
           <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight text-neutral-900 uppercase">
-            {isIndo ? 'Glow Me Up Try-On' : 'Glow Me Up Try-On'}
+            Glow Me Up Try-On
           </h1>
           <p className="text-xs sm:text-sm text-neutral-500 font-semibold leading-relaxed max-w-xl mx-auto">
-            {isIndo 
-              ? 'Sebelum menguji coba produk riasan Anda secara virtual, pilih salah satu profil Varna tersimpan Anda atau pilih dari 12 palet musiman utama kami.' 
-              : 'Before testing your cosmetics virtually, choose one of your saved scan history profiles or explore our 12 master seasonal palettes.'}
+            {t.glowMeUpBeforeScanSub || 'Before testing your cosmetics virtually, choose one of your saved scan history profiles or explore our 12 master seasonal palettes.'}
           </p>
         </div>
 
@@ -374,7 +308,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
             <div className="flex items-center gap-2 mb-2">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
               <h2 className="text-xs font-black text-neutral-800 uppercase tracking-widest font-mono">
-                {isIndo ? 'Gunakan Hasil Pindai Wajah Anda' : 'Use Your Scanned Profiles'}
+                {t.useScannedFaceResult || 'Use Your Scanned Profiles'}
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -405,7 +339,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         {item.subType} {item.season}
                       </h3>
                       <p className="text-[10px] text-neutral-400 font-bold font-mono mt-1">
-                        {isIndo ? 'Dasar Kulit / Logam:' : 'Base / Jewelry:'} {item.skinUndertone} • {item.jewelry}
+                        {t.baseJewelry || 'Base / Jewelry:'} {item.skinUndertone} • {item.jewelry}
                       </p>
                     </div>
 
@@ -419,7 +353,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         />
                       ))}
                       <span className="text-[9px] text-[#A0AEC0] font-black font-mono ml-auto tracking-wider uppercase group-hover:text-amber-500 transition-colors">
-                        {isIndo ? 'Pilih →' : 'Select →'}
+                        {t.glowSelect || 'Select →'}
                       </span>
                     </div>
                   </button>
@@ -434,7 +368,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
           <div className="flex items-center gap-2 mb-2 px-1">
             <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse shrink-0" />
             <h2 className="text-xs font-black text-neutral-800 uppercase tracking-widest font-mono">
-              {isIndo ? 'Eksplor 12 Musim Warna Utama' : 'Explore the 12 Master Seasons'}
+              {t.explore12MasterSeasons || 'Explore the 12 Master Seasons'}
             </h2>
           </div>
           
@@ -513,17 +447,17 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
           className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-full text-xs font-black uppercase tracking-wider transition-all cursor-pointer font-mono select-none"
         >
           <ArrowLeft size={14} />
-          {tLocal('backBtn')}
+          {t.backBtn || 'Back to Hub'}
         </button>
       </div>
 
       {/* Hero Intro */}
       <div className="space-y-2">
         <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight text-neutral-900 uppercase">
-          {tLocal('title')}
+          Glow Me Up
         </h1>
         <p className="text-sm text-neutral-510 font-semibold leading-relaxed max-w-2xl">
-          {tLocal('subtitle')}
+          {t.glowMeUpDesc || "Upload cosmetics swatch photo or live capture, and we'll instantly check if it fits your season."}
         </p>
       </div>
 
@@ -535,7 +469,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2">
             <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest font-mono block">
-              {tLocal('personalProfile')}
+              {t.personalProfile || "My Active Color Profile"}
             </span>
             <div className="flex flex-wrap items-center gap-3">
               <h2 className="text-xl sm:text-2xl font-display font-black text-neutral-900 uppercase tracking-tight">
@@ -545,12 +479,14 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                 onClick={() => setSelectedProfile(null)}
                 className="text-[10px] font-mono font-bold bg-neutral-200 rounded-full text-neutral-700 hover:bg-neutral-300 px-3 py-1 cursor-pointer select-none transition-colors uppercase tracking-wider shrink-0"
               >
-                {isIndo ? 'Ganti ✎' : 'Change ✎'}
+                {t.glowChange || 'Change ✎'}
               </button>
             </div>
             <p className="text-xs text-neutral-500 font-medium max-w-md">
-              {isIndo 
-                ? `Ditampilkan dengan warna dasar ${selectedProfile!.skinUndertone.toLowerCase()} dengan kacamata perhiasan ${selectedProfile!.jewelry.toLowerCase()}.` 
+              {t.matchedWithUndertoneText
+                ? t.matchedWithUndertoneText
+                    .replace('{{undertone}}', selectedProfile!.skinUndertone.toLowerCase())
+                    .replace('{{jewelry}}', selectedProfile!.jewelry.toLowerCase())
                 : `Matched with ${selectedProfile!.skinUndertone.toLowerCase()} undertones and recommended ${selectedProfile!.jewelry.toLowerCase()} accents.`}
             </p>
           </div>
@@ -558,7 +494,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
           <div className="bg-white/90 backdrop-blur-md border border-neutral-200/30 rounded-2xl p-4 px-6 flex flex-col sm:flex-row items-center gap-3.5 sm:gap-6 shadow-sm shrink-0 w-full sm:w-auto">
             <div className="text-center font-mono w-full sm:w-auto">
               <span className="text-[9px] text-neutral-400 uppercase font-black tracking-wider block mb-1">
-                {tLocal('idealFinish')}
+                {t.idealFinish || "Ideal Finish"}
               </span>
               <span className="text-xs font-bold text-neutral-800 bg-neutral-100 py-1 px-3 rounded-full block sm:inline-block">
                 {preset.finish || 'Satin'}
@@ -570,7 +506,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
             {/* Micro swatch row from main presets */}
             <div className="space-y-1 text-center sm:text-left w-full sm:w-auto">
               <span className="text-[9px] text-neutral-400 uppercase font-black tracking-wider font-mono block">
-                {isIndo ? 'Palet Utama' : 'Season Core'}
+                {t.seasonCore || 'Season Core'}
               </span>
               <div className="flex items-center justify-center sm:justify-start gap-1.5">
                 {(preset.lipColors || []).slice(0, 3).map((sw: any, i: number) => (
@@ -589,10 +525,10 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
         {/* Dynamic Compact Color Summary Horizontal List */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-neutral-200/60 font-mono">
           {[
-            { label: isIndo ? 'Alas Bedak (Base)' : 'Base Complexion', colors: preset.foundationSwatches || [], type: 'Foundation' },
-            { label: isIndo ? 'Riasan Lips' : 'Lips Makeup', colors: preset.lipColors || [], type: 'Lip' },
-            { label: isIndo ? 'Palet Mata' : 'Eyeshadow', colors: preset.eyeshadows || [], type: 'Eye' },
-            { label: isIndo ? 'Pipi (Blush)' : 'Blush Highlight', colors: preset.blushes || [], type: 'Blush' },
+            { label: t.baseComplexionLabel || 'Base Complexion', colors: preset.foundationSwatches || [], type: 'Foundation' },
+            { label: t.lipsMakeupLabel || 'Lips Makeup', colors: preset.lipColors || [], type: 'Lip' },
+            { label: t.eyeshadowLabel || 'Eyeshadow', colors: preset.eyeshadows || [], type: 'Eye' },
+            { label: t.blushHighlightLabel || 'Blush Highlight', colors: preset.blushes || [], type: 'Blush' },
           ].map((item, idx) => (
             <div key={idx} className="bg-white p-3.5 rounded-2xl border border-neutral-100 flex flex-col justify-between space-y-2">
               <span className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider block leading-tight">
@@ -622,7 +558,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
           {/* STEP 1: Drag and Drop Upload Area */}
           <div className="bg-white p-6 rounded-[2rem] border border-neutral-200/50 shadow-sm space-y-4">
             <h3 className="text-sm font-black text-neutral-800 uppercase tracking-wider font-mono flex items-center gap-2">
-              {tLocal('uploadTitle')}
+              {t.uploadTitle || "Upload Swatch Photos"}
             </h3>
 
             {!previewUrl ? (
@@ -644,7 +580,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                   </div>
                   <div className="space-y-1.5 max-w-xs">
                     <p className="text-xs font-bold text-neutral-700">
-                      {dragActive ? tLocal('dragActiveText') : tLocal('dragInactiveText')}
+                      {dragActive ? (t.dragActiveText || 'Drop your image here...') : (t.dragInactiveText || 'Drag & drop a swatch photo here, or click to browse')}
                     </p>
                     <p className="text-[10px] text-neutral-400 font-medium">
                       JPEG, PNG, WEBP files
@@ -664,7 +600,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                   <div className="flex items-center gap-1.5 px-0.5">
                     <Sparkles size={11} className="text-brand-primary animate-pulse" />
                     <span className="text-[10px] font-mono font-black text-brand-primary uppercase tracking-widest block">
-                      {tLocal('orChooseSample')}
+                      {t.orChooseSample || "Or choose a sample swatch:"}
                     </span>
                   </div>
                   <div className="grid grid-cols-4 gap-3">
@@ -692,7 +628,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-neutral-900/60 py-0.5 text-center">
                           <span className="text-[8.5px] font-mono font-bold text-white tracking-tight">
-                            {isIndo ? `Sampel ${sIdx + 1}` : `Sample ${sIdx + 1}`}
+                            {t.sampleNum ? t.sampleNum.replace('{{num}}', String(sIdx + 1)) : `Sample ${sIdx + 1}`}
                           </span>
                         </div>
                       </button>
@@ -739,7 +675,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                   ) : (
                     <>
                       <Sparkles size={16} className="text-amber-400 animate-pulse animate-spin-slow" />
-                      <span>{tLocal('analyzeBtn')}</span>
+                      <span>{t.glowAnalyzeBtn || 'Analyze Swatches'}</span>
                     </>
                   )}
                 </button>
@@ -761,7 +697,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
             <div className="flex gap-3 bg-amber-500/5 border border-amber-500/10 p-4 rounded-2xl">
               <Info size={16} className="text-amber-500 shrink-0 mt-0.5 animate-pulse" />
               <p className="text-[11px] text-amber-900/80 font-semibold leading-relaxed">
-                {tLocal('instructions')}
+                {t.instructions || "You can upload photos of lipsticks..."}
               </p>
             </div>
           </div>
@@ -783,12 +719,10 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                 </div>
                 <div className="space-y-1.5 max-w-xs">
                   <h4 className="text-sm font-bold text-neutral-700">
-                    {isIndo ? 'Menunggu Analisis' : 'Waiting for Analysis'}
+                    {t.waitingForAnalysis || 'Waiting for Analysis'}
                   </h4>
                   <p className="text-xs text-neutral-400 font-medium leading-relaxed">
-                    {isIndo 
-                      ? 'Pilih kategori kosmetik pilihan Anda dan unggah foto swatches untuk memulai perbandingan cerdas Varna.' 
-                      : 'Choose your preferred cosmetic tab and drop swatches of makeup products to run smart personal color matching.'}
+                    {t.waitingForAnalysisDesc || 'Choose your preferred cosmetic tab and drop swatches of makeup products to run smart personal color matching.'}
                   </p>
                 </div>
               </motion.div>
@@ -821,7 +755,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <h3 className="text-sm sm:text-base font-display font-black uppercase tracking-wide text-neutral-950">
-                          {result.matchFound ? tLocal('matchSuccessTitle') : tLocal('noMatchTitle')}
+                          {result.matchFound ? (t.matchSuccessTitle || 'Found Match for You!') : (t.noMatchTitle || 'No Match Found')}
                         </h3>
                         {result.detectedCategory && (
                           <span className="text-[9px] bg-neutral-900 text-white font-mono uppercase font-black px-2.5 py-0.5 rounded-full select-none">
@@ -830,7 +764,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         )}
                       </div>
                       <p className="text-[11px] text-neutral-500 font-semibold mt-0.5">
-                        {result.matchFound ? tLocal('matchSuccessDesc') : tLocal('noMatchDesc')}
+                        {result.matchFound ? (t.matchSuccessDesc || 'We found these shades...') : (t.noMatchDesc || 'None of these shades...')}
                       </p>
                     </div>
                   </div>
@@ -858,7 +792,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         <div className="absolute top-4 right-4 flex items-center gap-1 sm:gap-2 bg-emerald-500/5 border border-emerald-500/10 py-1 px-2 sm:py-1.5 sm:px-3 rounded-full font-mono">
                           <Gauge size={12} className="text-emerald-500 hidden sm:inline" />
                           <span className="text-[9px] text-neutral-400 font-black uppercase tracking-wider shrink-0 hidden sm:inline">
-                            {tLocal('scores')}
+                            {t.scores || 'Match Score'}
                           </span>
                           <span className="text-xs font-black text-emerald-600">
                             {match.matchScore}%
@@ -901,7 +835,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                               className="inline-flex items-center gap-1.5 px-4.5 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-[10px] sm:text-[11px] font-black uppercase tracking-wider font-mono transition-all duration-200 hover:scale-[1.01] shadow-sm cursor-pointer select-none"
                             >
                               <Sparkles size={11} className="text-amber-400 animate-pulse" />
-                              <span>{tLocal('tryOnBtn')}</span>
+                              <span>{t.tryOnBtn || 'See it in action'}</span>
                             </button>
                           </div>
                         )}
@@ -915,7 +849,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                   onClick={handleReset}
                   className="w-full py-3.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-2xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer font-mono select-none"
                 >
-                  {tLocal('resetBtn')}
+                  {t.glowResetBtn || 'Scan Another Photo'}
                 </button>
               </motion.div>
             )}
@@ -945,11 +879,11 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                   <div className="flex items-center gap-2">
                     <Sparkles size={16} className="text-amber-500 animate-pulse" />
                     <h3 className="text-base font-display font-black uppercase text-neutral-900 tracking-tight">
-                      {tLocal('tryOnTitle')}
+                      {t.tryOnTitle || 'AI Makeup Try-On'}
                     </h3>
                   </div>
                   <p className="text-[10px] text-neutral-400 font-semibold mt-0.5">
-                    {tLocal('tryOnSubtitle')}
+                    {t.tryOnSubtitle || 'See this matching shade applied naturally onto your profile face photo.'}
                   </p>
                 </div>
                 <button
@@ -974,7 +908,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                     </div>
                     <div className="text-center space-y-1">
                       <p className="text-xs font-bold text-neutral-800 animate-pulse">
-                        {tLocal('tryOnGenerating')}
+                        {t.tryOnGenerating || 'Simulating makeup shade with AI...'}
                       </p>
                       <p className="text-[10px] text-neutral-400 font-mono font-medium">
                         {visualizingMatch.shadeName} • {result?.detectedCategory}
@@ -999,7 +933,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                       onClick={() => setVisualizingMatch(null)}
                       className="px-5 py-2 bg-rose-950 text-white rounded-xl text-[10px] font-black uppercase tracking-wider font-mono hover:bg-rose-900 cursor-pointer select-none"
                     >
-                      {tLocal('closeBtn')}
+                      {t.closeBtn || 'Close View'}
                     </button>
                   </div>
                 ) : visualizedImageUrl ? (
@@ -1009,11 +943,11 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                       <div className="flex justify-between items-center text-[10px] uppercase font-black tracking-widest font-mono text-neutral-400 select-none px-1">
                         <span className="flex items-center gap-1.5 text-neutral-500">
                           <span className="w-1.5 h-1.5 rounded-full bg-neutral-300" />
-                          {tLocal('beforeLabel')}
+                          {t.beforeLabel || 'Original Face'}
                         </span>
                         <span className="flex items-center gap-1.5 text-amber-500 animate-pulse">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                          {tLocal('afterLabel')}
+                          {t.afterLabel || 'Virtual Try-On'}
                         </span>
                       </div>
 
@@ -1044,7 +978,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
 
                         {/* Slide handle and split divider line */}
                         <div 
-                          className="absolute top-0 bottom-0 w-1 bg-white/90 shadow-xl cursor-ew-resize z-25 pointer-events-none"
+                           className="absolute top-0 bottom-0 w-1 bg-white/90 shadow-xl cursor-ew-resize z-25 pointer-events-none"
                           style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
                         >
                           {/* Pulsing visual handle indicator */}
@@ -1070,7 +1004,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         {/* Micro-hint banner overlay disappearing on first move */}
                         {sliderPosition === 50 && (
                           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[9px] font-mono uppercase tracking-widest text-white/90 font-black pointer-events-none z-20 animate-bounce">
-                            {isIndo ? '← GESER →' : '← SLIDE →'}
+                            {t.slideHintTry || '← SLIDE →'}
                           </div>
                         )}
                       </div>
@@ -1112,7 +1046,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                   onClick={() => setVisualizingMatch(null)}
                   className="px-6 py-3 bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900 rounded-2xl text-xs uppercase font-black tracking-wider transition-colors font-mono cursor-pointer select-none"
                 >
-                  {tLocal('closeBtn')}
+                  {t.closeBtn || 'Close View'}
                 </button>
               </div>
             </motion.div>

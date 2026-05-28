@@ -34,13 +34,12 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({
   const metal = result.jewelry;
 
   // Friendly greetings config based on language context
-  const isIndo = language === 'id';
   const greetingTitle = name 
-    ? (`Hi ${name}!`) 
-    : ("Hi gorgeous!");
+    ? (`${t.hi || "Hi"} ${name}!`) 
+    : (t.hiGorgeous || "Hi gorgeous!");
 
-  const welcomeSub = isIndo 
-    ? `Selamat Datang di Keluarga ${season}!`
+  const welcomeSub = t.welcomeToFamily
+    ? t.welcomeToFamily.replace('{{season}}', season)
     : `Welcome to the ${season} Family!`;
 
   // Season-specific aesthetic guidelines (gradients, shadows, highlight colors)
@@ -252,7 +251,7 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({
             className="px-3.5 py-1.5 rounded-2xl text-[11px] font-black uppercase tracking-wider bg-slate-950/50 border border-white/10 text-white flex items-center gap-1.5"
           >
             <Gem size={12} className="text-slate-400 shrink-0" />
-            <span className="text-slate-400 font-semibold">{isIndo ? "Aksesoris" : "Jewelry"}:</span>
+            <span className="text-slate-400 font-semibold">{t.jewelryLabel || "Jewelry"}:</span>
             <span className={`bg-gradient-to-r ${aes.metalGrad} bg-clip-text text-transparent`}>
               {metal}
             </span>
@@ -265,7 +264,7 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({
             transition={{ delay: 0.5 }}
             className="px-3.5 py-1.5 rounded-2xl text-[11px] font-bold uppercase tracking-wider bg-slate-950/50 border border-white/10 text-slate-300 flex items-center gap-1"
           >
-            <span className="text-slate-400 font-semibold">{isIndo ? "Wajah" : "Face"}:</span>
+            <span className="text-slate-400 font-semibold">{t.faceLabel || "Face"}:</span>
             <span className="truncate max-w-[90px] text-white">
               {result.faceShape}
             </span>
@@ -286,7 +285,7 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({
           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:animate-shine" />
           
           <span>
-            {isIndo ? "Lihat Laporan Varnally" : "See Varnally Report"}
+            {t.seeReport || "See Varnally Report"}
           </span>
           <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform duration-300 shrink-0" />
         </motion.button>

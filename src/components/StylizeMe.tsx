@@ -49,8 +49,7 @@ interface SelectedFileItem {
 }
 
 export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, onBack }) => {
-  const { language } = useLanguage();
-  const isIndo = language === 'id';
+  const { t } = useLanguage();
 
   const [selectedProfile, setSelectedProfile] = useState<Analysis | null>(pinnedProfile || null);
 
@@ -74,7 +73,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
 
   const handleSelectSample = async (url: string, name: string) => {
     if (selectedFiles.length >= 5) {
-      setError(isIndo ? "Maksimum 5 foto pakaian." : "Maximum of 5 clothing photos.");
+      setError(t.maxClothingLimit || "Maximum of 5 clothing photos.");
       return;
     }
     setLoadingSample(name);
@@ -85,7 +84,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
       addFiles([file]);
     } catch (err: any) {
       console.error("Failed to load sample image:", err);
-      setError(isIndo ? "Gagal memuat gambar contoh." : "Failed to load sample image.");
+      setError(t.failLoadSampleImage || "Failed to load sample image.");
     } finally {
       setLoadingSample(null);
     }
@@ -128,49 +127,11 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
     return getPresetColors(selectedProfile.season, selectedProfile.subType).best;
   };
 
-  // Localized dictionary
-  const dict = {
-    title: { en: 'Stylize Me', id: 'Stylize Me' },
-    backBtn: { en: 'Back to Hub', id: 'Kembali ke Hub' },
-    subtitle: { 
-      en: 'Upload up to 5 clothing photos to find your absolute matches. Our AI acts as your personal stylist, analyzing each clothing piece and picking the absolute best color for your season.', 
-      id: 'Unggah hingga 5 foto pakaian untuk menemukan warna soulmate Anda. AI kami bertindak sebagai penasihat gaya pribadi, menganalisis keselarasan setiap pakaian dengan palet warna musiman Anda.' 
-    },
-    personalProfile: { en: 'My Active Color Profile', id: 'Profil Warna Aktif Saya' },
-    uploadTitle: { en: 'Upload Clothing Photos (Up to 5)', id: 'Unggah Foto Pakaian (Maks. 5)' },
-    dragActiveText: { en: 'Drop your clothes photos here...', id: 'Lepaskan foto pakaian Anda di sini...' },
-    dragInactiveText: { 
-      en: 'Drag & drop clothing pictures here, or click to choose files', 
-      id: 'Seret & letakkan foto-foto pakaian Anda di sini, atau klik untuk memilih file' 
-    },
-    instructions: { 
-      en: 'Upload clear photos of clothes or fabric swatches. Our AI personal stylist will check their compatibility score and find the absolute best match for you.', 
-      id: 'Unggah foto pakaian atau potongan kain yang jelas. Penata gaya bertenaga AI kami akan menghitung tingkat kecocokan warna dan merekomendasikan pilihan terbaik bagi Anda.' 
-    },
-    analyzeBtn: { en: 'Analyze Outfits', id: 'Analisis Pakaian' },
-    analyzingText: { en: 'Styling in progress...', id: 'Sedang menata gaya...' },
-    bestOutfitMatch: { en: 'Best Color Match for You', id: 'Warna Pakaian Terbaik Anda' },
-    allOutfits: { en: 'All Outfits Analyzed', id: 'Semua Hasil Analisis Pakaian' },
-    matchScore: { en: 'Compatibility', id: 'Kecocokan' },
-    compatible: { en: 'Recommended', id: 'Direkomendasikan' },
-    notCompatible: { en: 'Not Ideal', id: 'Kurang Ideal' },
-    recommendOther: { en: 'Try another shade', id: 'Coba warna lain' }
-  };
-
-  const tLocal = (key: keyof typeof dict) => {
-    return dict[key][isIndo ? 'id' : 'en'];
-  };
-
-  const loadingSentences = isIndo ? [
-    "Menganalisis kain...",
-    "Mencocokkan warna...",
-    "Menyusun gaya...",
-    "Menghitung skor..."
-  ] : [
-    "Analyzing fabrics...",
-    "Matching colors...",
-    "Curating style...",
-    "Calculating score..."
+  const loadingSentences = [
+    t.fabricAnalysis || "Analyzing fabrics...",
+    t.analysisPurity || "Analyzing purity...",
+    t.curatingStyle || "Curating style...",
+    t.calculatingScore || "Calculating score..."
   ];
 
   useEffect(() => {
@@ -214,14 +175,14 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
   const addFiles = (filesList: File[]) => {
     const validFiles = filesList.filter(file => file.type.startsWith('image/'));
     if (validFiles.length === 0) {
-      setError(isIndo ? "Mohon unggah file gambar." : "Please upload an image file.");
+      setError(t.pleaseUploadImageClothing || "Please upload an image file.");
       return;
     }
 
     setSelectedFiles(prev => {
       const remainingSlots = 5 - prev.length;
       if (remainingSlots <= 0) {
-        setError(isIndo ? "Maksimum 5 foto pakaian." : "Maximum of 5 clothing photos.");
+        setError(t.maxClothingLimit || "Maximum of 5 clothing photos.");
         return prev;
       }
 
@@ -310,7 +271,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
 
   const handleAnalyze = async () => {
     if (selectedFiles.length === 0) {
-      setError(isIndo ? "Maksimal unggah hingga 5 foto pakaian terlebih dahulu." : "Please upload at least one clothing photo first.");
+      setError(t.uploadMinOneClothing || "Please upload at least one clothing photo first.");
       return;
     }
 
@@ -358,7 +319,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
       }
     } catch (err: any) {
       console.error(err);
-      setError(err?.message || (isIndo ? "Gagal melakukan analisis pakaian. Silakan coba lagi." : "Outfits analysis failed. Please try again."));
+      setError(err?.message || (t.outfitAnalysisFailed || "Outfits analysis failed. Please try again."));
     } finally {
       setAnalyzing(false);
     }
@@ -388,7 +349,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
             className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-full text-xs font-black uppercase tracking-wider transition-all cursor-pointer font-mono select-none"
           >
             <ArrowLeft size={14} />
-            {isIndo ? 'Kembali' : 'Back'}
+            {t.backBtn || 'Back'}
           </button>
         </div>
 
@@ -397,12 +358,10 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
             <Shirt className="animate-pulse" size={32} />
           </div>
           <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight text-neutral-900 uppercase">
-            {isIndo ? 'Stylize Me' : 'Stylize Me'}
+            {t.stylizeTitle || 'Stylize Me'}
           </h1>
           <p className="text-xs sm:text-sm text-neutral-500 font-semibold leading-relaxed max-w-xl mx-auto">
-            {isIndo 
-              ? 'Sebelum menganalisis keselarasan warna pakaian Anda, tentukan opsi profil asisten warna dari riwayat pindaian Anda atau pilih dari 12 musim warna utama kami.' 
-              : 'Before analyzing clothing colors, choose one of your saved scan history profiles or explore our 12 master seasonal palettes.'}
+            {t.stylizeBeforeScanSub || 'Before choosing clothing colors, choose one of your saved scan history profiles or explore our 12 master seasonal palettes.'}
           </p>
         </div>
 
@@ -412,7 +371,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
             <div className="flex items-center gap-2 mb-2">
               <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shrink-0" />
               <h2 className="text-xs font-black text-neutral-800 uppercase tracking-widest font-mono">
-                {isIndo ? 'Gunakan Hasil Pindai Wajah Anda' : 'Use Your Scanned Profiles'}
+                {t.useScannedFaceResult || 'Use Your Scanned Profiles'}
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -444,7 +403,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                         {item.subType} {item.season}
                       </h3>
                       <p className="text-[10px] text-neutral-400 font-bold font-mono mt-1">
-                        {isIndo ? 'Dasar Kulit / Logam:' : 'Base / Jewelry:'} {item.skinUndertone} • {item.jewelry}
+                        {t.baseJewelry || 'Base / Jewelry:'} {item.skinUndertone} • {item.jewelry}
                       </p>
                     </div>
 
@@ -458,7 +417,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                         />
                       ))}
                       <span className="text-[9px] text-[#A0AEC0] font-black font-mono ml-auto tracking-wider uppercase group-hover:text-indigo-500 transition-colors font-mono">
-                        {isIndo ? 'Pilih →' : 'Select →'}
+                        {t.glowSelect || 'Select →'}
                       </span>
                     </div>
                   </button>
@@ -473,7 +432,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
           <div className="flex items-center gap-2 mb-2 px-1">
             <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shrink-0" />
             <h2 className="text-xs font-black text-neutral-800 uppercase tracking-widest font-mono">
-              {isIndo ? 'Eksplor 12 Musim Warna Utama' : 'Explore the 12 Master Seasons'}
+              {t.explore12MasterSeasons || 'Explore the 12 Master Seasons'}
             </h2>
           </div>
           
@@ -554,17 +513,17 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
           className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-full text-xs font-black uppercase tracking-wider transition-all cursor-pointer font-mono select-none"
         >
           <ArrowLeft size={14} />
-          {tLocal('backBtn')}
+          {t.backBtn || 'Back to Hub'}
         </button>
       </div>
 
       {/* Title block */}
       <div className="space-y-2">
         <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight text-neutral-900 uppercase">
-          {tLocal('title')}
+          {t.stylizeTitle || 'Stylize Me'}
         </h1>
         <p className="text-sm text-neutral-500 font-semibold leading-relaxed max-w-2xl">
-          {tLocal('subtitle')}
+          {t.stylizeSubtitle || 'Upload up to 5 clothing photos to find your absolute matches. Our AI acts as your personal stylist, analyzing each clothing piece and picking the absolute best color for your season.'}
         </p>
       </div>
 
@@ -575,7 +534,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2">
             <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest font-mono block">
-              {tLocal('personalProfile')}
+              {t.personalProfile || 'My Active Color Profile'}
             </span>
             <div className="flex flex-wrap items-center gap-3">
               <h2 className="text-xl sm:text-2xl font-display font-black text-neutral-900 uppercase tracking-tight">
@@ -585,12 +544,12 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                 onClick={() => setSelectedProfile(null)}
                 className="text-[10px] font-mono font-bold bg-neutral-200 rounded-full text-neutral-700 hover:bg-neutral-300 px-3 py-1 cursor-pointer select-none transition-colors uppercase tracking-wider shrink-0"
               >
-                {isIndo ? 'Ganti ✎' : 'Change ✎'}
+                {t.glowChange || 'Change ✎'}
               </button>
             </div>
-            <p className="text-xs text-neutral-500 font-medium max-w-md">
-              {isIndo 
-                ? `Ditampilkan dengan warna dasar ${selectedProfile.skinUndertone.toLowerCase()} dengan kacamata perhiasan ${selectedProfile.jewelry.toLowerCase()}.` 
+            <p className="text-xs text-neutral-550 font-semibold max-w-md">
+              {t.matchedWithUndertoneText 
+                ? t.matchedWithUndertoneText.replace('{{undertone}}', selectedProfile.skinUndertone.toLowerCase()).replace('{{jewelry}}', selectedProfile.jewelry.toLowerCase())
                 : `Matched with ${selectedProfile.skinUndertone.toLowerCase()} undertones and recommended ${selectedProfile.jewelry.toLowerCase()} accents.`}
             </p>
           </div>
@@ -598,7 +557,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
           <div className="bg-white/90 backdrop-blur-md border border-neutral-200/30 rounded-2xl p-4 px-6 flex flex-col sm:flex-row items-center gap-3.5 sm:gap-6 shadow-sm shrink-0 w-full sm:w-auto">
             <div className="space-y-1 text-center sm:text-left w-full sm:w-auto">
               <span className="text-[9px] text-neutral-400 uppercase font-black tracking-wider font-mono block">
-                {isIndo ? 'Palet Utama' : 'Season Core'}
+                {t.seasonCore || 'Season Core'}
               </span>
               <div className="flex items-center justify-center sm:justify-start gap-1.5">
                 {profileCoreColors.slice(0, 5).map((col: any, i: number) => (
@@ -624,7 +583,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
             <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs sm:text-sm font-black text-neutral-800 uppercase tracking-wider font-mono">
-                  {tLocal('uploadTitle')}
+                  {t.uploadTitleClothing || 'Upload Clothing Photos (Up to 5)'}
                 </h3>
                 <span className="text-[10px] text-neutral-400 normal-case font-bold font-mono">
                   {selectedFiles.length}/5
@@ -637,7 +596,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                     disabled={analyzing}
                     className="text-[10px] text-red-500 hover:text-red-600 hover:underline cursor-pointer select-none border-none bg-transparent font-sans lowercase font-black tracking-normal"
                   >
-                    {isIndo ? 'reset semua' : 'reset all'}
+                    {t.resetAll || 'reset all'}
                   </button>
                 </div>
               )}
@@ -665,7 +624,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                   </div>
                   <div className="space-y-1.5 max-w-xs">
                     <p className="text-xs font-bold text-neutral-700">
-                      {dragActive ? tLocal('dragActiveText') : tLocal('dragInactiveText')}
+                      {dragActive ? (t.dragActiveTextClothing || 'Drop your clothes photos here...') : (t.dragInactiveTextClothing || 'Drag & drop clothing pictures here, or click to choose files')}
                     </p>
                     <p className="text-[10px] text-neutral-400 font-medium font-mono">
                       Accepts JPEG, PNG, WEBP files
@@ -709,7 +668,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
 
                         <div className="absolute inset-x-0 bottom-0 bg-neutral-900/60 py-1 text-center">
                           <span className="text-[8.5px] font-mono font-bold text-white tracking-tight">
-                            {isIndo ? `Pakaian ${idx + 1}` : `Outfit ${idx + 1}`}
+                            {t.outfitNum ? t.outfitNum.replace('{{num}}', String(idx + 1)) : `Outfit ${idx + 1}`}
                           </span>
                         </div>
                       </div>
@@ -724,7 +683,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                       >
                         <Plus size={20} className="mb-1" />
                         <span className="text-[9px] font-mono font-black uppercase tracking-wider">
-                          {isIndo ? 'Tambah' : 'Add Photo'}
+                          {t.addPhoto || 'Add Photo'}
                         </span>
                         <input 
                           type="file"
@@ -752,7 +711,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                       ) : (
                         <>
                           <Sparkles size={16} className="text-amber-400 animate-pulse" />
-                          <span>{tLocal('analyzeBtn')}</span>
+                          <span>{t.btnAnalyzeOutfits || 'Analyze Outfits'}</span>
                         </>
                       )}
                     </button>
@@ -764,7 +723,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
             {/* Sample Clothes Grid */}
             <div className="space-y-2.5 pt-2 border-t border-neutral-100">
               <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest font-mono block">
-                {isIndo ? 'Coba dengan Contoh Pakaian' : 'Try with Sample Clothes'}
+                {t.tryWithSampleClothes || 'Try with Sample Clothes'}
               </span>
               <div className="grid grid-cols-5 gap-2">
                 {[1, 2, 3, 4, 5].map((num) => {
@@ -784,7 +743,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                           ? 'border-indigo-400 ring-2 ring-indigo-400/20 opacity-60'
                           : 'border-neutral-200 hover:border-indigo-500 hover:shadow-md active:scale-95'
                       }`}
-                      title={isIndo ? `Sampel Pakaian ${num}` : `Sample Outfit ${num}`}
+                      title={t.sampleOutfitNum ? t.sampleOutfitNum.replace('{{num}}', String(num)) : `Sample Outfit ${num}`}
                     >
                       <img src={url} alt={`Style ${num}`} className="w-full h-full object-cover" />
                       
@@ -820,7 +779,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
             <div className="flex gap-3 bg-indigo-500/5 border border-indigo-500/10 p-4 rounded-2xl">
               <Info size={16} className="text-indigo-500 shrink-0 mt-0.5 animate-pulse" />
               <p className="text-[11px] text-indigo-950/80 font-semibold leading-relaxed">
-                {tLocal('instructions')}
+                {t.instructionsClothing || 'Upload clear photos of clothes or fabric swatches. Our AI personal stylist will check their compatibility score and find the absolute best match for you.'}
               </p>
             </div>
           </div>
@@ -842,12 +801,10 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                 </div>
                 <div className="space-y-2.5 max-w-sm mx-auto">
                   <h3 className="font-display font-black text-neutral-800 text-sm uppercase tracking-wider">
-                    {isIndo ? 'Siap Menganalisis Pakaian' : 'Stylist Dashboard Ready'}
+                    {t.stylistDashboardReady || 'Stylist Dashboard Ready'}
                   </h3>
                   <p className="text-xs text-neutral-400 font-medium leading-relaxed">
-                    {isIndo 
-                      ? 'Silakan unggah setidaknya 1 foto baju Anda di panel kiri untuk membandingkan kecocokannya dengan palet warna musiman Anda secara instan.' 
-                      : 'Please upload at least 1 cloth image in the left panel to compare its compatibility score against your seasonal color palette instantly.'}
+                    {t.stylistDashboardReadyDesc || 'Upload up to 5 items of clothes. Our AI Stylist will compute chromatic metrics against your exact color season and highlight the best combinations.'}
                   </p>
                 </div>
               </motion.div>
@@ -877,7 +834,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                       <div className="flex items-center gap-2 mb-6">
                         <Sparkles className="shrink-0 animate-pulse" style={{ color: bestItem.hexColor }} size={16} />
                         <span className="text-[10px] font-black uppercase tracking-widest font-mono" style={{ color: bestItem.hexColor }}>
-                          {tLocal('bestOutfitMatch')}
+                          {t.bestOutfitMatch || 'Best Color Match for You'}
                         </span>
                       </div>
 
@@ -913,7 +870,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
 
                           <div className="space-y-1">
                             <div className="flex justify-between items-center text-xs font-mono font-bold">
-                              <span className="text-neutral-400 uppercase tracking-widest text-[9px]">{tLocal('matchScore')}</span>
+                              <span className="text-neutral-400 uppercase tracking-widest text-[9px]">{t.matchScore || 'Compatibility'}</span>
                               <span className="font-black text-sm" style={{ color: bestItem.hexColor }}>{bestItem.matchScore}%</span>
                             </div>
                             <div className="h-2 w-full bg-neutral-100 rounded-full overflow-hidden">
@@ -948,7 +905,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                   <div className="flex items-center gap-1.5 px-1.5">
                     <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shrink-0" />
                     <h3 className="text-[10px] font-black text-neutral-800 uppercase tracking-widest font-mono">
-                      {tLocal('allOutfits')}
+                      {t.allOutfits || 'All Outfits Analyzed'}
                     </h3>
                   </div>
 
@@ -989,7 +946,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                                     ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
                                     : 'bg-red-50 border-red-200 text-red-800'
                                 }`}>
-                                  {item.isCompatible ? tLocal('compatible') : tLocal('notCompatible')}
+                                  {item.isCompatible ? (t.compatible || 'Recommended') : (t.notCompatible || 'Not Ideal')}
                                 </span>
                                 <span className="text-[11px] font-mono font-black text-neutral-700">
                                   {item.matchScore}%

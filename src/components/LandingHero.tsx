@@ -384,16 +384,14 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100/50 shadow-sm animate-bounce">
             <span className="w-2 h-2 rounded-full bg-brand-secondary animate-ping" />
             <span className="text-[10px] font-black text-brand-secondary uppercase tracking-widest font-mono">
-              {language === 'id' ? 'TAMAN BERMAIN GAYA INTERAKTIF' : 'INTERACTIVE STYLING PLAYGROUND'}
+              {t.hubTag || 'INTERACTIVE STYLING PLAYGROUND'}
             </span>
           </div>
           <h2 className="text-4xl md:text-5xl font-display font-black text-gray-900 tracking-tight uppercase">
             Varnally Hub
           </h2>
           <p className="text-sm md:text-base text-gray-500 max-w-xl mx-auto font-semibold leading-relaxed">
-            {language === 'id' 
-              ? 'Lepaskan batasan frame biasa! Eksplorasi fitur interaktif kami dengan desain melengkung organik yang dirancang khusus untuk kenyamanan visual Anda.'
-              : 'Break free from rigid grids. Dive into our playful interactive sandboxes wrapped in responsive organic shapes and fluid energy.'}
+            {t.hubSub || 'Break free from rigid grids. Dive into our playful interactive sandboxes wrapped in responsive organic shapes and fluid energy.'}
           </p>
         </div>
 
@@ -409,19 +407,17 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
             <div className="space-y-4 relative z-10">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-black text-amber-600 uppercase tracking-widest font-mono flex items-center gap-1.5 bg-amber-100/60 px-3 py-1 rounded-full">
-                  <Sparkles size={13} className="animate-spin text-amber-500" /> {language === 'id' ? 'COBA RIASAN' : 'MAKEUP TRY-ON'}
+                  <Sparkles size={13} className="animate-spin text-amber-500" /> {t.makeupTryOn || 'MAKEUP TRY-ON'}
                 </span>
                 <span className="px-2.5 py-1 rounded-full text-[9px] font-mono font-black uppercase tracking-wider bg-amber-500 text-white animate-pulse shadow-md shadow-amber-500/20">
-                  {language === 'id' ? 'BARU' : 'NEW'}
+                  {t.newTag || 'NEW'}
                 </span>
               </div>
               <h3 className="text-3xl font-black text-neutral-900 font-display tracking-tight flex items-center gap-2">
                 Glow Me Up
               </h3>
               <p className="text-xs md:text-sm text-neutral-500 leading-relaxed font-semibold">
-                {language === 'id'
-                  ? 'Uji paduan riasan wajah terbaik Anda secara virtual dengan AI instan. Gunakan slider pembanding super mulus di bawah untuk mengamati perubahan menakjubkan pada wajah!'
-                  : 'Immersive artificial cosmetics visualization. Slide left and right to inspect customized, hyper-realistic makeup overlays mapped perfectly over portrait geometries.'}
+                {t.glowDesc || 'Immersive artificial cosmetics visualization. Slide left and right to inspect customized, hyper-realistic makeup overlays mapped perfectly over portrait geometries.'}
               </p>
             </div>
 
@@ -430,15 +426,15 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
               <div className="flex justify-between items-center text-[10px] uppercase font-black tracking-widest font-mono text-neutral-500 px-2 bg-neutral-100/50 py-1.5 rounded-full border border-neutral-250/30">
                 <span className="flex items-center gap-1.5 text-neutral-600">
                   <span className="w-2 h-2 rounded-full bg-neutral-400" />
-                  {language === 'id' ? 'SEBELUM' : 'BEFORE'}
+                  {t.sliderBefore || 'BEFORE'}
                 </span>
                 <span className="flex items-center gap-1.5 text-amber-600 font-bold">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-                  {language === 'id' ? 'SESUDAH' : 'AFTER'}
+                  {t.sliderAfter || 'AFTER'}
                 </span>
               </div>
-
-              {/* Interactive Dragging Slider inside an asymmetrical capsule */}
+ 
+               {/* Interactive Dragging Slider inside an asymmetrical capsule */}
               <div className="aspect-[4/5] relative w-full rounded-[3.5rem_2rem_3rem_2.5rem] overflow-hidden border-2 border-amber-300 shadow-[0_15px_30px_rgba(0,0,0,0.08)] bg-neutral-100 group/slider touch-none">
                 {/* Before Image */}
                 <img
@@ -489,7 +485,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
                 {sliderPos === 50 && (
                   <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-amber-500 text-white font-mono px-4 py-1.5 rounded-full text-[9px] uppercase tracking-widest font-black pointer-events-none z-5 shadow-lg border border-amber-300 animate-bounce">
-                    {language === 'id' ? '← GESER UNTUK COBA →' : '← SLIDE TO TRY →'}
+                    {t.slideHint || '← SLIDE TO TRY →'}
                   </div>
                 )}
               </div>
@@ -503,7 +499,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                 onClick={onGlowMeUp}
                 className="w-full max-w-xs mx-auto py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-2xl flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-amber-500/20 text-xs tracking-wider uppercase"
               >
-                <span>{language === 'id' ? 'Coba Riasan Virtual ✧' : 'Launch Virtual Try-On ✧'}</span>
+                <span>{t.launchTryOn || 'Launch Virtual Try-On ✧'}</span>
                 <ArrowRight size={14} />
               </motion.button>
             </div>
@@ -519,19 +515,17 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
             <div className="space-y-4 relative z-10">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-black text-rose-600 uppercase tracking-widest font-mono flex items-center gap-1.5 bg-rose-100/60 px-3 py-1 rounded-full">
-                  <Palette size={13} className="text-rose-500" /> {language === 'id' ? 'ASISTEN STYLING' : 'PERSONAL STYLIST'}
+                  <Palette size={13} className="text-rose-500" /> {t.personalStylist || 'PERSONAL STYLIST'}
                 </span>
                 <span className="px-2.5 py-1 rounded-full text-[9px] font-mono font-black uppercase tracking-wider bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/20">
-                  {language === 'id' ? 'TREN VIRAL 🔥' : 'HOT TREND 🔥'}
+                  {t.hotTrend || 'HOT TREND 🔥'}
                 </span>
               </div>
               <h3 className="text-3xl font-black text-neutral-900 font-display tracking-tight flex items-center gap-2">
                 Stylize Me
               </h3>
               <p className="text-xs md:text-sm text-neutral-500 leading-relaxed font-semibold">
-                {language === 'id'
-                  ? 'Temukan harmoni busana impian secara presisi. Sangat disesuaikan dengan tipe warna kulit Anda sendiri guna menghindari kesalahan mix-and-match!'
-                  : 'Establish perfect wardrobe synchronicities. Compare seasonal apparel options side-by-side to understand which styles amplify your glowing nature.'}
+                {t.styleDesc || 'Establish perfect wardrobe synchronicities. Compare seasonal apparel options side-by-side to understand which styles amplify your glowing nature.'}
               </p>
             </div>
 
@@ -552,42 +546,36 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                 {clickedStyle === null ? (
                   <>
                     <p className="leading-relaxed text-[13px]">
-                      {language === 'id' 
-                        ? '✨ "Yang mana busana paling cocok untuk tipe warna Light Summer?"' 
-                        : '✨ "Which style is most suitable for the Light Summer season?"'}
+                      {t.guessQuestion || '✨ "Which style is most suitable for the Light Summer season?"'}
                     </p>
                     <span className="text-[9px] font-black tracking-wider uppercase text-rose-500/70 block mt-1.5 animate-pulse">
-                      {language === 'id' ? '👉 Coba Tebak! Klik salah satu foto di bawah!' : '👉 Click an image below to guess!'}
+                      {t.guessTip || '👉 Click an image below to guess!'}
                     </span>
                   </>
                 ) : clickedStyle === 'right' ? (
                   <>
                     <p className="leading-relaxed text-[13px]">
-                      {language === 'id'
-                        ? '🎉 Benar Sekali! Tipe warna Light Summer bercahaya maksimal dengan warna cerah, dingin, dan lembut di kanan!'
-                        : '🎉 Bingo! Light Summer seasonal palettes thrive with clear, light, cool-undertoned coordinates on the right!'}
+                      {t.guessCorrect || '🎉 Bingo! Light Summer seasonal palettes thrive with clear, light, cool-undertoned coordinates on the right!'}
                     </p>
                     <button 
                       type="button"
                       onClick={() => setClickedStyle(null)}
                       className="mt-2 text-[10px] font-black uppercase text-emerald-600 bg-white border border-emerald-200 px-3 py-1 rounded-full shadow-sm hover:bg-emerald-50 transition-colors cursor-pointer block mx-auto"
                     >
-                      {language === 'id' ? 'Main Lagi ↺' : 'Try Another ↺'}
+                      {t.tryAnother || 'Try Another ↺'}
                     </button>
                   </>
                 ) : (
                   <>
                     <p className="leading-relaxed text-[13px]">
-                      {language === 'id'
-                        ? '😅 Belum Tepat! Warna baju kiri bertabrakan dengan rona alami Light Summer yang lembut, membuat kulit kusam.'
-                        : '😅 Not matching! The heavy warm profile on the left clashes with delicate Light Summer hues, casting shadows.'}
+                      {t.guessWrong || '😅 Not matching! The heavy warm profile on the left clashes with delicate Light Summer hues, casting shadows.'}
                     </p>
                     <button 
                       type="button"
                       onClick={() => setClickedStyle(null)}
                       className="mt-2 text-[10px] font-black uppercase text-rose-600 bg-white border border-rose-200 px-3 py-1 rounded-full shadow-sm hover:bg-rose-50 transition-colors cursor-pointer block mx-auto"
                     >
-                      {language === 'id' ? 'Coba Lagi ↺' : 'Try Again ↺'}
+                      {t.tryAgain || 'Try Again ↺'}
                     </button>
                   </>
                 )}
@@ -653,10 +641,10 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     className="text-center bg-rose-50 py-1.5 px-2 rounded-2xl border border-rose-100/70"
                   >
                     <span className="text-[11px] font-mono font-black uppercase tracking-wider text-rose-600 block">
-                      {language === 'id' ? 'Clashing' : 'Clashing Tone'}
+                      {t.guessClashingTone || 'Clashing Tone'}
                     </span>
                     <span className="text-[9px] text-neutral-500 font-semibold block mt-0.5">
-                      {language === 'id' ? 'Kulit tampak kusam' : 'Slightly washes out'}
+                      {t.guessWashesOut || 'Slightly washes out'}
                     </span>
                   </motion.div>
                 )}
@@ -710,10 +698,10 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     className="text-center bg-emerald-50 py-1.5 px-2 rounded-2xl border border-emerald-100/70"
                   >
                     <span className="text-[11px] font-mono font-black uppercase tracking-wider text-emerald-700 block">
-                      {language === 'id' ? 'Harmonis!' : 'Perfect Gold!'}
+                      {t.guessPerfectGold || 'Perfect Gold!'}
                     </span>
                     <span className="text-[9px] text-neutral-500 font-semibold block mt-0.5">
-                      {language === 'id' ? 'Instan bercahaya!' : 'Instantly illuminates!'}
+                      {t.guessIlluminates || 'Instantly illuminates!'}
                     </span>
                   </motion.div>
                 )}
@@ -729,7 +717,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                 onClick={onStylizeMe}
                 className="w-full max-w-xs mx-auto py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-2xl flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-rose-500/20 text-xs tracking-wider uppercase"
               >
-                <span>{language === 'id' ? 'Coba Pilih Busana ✧' : 'Launch Style Matcher ✧'}</span>
+                <span>{t.launchStyleMatcher || 'Launch Style Matcher ✧'}</span>
                 <ArrowRight size={14} />
               </motion.button>
             </div>

@@ -281,7 +281,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ) : (
                   <div className="p-3 bg-neutral-50 rounded-2xl text-center border border-dashed border-neutral-200">
                     <span className="text-[10px] text-neutral-400 font-semibold block leading-tight">
-                      {language === 'id' ? "Belum ada profil Varna terpilih" : "No active Varna profile pinned"}
+                      {t.noActiveProfilePinned || "No active Varna profile pinned"}
                     </span>
                   </div>
                 )}
