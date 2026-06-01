@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ArrowLeft, 
-  Sparkles, 
-  UploadCloud, 
-  CheckCircle2, 
-  XCircle, 
-  Trash2, 
-  Info, 
+import {
+  ArrowLeft,
+  Sparkles,
+  UploadCloud,
+  CheckCircle2,
+  XCircle,
+  Trash2,
+  Info,
   RefreshCw,
   HelpCircle,
   Shirt,
@@ -99,22 +99,22 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
       hex: `#${hex}`,
       name: `Recommended Color ${index + 1}`
     }));
-    
+
     let avoidhexes: string[] = [];
     if (season === 'Winter') {
-      avoidhexes = ["A38F1E", "B97A19", "DE7A0A", "652E19", "C53F19"]; 
+      avoidhexes = ["A38F1E", "B97A19", "DE7A0A", "652E19", "C53F19"];
     } else if (season === 'Spring') {
-      avoidhexes = ["2D4281", "2F3359", "4B225C", "111111", "AA90BD"]; 
+      avoidhexes = ["2D4281", "2F3359", "4B225C", "111111", "AA90BD"];
     } else if (season === 'Summer') {
-      avoidhexes = ["DE7A0A", "C53F19", "C7135A", "F7E602", "DC0814"]; 
+      avoidhexes = ["DE7A0A", "C53F19", "C7135A", "F7E602", "DC0814"];
     } else {
-      avoidhexes = ["BFDFEC", "C8A7C8", "9283BA", "B4DAE5", "C75086"]; 
+      avoidhexes = ["BFDFEC", "C8A7C8", "9283BA", "B4DAE5", "C75086"];
     }
     const avoid = avoidhexes.map((hex: string, index: number) => ({
       hex: `#${hex}`,
       name: `Avoid Color ${index + 1}`
     }));
-    
+
     return { best, avoid };
   };
 
@@ -376,8 +376,8 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {history.map((item, idx) => {
-                const signatureColors = item.bestColors && item.bestColors.length > 0 
-                  ? item.bestColors 
+                const signatureColors = item.bestColors && item.bestColors.length > 0
+                  ? item.bestColors
                   : getPresetColors(item.season, item.subType).best;
                 return (
                   <button
@@ -391,9 +391,9 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                           Varna #{idx + 1}
                         </span>
                         {(item.cleanedImageUrl || item.imageUrl) && (
-                          <img 
-                            src={item.cleanedImageUrl || item.imageUrl} 
-                            alt="" 
+                          <img
+                            src={item.cleanedImageUrl || item.imageUrl}
+                            alt=""
                             className="w-8 h-8 rounded-full object-cover border border-neutral-100 shadow-sm"
                             referrerPolicy="no-referrer"
                           />
@@ -409,11 +409,11 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
 
                     <div className="flex items-center gap-1 mt-5 pt-3 border-t border-neutral-100 w-full">
                       {signatureColors.slice(0, 3).map((col: any, sIdx: number) => (
-                        <div 
-                           key={sIdx} 
-                           className="w-4 h-4 rounded-full border border-black/5 shrink-0"
-                           style={{ backgroundColor: col.hex }}
-                           title={col.name}
+                        <div
+                          key={sIdx}
+                          className="w-4 h-4 rounded-full border border-black/5 shrink-0"
+                          style={{ backgroundColor: col.hex }}
+                          title={col.name}
                         />
                       ))}
                       <span className="text-[9px] text-[#A0AEC0] font-black font-mono ml-auto tracking-wider uppercase group-hover:text-indigo-500 transition-colors font-mono">
@@ -435,14 +435,14 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
               {t.explore12MasterSeasons || 'Explore the 12 Master Seasons'}
             </h2>
           </div>
-          
+
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {Object.keys(ARCHETYPES["Winter"]).concat(Object.keys(ARCHETYPES["Spring"]), Object.keys(ARCHETYPES["Summer"]), Object.keys(ARCHETYPES["Autumn"])).map((key) => {
               const seasonParts = key.split(' ');
               const chosenSubType = seasonParts[0];
               const chosenSeason = (seasonParts[1] || 'Winter') as any;
               const presetColors = getPresetColors(chosenSeason, chosenSubType);
-              
+
               return (
                 <button
                   key={key}
@@ -476,8 +476,8 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
 
                   <div className="flex items-center gap-1 mt-5 pt-3 border-t border-neutral-100 w-full">
                     {presetColors.best.slice(0, 3).map((col: any, sIdx: number) => (
-                      <div 
-                        key={sIdx} 
+                      <div
+                        key={sIdx}
                         className="w-4 h-4 rounded-full border border-black/5 shrink-0"
                         style={{ backgroundColor: col.hex }}
                         title={col.name}
@@ -548,7 +548,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
               </button>
             </div>
             <p className="text-xs text-neutral-550 font-semibold max-w-md">
-              {t.matchedWithUndertoneText 
+              {t.matchedWithUndertoneText
                 ? t.matchedWithUndertoneText.replace('{{undertone}}', selectedProfile.skinUndertone.toLowerCase()).replace('{{jewelry}}', selectedProfile.jewelry.toLowerCase())
                 : `Matched with ${selectedProfile.skinUndertone.toLowerCase()} undertones and recommended ${selectedProfile.jewelry.toLowerCase()} accents.`}
             </p>
@@ -561,8 +561,8 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
               </span>
               <div className="flex items-center justify-center sm:justify-start gap-1.5">
                 {profileCoreColors.slice(0, 5).map((col: any, i: number) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className="w-5 h-5 rounded-full shadow-inner border border-white"
                     style={{ backgroundColor: col.hex }}
                     title={col.name}
@@ -576,7 +576,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
 
       {/* Main feature interaction area */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
         {/* Left column: Clothing images setup */}
         <div className="lg:col-span-6 space-y-6">
           <div className="bg-white p-6 rounded-[2rem] border border-neutral-200/50 shadow-sm space-y-4">
@@ -603,7 +603,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
             </div>
 
             {/* Droppable grid selector area */}
-            <div 
+            <div
               onDragEnter={handleDrag}
               onDragOver={handleDrag}
               onDragLeave={handleDrag}
@@ -613,11 +613,10 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
               {selectedFiles.length === 0 ? (
                 <div
                   onClick={triggerFileSelect}
-                  className={`aspect-[4/3] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 relative select-none ${
-                    dragActive
+                  className={`aspect-[4/3] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 relative select-none ${dragActive
                       ? 'border-indigo-500 bg-indigo-50/10 scale-98'
                       : 'border-neutral-200 hover:border-indigo-500 hover:bg-neutral-50/50'
-                  }`}
+                    }`}
                 >
                   <div className="w-12 h-12 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center justify-center text-indigo-500 mb-4 animate-bounce">
                     <UploadCloud size={20} />
@@ -630,7 +629,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                       Accepts JPEG, PNG, WEBP files
                     </p>
                   </div>
-                  <input 
+                  <input
                     type="file"
                     ref={fileInputRef}
                     onChange={handleFileChange}
@@ -644,16 +643,16 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                   {/* Thumbnail grid list of clothes */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
                     {selectedFiles.map((sf, idx) => (
-                      <div 
+                      <div
                         key={sf.id}
                         className="aspect-square rounded-2xl border border-neutral-200/50 overflow-hidden relative group shadow-sm bg-neutral-50"
                       >
-                        <img 
-                          src={sf.preview} 
-                          alt={sf.name} 
-                          className="w-full h-full object-cover" 
+                        <img
+                          src={sf.preview}
+                          alt={sf.name}
+                          className="w-full h-full object-cover"
                         />
-                        
+
                         {/* Always visible prominent delete button */}
                         <button
                           onClick={(e) => {
@@ -685,7 +684,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                         <span className="text-[9px] font-mono font-black uppercase tracking-wider">
                           {t.addPhoto || 'Add Photo'}
                         </span>
-                        <input 
+                        <input
                           type="file"
                           ref={fileInputRef}
                           onChange={handleFileChange}
@@ -738,21 +737,20 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                       type="button"
                       disabled={isAlreadySelected || selectedFiles.length >= 5 || analyzing || !!loadingSample}
                       onClick={() => handleSelectSample(url, name)}
-                      className={`aspect-square rounded-xl overflow-hidden relative border transition-all duration-205 cursor-pointer ${
-                        isAlreadySelected
+                      className={`aspect-square rounded-xl overflow-hidden relative border transition-all duration-205 cursor-pointer ${isAlreadySelected
                           ? 'border-indigo-400 ring-2 ring-indigo-400/20 opacity-60'
                           : 'border-neutral-200 hover:border-indigo-500 hover:shadow-md active:scale-95'
-                      }`}
+                        }`}
                       title={t.sampleOutfitNum ? t.sampleOutfitNum.replace('{{num}}', String(num)) : `Sample Outfit ${num}`}
                     >
                       <img src={url} alt={`Style ${num}`} className="w-full h-full object-cover" />
-                      
+
                       {isCurrentLoading && (
                         <div className="absolute inset-0 bg-neutral-900/40 flex items-center justify-center">
                           <RefreshCw size={12} className="animate-spin text-white" />
                         </div>
                       )}
-                      
+
                       {isAlreadySelected && (
                         <div className="absolute inset-0 bg-indigo-500/10 flex items-center justify-center">
                           <CheckCircle2 size={14} className="text-indigo-600 bg-white rounded-full" />
@@ -771,7 +769,11 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                 animate={{ opacity: 1, y: 0 }}
                 className="p-4 bg-red-50 border border-red-100 rounded-2xl text-center"
               >
-                <p className="text-xs text-red-600 font-bold leading-relaxed">{error}</p>
+                <p className="text-xs text-red-600 font-bold leading-relaxed">{"Quota exceeded, please use AI Studio version:"}<a
+                  href="https://tiny.cc/varnally"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >tiny.cc/varnally</a></p>
               </motion.div>
             )}
 
@@ -821,16 +823,16 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                 {(() => {
                   const bestItem = result.items.find(item => item.filename === result.bestItemFilename) || result.items[0];
                   const bestItemUrl = getPreviewByFilename(bestItem.filename);
-                  
+
                   return (
-                    <div 
+                    <div
                       className="bg-white text-neutral-900 border border-neutral-200/50 rounded-[2.5rem] p-6 sm:p-8 overflow-hidden relative transition-all"
                       style={{
                         boxShadow: `0 12px 42px -10px ${bestItem.hexColor}25, 0 0 35px 3px ${bestItem.hexColor}15`
                       }}
                     >
                       <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-indigo-500/5 via-amber-500/5 to-transparent rounded-bl-full pointer-events-none" />
-                      
+
                       <div className="flex items-center gap-2 mb-6">
                         <Sparkles className="shrink-0 animate-pulse" style={{ color: bestItem.hexColor }} size={16} />
                         <span className="text-[10px] font-black uppercase tracking-widest font-mono" style={{ color: bestItem.hexColor }}>
@@ -841,10 +843,10 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                         {/* Top outfit image inside the result card */}
                         <div className="md:col-span-5 h-56 md:h-48 rounded-2xl overflow-hidden border border-neutral-200/40 shadow-sm relative bg-neutral-50">
-                          <img 
-                            src={bestItemUrl} 
-                            alt="The Best Color Outfit Matches" 
-                            className="w-full h-full object-cover" 
+                          <img
+                            src={bestItemUrl}
+                            alt="The Best Color Outfit Matches"
+                            className="w-full h-full object-cover"
                           />
                           <div className="absolute top-2.5 left-2.5 px-3 py-1 bg-amber-400 text-neutral-950 font-mono text-[9px] font-black rounded-full uppercase tracking-wider flex items-center gap-1 shadow-sm">
                             <Sparkles size={9} />
@@ -854,7 +856,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
 
                         <div className="md:col-span-7 space-y-4">
                           <div className="flex items-center gap-3">
-                            <div 
+                            <div
                               className="w-6 h-6 rounded-full border border-neutral-200 shadow-sm shrink-0"
                               style={{ backgroundColor: bestItem.hexColor }}
                             />
@@ -874,9 +876,9 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                               <span className="font-black text-sm" style={{ color: bestItem.hexColor }}>{bestItem.matchScore}%</span>
                             </div>
                             <div className="h-2 w-full bg-neutral-100 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full transition-all duration-1000" 
-                                style={{ 
+                              <div
+                                className="h-full transition-all duration-1000"
+                                style={{
                                   width: `${bestItem.matchScore}%`,
                                   backgroundColor: bestItem.hexColor
                                 }}
@@ -915,13 +917,12 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                       const isBestMatch = item.filename === result.bestItemFilename;
 
                       return (
-                        <div 
+                        <div
                           key={idx}
-                          className={`p-4 bg-white border rounded-3xl transition-all flex flex-col sm:flex-row items-center gap-4.5 ${
-                            isBestMatch 
-                              ? 'border-indigo-400 shadow-md ring-1 ring-indigo-400/25 bg-indigo-50/5' 
+                          className={`p-4 bg-white border rounded-3xl transition-all flex flex-col sm:flex-row items-center gap-4.5 ${isBestMatch
+                              ? 'border-indigo-400 shadow-md ring-1 ring-indigo-400/25 bg-indigo-50/5'
                               : 'border-neutral-200/60 hover:border-neutral-350 shadow-sm'
-                          }`}
+                            }`}
                         >
                           {/* Image preview of searched clothing image */}
                           <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-neutral-100 shadow-inner bg-neutral-50 relative">
@@ -931,7 +932,7 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                           <div className="flex-1 space-y-3 w-full">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                               <div className="flex items-center gap-2">
-                                <div 
+                                <div
                                   className="w-4 h-4 rounded-full border border-black/5 shrink-0"
                                   style={{ backgroundColor: item.hexColor }}
                                 />
@@ -941,11 +942,10 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                               </div>
 
                               <div className="flex items-center gap-2">
-                                <span className={`text-[8px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border font-mono ${
-                                  item.isCompatible 
-                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
+                                <span className={`text-[8px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border font-mono ${item.isCompatible
+                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
                                     : 'bg-red-50 border-red-200 text-red-800'
-                                }`}>
+                                  }`}>
                                   {item.isCompatible ? (t.compatible || 'Recommended') : (t.notCompatible || 'Not Ideal')}
                                 </span>
                                 <span className="text-[11px] font-mono font-black text-neutral-700">

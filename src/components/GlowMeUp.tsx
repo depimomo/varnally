@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ArrowLeft, 
-  Sparkles, 
-  UploadCloud, 
-  CheckCircle2, 
-  XCircle, 
-  Eye, 
-  Heart, 
-  Palette, 
-  Trash2, 
-  Info, 
+import {
+  ArrowLeft,
+  Sparkles,
+  UploadCloud,
+  CheckCircle2,
+  XCircle,
+  Eye,
+  Heart,
+  Palette,
+  Trash2,
+  Info,
   RefreshCw,
   Gauge,
   HelpCircle,
@@ -219,7 +219,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
         match.hexColor || '#ff0000'
       );
       setVisualizedImageUrl(generatedUrl);
-      
+
       // Cache the successfully generated try-on image
       setTryOnCache(prev => ({
         ...prev,
@@ -327,9 +327,9 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                           Varna #{idx + 1}
                         </span>
                         {(item.cleanedImageUrl || item.imageUrl) && (
-                          <img 
-                            src={item.cleanedImageUrl || item.imageUrl} 
-                            alt="" 
+                          <img
+                            src={item.cleanedImageUrl || item.imageUrl}
+                            alt=""
                             className="w-8 h-8 rounded-full object-cover border border-neutral-100 shadow-sm"
                             referrerPolicy="no-referrer"
                           />
@@ -345,8 +345,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
 
                     <div className="flex items-center gap-1 mt-5 pt-3 border-t border-neutral-100 w-full">
                       {(itemPreset?.lipColors || []).slice(0, 3).map((col: any, sIdx: number) => (
-                        <div 
-                          key={sIdx} 
+                        <div
+                          key={sIdx}
                           className="w-4 h-4 rounded-full border border-black/5 shrink-0"
                           style={{ backgroundColor: col.hex }}
                           title={col.name}
@@ -371,14 +371,14 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
               {t.explore12MasterSeasons || 'Explore the 12 Master Seasons'}
             </h2>
           </div>
-          
+
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {Object.keys(MAKEUP_PRESETS).map((key) => {
               const itemPreset = MAKEUP_PRESETS[key];
               const seasonParts = key.split(' ');
               const chosenSubType = seasonParts[0];
               const chosenSeason = (seasonParts[1] || 'Winter') as any;
-              
+
               return (
                 <button
                   key={key}
@@ -412,8 +412,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
 
                   <div className="flex items-center gap-1 mt-5 pt-3 border-t border-neutral-100 w-full">
                     {(itemPreset?.lipColors || []).slice(0, 3).map((col: any, sIdx: number) => (
-                      <div 
-                        key={sIdx} 
+                      <div
+                        key={sIdx}
                         className="w-4 h-4 rounded-full border border-black/5 shrink-0"
                         style={{ backgroundColor: col.hex }}
                         title={col.name}
@@ -475,7 +475,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
               <h2 className="text-xl sm:text-2xl font-display font-black text-neutral-900 uppercase tracking-tight">
                 {selectedProfile!.subType} {selectedProfile!.season}
               </h2>
-              <button 
+              <button
                 onClick={() => setSelectedProfile(null)}
                 className="text-[10px] font-mono font-bold bg-neutral-200 rounded-full text-neutral-700 hover:bg-neutral-300 px-3 py-1 cursor-pointer select-none transition-colors uppercase tracking-wider shrink-0"
               >
@@ -485,8 +485,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
             <p className="text-xs text-neutral-500 font-medium max-w-md">
               {t.matchedWithUndertoneText
                 ? t.matchedWithUndertoneText
-                    .replace('{{undertone}}', selectedProfile!.skinUndertone.toLowerCase())
-                    .replace('{{jewelry}}', selectedProfile!.jewelry.toLowerCase())
+                  .replace('{{undertone}}', selectedProfile!.skinUndertone.toLowerCase())
+                  .replace('{{jewelry}}', selectedProfile!.jewelry.toLowerCase())
                 : `Matched with ${selectedProfile!.skinUndertone.toLowerCase()} undertones and recommended ${selectedProfile!.jewelry.toLowerCase()} accents.`}
             </p>
           </div>
@@ -510,8 +510,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
               </span>
               <div className="flex items-center justify-center sm:justify-start gap-1.5">
                 {(preset.lipColors || []).slice(0, 3).map((sw: any, i: number) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className="w-5 h-5 rounded-full shadow-inner border border-white"
                     style={{ backgroundColor: sw.hex }}
                     title={sw.name}
@@ -536,8 +536,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
               </span>
               <div className="flex items-center gap-1">
                 {item.colors.slice(0, 3).map((col: any, sIdx: number) => (
-                  <div 
-                    key={sIdx} 
+                  <div
+                    key={sIdx}
                     className="w-4.5 h-4.5 rounded-full border border-black/5 flex-shrink-0"
                     style={{ backgroundColor: col.hex }}
                     title={col.name}
@@ -551,10 +551,10 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
 
       {/* Main Feature Interactivity Area */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-        
+
         {/* Left Side: Configuration Controls */}
         <div className="md:col-span-12 lg:col-span-6 space-y-6">
-          
+
           {/* STEP 1: Drag and Drop Upload Area */}
           <div className="bg-white p-6 rounded-[2rem] border border-neutral-200/50 shadow-sm space-y-4">
             <h3 className="text-sm font-black text-neutral-800 uppercase tracking-wider font-mono flex items-center gap-2">
@@ -569,11 +569,10 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                   onDragLeave={handleDrag}
                   onDrop={handleDrop}
                   onClick={triggerFileSelect}
-                  className={`aspect-[4/3] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 relative select-none ${
-                    dragActive
+                  className={`aspect-[4/3] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 relative select-none ${dragActive
                       ? 'border-brand-primary bg-brand-primary/5 scale-98'
                       : 'border-neutral-200 hover:border-brand-primary hover:bg-neutral-50/50'
-                  }`}
+                    }`}
                 >
                   <div className="w-12 h-12 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center justify-center text-neutral-400 group-hover:bg-white mb-4 animate-bounce">
                     <UploadCloud size={20} className="text-brand-primary" />
@@ -586,7 +585,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                       JPEG, PNG, WEBP files
                     </p>
                   </div>
-                  <input 
+                  <input
                     type="file"
                     ref={fileInputRef}
                     onChange={handleFileChange}
@@ -620,11 +619,11 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         className="group aspect-square rounded-2xl overflow-hidden border-2 border-neutral-200/50 hover:border-brand-primary active:scale-95 transition-all relative cursor-pointer bg-neutral-50 flex items-center justify-center shadow-sm"
                         title={samp.label}
                       >
-                        <img 
-                          src={samp.url} 
-                          alt={samp.label} 
+                        <img
+                          src={samp.url}
+                          alt={samp.label}
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-neutral-900/60 py-0.5 text-center">
                           <span className="text-[8.5px] font-mono font-bold text-white tracking-tight">
@@ -640,9 +639,9 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
               <div className="space-y-4">
                 <div className="aspect-[4/3] rounded-3xl border border-neutral-200/50 overflow-hidden relative group">
                   <img src={previewUrl} alt="swatch preview" className="w-full h-full object-cover" />
-                  
+
                   {analyzing && (
-                    <motion.div 
+                    <motion.div
                       initial={{ top: '-10%' }}
                       animate={{ top: '110%' }}
                       transition={{ repeat: Infinity, duration: 2.5, ease: 'linear' }}
@@ -689,7 +688,11 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                 animate={{ opacity: 1, y: 0 }}
                 className="p-4 bg-red-50 border border-red-100 rounded-2xl text-center"
               >
-                <p className="text-xs text-red-600 font-bold leading-relaxed">{error}</p>
+                <p className="text-xs text-red-600 font-bold leading-relaxed">{"Quota exceeded, please use AI Studio version:"}<a
+                  href="https://tiny.cc/varnally"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >tiny.cc/varnally</a></p>
               </motion.div>
             )}
 
@@ -735,11 +738,10 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                 className="space-y-6"
               >
                 {/* Result header banner */}
-                <div className={`p-6 sm:p-8 rounded-[2.2rem] border flex flex-col gap-4 shadow-sm relative overflow-hidden ${
-                  result.matchFound 
-                    ? 'bg-emerald-500/5 border-emerald-500/10' 
+                <div className={`p-6 sm:p-8 rounded-[2.2rem] border flex flex-col gap-4 shadow-sm relative overflow-hidden ${result.matchFound
+                    ? 'bg-emerald-500/5 border-emerald-500/10'
                     : 'bg-rose-500/5 border-rose-500/10'
-                }`}>
+                  }`}>
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-white/10 to-transparent pointer-events-none" />
 
                   <div className="flex items-center gap-3">
@@ -802,7 +804,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         {/* Shade header with visual color swatch */}
                         <div className="flex items-center gap-3.5 mb-3 max-w-[65%] sm:max-w-[73%]">
                           {match.hexColor && (
-                            <div 
+                            <div
                               className="w-7 h-7 rounded-full border border-neutral-200/80 shadow-md flex-shrink-0 relative"
                               style={{ backgroundColor: match.hexColor }}
                               title={match.hexColor}
@@ -962,10 +964,10 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         />
 
                         {/* After Image (Clipped overlay layer on top) */}
-                        <div 
+                        <div
                           className="absolute inset-0 overflow-hidden pointer-events-none"
-                          style={{ 
-                            clipPath: `polygon(${sliderPosition}% 0, 100% 0, 100% 100%, ${sliderPosition}% 100%)` 
+                          style={{
+                            clipPath: `polygon(${sliderPosition}% 0, 100% 0, 100% 100%, ${sliderPosition}% 100%)`
                           }}
                         >
                           <img
@@ -977,8 +979,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         </div>
 
                         {/* Slide handle and split divider line */}
-                        <div 
-                           className="absolute top-0 bottom-0 w-1 bg-white/90 shadow-xl cursor-ew-resize z-25 pointer-events-none"
+                        <div
+                          className="absolute top-0 bottom-0 w-1 bg-white/90 shadow-xl cursor-ew-resize z-25 pointer-events-none"
                           style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
                         >
                           {/* Pulsing visual handle indicator */}
@@ -991,7 +993,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                         </div>
 
                         {/* Interactive Drag Overlay (Native Invisible input taking up full card aspect) */}
-                        <input 
+                        <input
                           type="range"
                           min="0"
                           max="100"
@@ -1013,7 +1015,7 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                     {/* Meta info block */}
                     <div className="bg-neutral-50 p-4 rounded-3xl border border-neutral-100 flex flex-col sm:flex-row items-center gap-4">
                       {visualizingMatch.hexColor && (
-                        <div 
+                        <div
                           className="w-10 h-10 rounded-full border border-neutral-200 shadow-md flex-shrink-0 relative"
                           style={{ backgroundColor: visualizingMatch.hexColor }}
                         >
