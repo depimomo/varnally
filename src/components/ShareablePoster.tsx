@@ -404,7 +404,7 @@ export const ShareablePoster: React.FC<ShareablePosterProps> = ({
                       <span className="text-[8px] text-white/60 font-bold">{t.tryNow}</span>
                     </div>
                     <span className="text-[7.5px] font-mono text-white/40 tracking-wider">
-                      tinyurl.com/varnally
+                      tiny.cc/varnally
                     </span>
                   </div>
 

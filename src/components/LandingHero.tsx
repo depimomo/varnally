@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { 
-  Sparkles, 
-  Palette, 
-  Smile, 
-  Glasses, 
-  Heart, 
-  History,
-  Share2,
+import {
+  Sparkles,
+  Palette,
+  Smile,
+  Heart,
   ArrowRight,
   Check,
   X
@@ -60,112 +57,25 @@ const VarnaColorRaysBackdrop: React.FC = () => {
 
   const activePalette = PALETTES[paletteIndex] || DEFAULT_PALETTES[0];
 
-  if (isMobile) {
-    // Ultra-lightweight background representation for mobile/low-end devices.
-    // Absolutely no multi-layer dynamic rotators, keyframes, or rays to avoid browser compositing lag.
-    return (
-      <div className="absolute inset-0 flex items-center justify-center -z-15 overflow-hidden pointer-events-none select-none">
-        <div 
-          className="absolute w-72 h-72 rounded-full blur-[65px] opacity-25 transition-all duration-[2000ms] ease-in-out"
-          style={{
-            backgroundColor: activePalette[0] || '#FF8A65'
-          }}
-        />
-        <div 
-          className="absolute w-56 h-56 rounded-full blur-[55px] opacity-20 transition-all duration-[2000ms] ease-in-out ml-6 mt-6"
-          style={{
-            backgroundColor: activePalette[1] || '#4DB6AC'
-          }}
-        />
-      </div>
-    );
-  }
-
+  // Ultra-lightweight background representation for mobile/low-end devices.
+  // Absolutely no multi-layer dynamic rotators, keyframes, or rays to avoid browser compositing lag.
   return (
-    <div className="absolute inset-0 flex items-center justify-center -z-15 overflow-visible pointer-events-none select-none">
-      <div className="relative w-0 h-0 flex items-center justify-center">
-        
-        {/* Layer 1: Clockwise slow rotation - larger and highly blurred color sweeps */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[680px] h-[680px] flex items-center justify-center"
-        >
-          {activePalette.map((color, i) => (
-            <motion.div
-              key={`ray-cw-${i}`}
-              className="absolute w-14 h-[350px] rounded-full blur-[65px] opacity-[0.25]"
-              style={{
-                top: '50%',
-                left: '50%',
-                transformOrigin: 'center center',
-                transform: `translate(-50%, -50%) rotate(${i * 36}deg) translateY(-140px)`,
-              }}
-              animate={{
-                backgroundColor: color,
-                scaleY: [1, 1.2, 0.9, 1],
-                opacity: [0.22, 0.32, 0.22, 0.22],
-              }}
-              transition={{
-                backgroundColor: { duration: 2.2, ease: "easeInOut" },
-                scaleY: { duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut" },
-                opacity: { duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut" }
-              }}
-            />
-          ))}
-        </motion.div>
-
-        {/* Layer 2: Counter-Clockwise slow rotation - smaller/sharper rays for dynamic texture */}
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[500px] h-[500px] flex items-center justify-center"
-        >
-          {activePalette.map((color, i) => (
-            <motion.div
-              key={`ray-ccw-${i}`}
-              className="absolute w-10 h-[260px] rounded-full blur-[40px] opacity-[0.28]"
-              style={{
-                top: '50%',
-                left: '50%',
-                transformOrigin: 'center center',
-                transform: `translate(-50%, -50%) rotate(${i * 36 + 18}deg) translateY(-100px)`,
-              }}
-              animate={{
-                backgroundColor: color,
-                scaleY: [0.95, 1.15, 0.85, 0.95],
-                opacity: [0.25, 0.35, 0.25, 0.25],
-              }}
-              transition={{
-                backgroundColor: { duration: 2.2, ease: "easeInOut" },
-                scaleY: { duration: 6 - (i % 2), repeat: Infinity, ease: "easeInOut" },
-                opacity: { duration: 6 - (i % 2), repeat: Infinity, ease: "easeInOut" }
-              }}
-            />
-          ))}
-        </motion.div>
-
-        {/* Layer 3: Central Ambient Core Pulse */}
-        <motion.div
-          animate={{
-            backgroundColor: activePalette[0],
-            scale: [0.85, 1.15, 0.85],
-            opacity: [0.25, 0.45, 0.25],
-          }}
-          transition={{
-            backgroundColor: { duration: 2.2, ease: "easeInOut" },
-            scale: { duration: 7, repeat: Infinity, ease: "easeInOut" },
-            opacity: { duration: 7, repeat: Infinity, ease: "easeInOut" }
-          }}
-          className="absolute w-96 h-96 rounded-full blur-[70px]"
-        />
-        
-        {/* Layer 4: Extremely subtle crisp concentric circles for a spatial target look */}
-        <div className="absolute w-[320px] h-[320px] rounded-full border border-gray-950/[0.03] -z-10" />
-        <div className="absolute w-[480px] h-[480px] rounded-full border border-gray-950/[0.015] -z-10" />
-      </div>
+    <div className="absolute inset-0 flex items-center justify-center -z-15 overflow-hidden pointer-events-none select-none">
+      <div
+        className="absolute w-72 h-72 rounded-full blur-[65px] opacity-25 transition-all duration-[2000ms] ease-in-out"
+        style={{
+          backgroundColor: activePalette[0] || '#FF8A65'
+        }}
+      />
+      <div
+        className="absolute w-56 h-56 rounded-full blur-[55px] opacity-20 transition-all duration-[2000ms] ease-in-out ml-6 mt-6"
+        style={{
+          backgroundColor: activePalette[1] || '#4DB6AC'
+        }}
+      />
     </div>
   );
+
 };
 
 
@@ -186,61 +96,10 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
   return (
     <div className="relative space-y-16 py-4 md:py-8 overflow-hidden min-h-screen">
-      
+
       {/* Dynamic Ambient Background Glow Orbs */}
       <div className="absolute inset-x-0 top-0 h-full overflow-hidden pointer-events-none -z-20">
-        {!isMobile ? (
-          <>
-            <motion.div 
-              animate={{
-                x: [0, 45, -25, 0],
-                y: [0, -35, 25, 0],
-              }}
-              transition={{
-                duration: 16,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute top-20 left-[10%] w-72 h-72 rounded-full bg-brand-primary/20 blur-[110px]"
-            />
-            <motion.div 
-              animate={{
-                x: [0, -35, 35, 0],
-                y: [0, 45, -45, 0],
-              }}
-              transition={{
-                duration: 19,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute top-60 right-[15%] w-96 h-96 rounded-full bg-brand-secondary/25 blur-[130px]"
-            />
-            <motion.div 
-              animate={{
-                x: [0, 50, -35, 0],
-                y: [0, 25, 55, 0],
-              }}
-              transition={{
-                duration: 23,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute bottom-40 left-[20%] w-80 h-80 rounded-full bg-indigo-500/15 blur-[120px]"
-            />
-            <motion.div 
-              animate={{
-                x: [0, -45, 25, 0],
-                y: [0, -55, 25, 0],
-              }}
-              transition={{
-                duration: 21,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute bottom-10 right-[25%] w-85 h-85 rounded-full bg-pink-500/15 blur-[110px]"
-            />
-          </>
-        ) : (
+        {(
           /* Simple, static lightweight orbs for mobile - zero frame processing and dynamic layout repaints */
           <>
             <div className="absolute top-20 left-[5%] w-52 h-52 rounded-full bg-brand-primary/10 blur-[80px]" />
@@ -253,7 +112,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
       {/* 1. Hero Title Section */}
       <div className="text-center max-w-4xl mx-auto space-y-6 px-4 md:px-0 relative z-10 overflow-visible min-h-[calc(100vh-9rem)] sm:min-h-[calc(100vh-12rem)] flex flex-col justify-center items-center pb-12 sm:pb-16">
         <VarnaColorRaysBackdrop />
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.92, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.4 }}
@@ -272,14 +131,14 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
             <span className="absolute left-0 right-0 bottom-2 h-4 sm:h-5 bg-gradient-to-r from-brand-primary/25 via-pink-400/20 to-brand-secondary/25 rounded-full -z-10" />
           </span>
         </h1>
-        
+
         <p className="text-sm sm:text-base md:text-lg text-gray-500 max-w-2xl mx-auto font-semibold leading-relaxed">
           {t.heroIntro}
         </p>
 
         {/* Primary CTA */}
         <div className="pt-4">
-          <motion.button 
+          <motion.button
             whileHover={{ scale: 1.03, boxShadow: "0 20px 30px -10px rgba(255,110,64,0.3)" }}
             whileTap={{ scale: 0.97 }}
             onClick={onStart}
@@ -304,7 +163,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          
+
           {/* Feature 1: Seasonal Analysis */}
           <div className="p-6 bg-white hover:bg-gradient-to-b hover:from-white hover:to-[#FF8A65]/5 rounded-[2rem] border border-black/5 hover:border-brand-primary/20 transition-all flex flex-col justify-between space-y-6 shadow-sm group">
             <div className="space-y-3">
@@ -372,7 +231,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
       {/* 4.5 Varnally Hub Showcase Section */}
       <div className="space-y-16 max-w-6xl mx-auto px-4 relative z-10 pt-14 pb-10">
-        
+
         {/* Playful Ambient Background Blobs */}
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none select-none">
           <div className="absolute top-1/4 left-10 w-80 h-80 bg-amber-300/25 rounded-full blur-[80px] animate-pulse" />
@@ -397,13 +256,13 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
         {/* Asymmetrical organic-shaped items */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          
+
           {/* Sub-section 1: Glow Me Up */}
           <div className="lg:col-span-6 p-8 md:p-10 bg-white/70 backdrop-blur-md rounded-[5rem_3rem_6rem_2.5rem] border-2 border-amber-300/40 hover:border-amber-400/70 shadow-[0_20px_50px_rgba(245,158,11,0.06)] hover:shadow-[0_30px_60px_rgba(245,158,11,0.12)] transition-all duration-500 flex flex-col justify-between space-y-8 relative overflow-hidden group">
-            
+
             {/* Soft internal liquid background */}
             <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-amber-100/30 rounded-full blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-700" />
-            
+
             <div className="space-y-4 relative z-10">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-black text-amber-600 uppercase tracking-widest font-mono flex items-center gap-1.5 bg-amber-100/60 px-3 py-1 rounded-full">
@@ -433,8 +292,8 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                   {t.sliderAfter || 'AFTER'}
                 </span>
               </div>
- 
-               {/* Interactive Dragging Slider inside an asymmetrical capsule */}
+
+              {/* Interactive Dragging Slider inside an asymmetrical capsule */}
               <div className="aspect-[4/5] relative w-full rounded-[3.5rem_2rem_3rem_2.5rem] overflow-hidden border-2 border-amber-300 shadow-[0_15px_30px_rgba(0,0,0,0.08)] bg-neutral-100 group/slider touch-none">
                 {/* Before Image */}
                 <img
@@ -445,10 +304,10 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                 />
 
                 {/* After Image (Clipped) */}
-                <div 
+                <div
                   className="absolute inset-0 overflow-hidden pointer-events-none"
-                  style={{ 
-                    clipPath: `polygon(${sliderPos}% 0, 100% 0, 100% 100%, ${sliderPos}% 100%)` 
+                  style={{
+                    clipPath: `polygon(${sliderPos}% 0, 100% 0, 100% 100%, ${sliderPos}% 100%)`
                   }}
                 >
                   <img
@@ -460,7 +319,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                 </div>
 
                 {/* Divider Line & Handle */}
-                <div 
+                <div
                   className="absolute top-0 bottom-0 w-[3px] bg-gradient-to-b from-amber-400 to-amber-200 shadow-xl cursor-ew-resize z-2 pointer-events-none"
                   style={{ left: `${sliderPos}%`, transform: 'translateX(-50%)' }}
                 >
@@ -473,7 +332,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                 </div>
 
                 {/* Invisible input range overlay */}
-                <input 
+                <input
                   type="range"
                   min="0"
                   max="100"
@@ -508,7 +367,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
           {/* Sub-section 2: Stylize Me - with counter curves */}
           <div className="lg:col-span-6 p-8 md:p-10 bg-white/70 backdrop-blur-md rounded-[3rem_6rem_2.5rem_5rem] border-2 border-rose-300/40 hover:border-rose-400/70 shadow-[0_20px_50px_rgba(244,63,94,0.06)] hover:shadow-[0_30px_60px_rgba(244,63,94,0.12)] transition-all duration-500 flex flex-col justify-between space-y-8 relative overflow-hidden group">
-            
+
             {/* Soft internal liquid background */}
             <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-rose-100/30 rounded-full blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-700" />
 
@@ -531,17 +390,16 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
             {/* Speech Bubble Chat Style Question */}
             <div className="w-full max-w-xs mx-auto flex flex-col items-center pt-2 relative z-10">
-              <motion.div 
+              <motion.div
                 layout
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className={`relative w-full rounded-3xl p-4 text-xs text-center border font-bold transition-all duration-300 shadow-md ${
-                  clickedStyle === null 
-                    ? 'bg-gradient-to-r from-rose-50/80 to-amber-50/80 border-rose-100 text-rose-850' 
+                className={`relative w-full rounded-3xl p-4 text-xs text-center border font-bold transition-all duration-300 shadow-md ${clickedStyle === null
+                    ? 'bg-gradient-to-r from-rose-50/80 to-amber-50/80 border-rose-100 text-rose-850'
                     : clickedStyle === 'right'
                       ? 'bg-gradient-to-r from-emerald-50/95 to-teal-50/95 border-emerald-100 text-emerald-850'
                       : 'bg-gradient-to-r from-rose-50 to-rose-100/50 border-rose-200 text-rose-900'
-                }`}
+                  }`}
               >
                 {clickedStyle === null ? (
                   <>
@@ -557,7 +415,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     <p className="leading-relaxed text-[13px]">
                       {t.guessCorrect || '🎉 Bingo! Light Summer seasonal palettes thrive with clear, light, cool-undertoned coordinates on the right!'}
                     </p>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setClickedStyle(null)}
                       className="mt-2 text-[10px] font-black uppercase text-emerald-600 bg-white border border-emerald-200 px-3 py-1 rounded-full shadow-sm hover:bg-emerald-50 transition-colors cursor-pointer block mx-auto"
@@ -570,7 +428,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     <p className="leading-relaxed text-[13px]">
                       {t.guessWrong || '😅 Not matching! The heavy warm profile on the left clashes with delicate Light Summer hues, casting shadows.'}
                     </p>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setClickedStyle(null)}
                       className="mt-2 text-[10px] font-black uppercase text-rose-600 bg-white border border-rose-200 px-3 py-1 rounded-full shadow-sm hover:bg-rose-50 transition-colors cursor-pointer block mx-auto"
@@ -580,19 +438,18 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                   </>
                 )}
                 {/* Bubble speech tail orientation pointing downward */}
-                <div className={`absolute top-full left-1/2 -translate-x-1/2 -translate-y-1.5 w-3.5 h-3.5 rotate-45 border-r border-b transition-colors duration-300 ${
-                  clickedStyle === null 
-                    ? 'bg-amber-50 border-rose-100' 
+                <div className={`absolute top-full left-1/2 -translate-x-1/2 -translate-y-1.5 w-3.5 h-3.5 rotate-45 border-r border-b transition-colors duration-300 ${clickedStyle === null
+                    ? 'bg-amber-50 border-rose-100'
                     : clickedStyle === 'right'
                       ? 'bg-teal-50 border-emerald-100'
                       : 'bg-rose-100/50 border-rose-200'
-                }`} />
+                  }`} />
               </motion.div>
             </div>
 
             {/* Stylize Me Comparison Row with asymmetric picture mounts */}
             <div className="w-full max-w-xs mx-auto grid grid-cols-2 gap-5 select-none pt-2 relative z-10">
-              
+
               {/* Clashing style (style_1.webp) */}
               <div className="space-y-3">
                 <button
@@ -601,13 +458,12 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     if (clickedStyle === null) setClickedStyle('left');
                   }}
                   disabled={clickedStyle !== null}
-                  className={`relative aspect-[4/5] rounded-[3rem_1.5rem_2rem_2.5rem] overflow-hidden border-2 bg-neutral-100 transition-all duration-300 text-left block w-full outline-none shadow-[0_10px_20px_rgba(0,0,0,0.06)] ${
-                    clickedStyle === null 
-                      ? 'border-neutral-200 hover:border-rose-400 hover:scale-[1.04] active:scale-95 cursor-pointer hover:shadow-lg' 
+                  className={`relative aspect-[4/5] rounded-[3rem_1.5rem_2rem_2.5rem] overflow-hidden border-2 bg-neutral-100 transition-all duration-300 text-left block w-full outline-none shadow-[0_10px_20px_rgba(0,0,0,0.06)] ${clickedStyle === null
+                      ? 'border-neutral-200 hover:border-rose-400 hover:scale-[1.04] active:scale-95 cursor-pointer hover:shadow-lg'
                       : clickedStyle === 'left'
                         ? 'border-rose-450 ring-4 ring-rose-500/20'
                         : 'border-neutral-200/50 opacity-50 filter grayscale'
-                  }`}
+                    }`}
                 >
                   <img
                     src="/sample/style_1.webp"
@@ -615,7 +471,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
-                  
+
                   {/* Subtle red overlay when answer is revealed */}
                   {clickedStyle !== null && (
                     <div className="absolute inset-0 bg-rose-500/10" />
@@ -623,7 +479,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
                   {/* Red X icon - revealed only after a selection has been made */}
                   {clickedStyle !== null && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, rotate: -45 }}
                       animate={{ scale: 1, rotate: 0 }}
                       className="absolute top-4 left-4 bg-rose-500 text-white p-1.5 rounded-full shadow-lg border border-white flex items-center justify-center"
@@ -635,7 +491,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
                 {/* Left Description Revealed after Click */}
                 {clickedStyle !== null && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center bg-rose-50 py-1.5 px-2 rounded-2xl border border-rose-100/70"
@@ -658,13 +514,12 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     if (clickedStyle === null) setClickedStyle('right');
                   }}
                   disabled={clickedStyle !== null}
-                  className={`relative aspect-[4/5] rounded-[1.5rem_3rem_2.5rem_2rem] overflow-hidden border-2 bg-neutral-100 transition-all duration-300 text-left block w-full outline-none shadow-[0_10px_20px_rgba(0,0,0,0.06)] ${
-                    clickedStyle === null 
-                      ? 'border-neutral-200 hover:border-emerald-400 hover:scale-[1.04] active:scale-95 cursor-pointer hover:shadow-lg' 
+                  className={`relative aspect-[4/5] rounded-[1.5rem_3rem_2.5rem_2rem] overflow-hidden border-2 bg-neutral-100 transition-all duration-300 text-left block w-full outline-none shadow-[0_10px_20px_rgba(0,0,0,0.06)] ${clickedStyle === null
+                      ? 'border-neutral-200 hover:border-emerald-400 hover:scale-[1.04] active:scale-95 cursor-pointer hover:shadow-lg'
                       : clickedStyle === 'right'
                         ? 'border-emerald-450 ring-4 ring-emerald-500/20 shadow-emerald-200'
                         : 'border-neutral-200/50 opacity-50 filter grayscale'
-                  }`}
+                    }`}
                 >
                   <img
                     src="/sample/style_2.webp"
@@ -672,7 +527,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
-                  
+
                   {/* Subtle green overlay when answer is revealed */}
                   {clickedStyle !== null && (
                     <div className="absolute inset-0 bg-emerald-500/5" />
@@ -680,7 +535,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
                   {/* Green check icon - revealed only after a selection has been made */}
                   {clickedStyle !== null && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, rotate: 45 }}
                       animate={{ scale: 1, rotate: 0 }}
                       className="absolute top-4 left-4 bg-emerald-500 text-white p-1.5 rounded-full shadow-lg border border-white flex items-center justify-center"
@@ -692,7 +547,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
                 {/* Right Description Revealed after Click */}
                 {clickedStyle !== null && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center bg-emerald-50 py-1.5 px-2 rounded-2xl border border-emerald-100/70"
@@ -743,34 +598,34 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
 
         <div className="w-full">
           {[
-            { 
-              key: 'Spring', 
-              bgClass: 'from-[#EBF8F0] via-[#FCFBE5] to-[#E3F7EB]', 
-              glowClass: 'bg-emerald-400/12', 
+            {
+              key: 'Spring',
+              bgClass: 'from-[#EBF8F0] via-[#FCFBE5] to-[#E3F7EB]',
+              glowClass: 'bg-emerald-400/12',
               tagBg: 'bg-emerald-50/80 text-emerald-800 border-emerald-100/50',
               accentColor: 'text-emerald-950',
               seasonNature: t.seasonSpringNature || 'Warm & Bright'
             },
-            { 
-              key: 'Summer', 
-              bgClass: 'from-[#E6F0FA] via-[#FAEDF6] to-[#E4EEFA]', 
-              glowClass: 'bg-sky-400/10', 
+            {
+              key: 'Summer',
+              bgClass: 'from-[#E6F0FA] via-[#FAEDF6] to-[#E4EEFA]',
+              glowClass: 'bg-sky-400/10',
               tagBg: 'bg-indigo-50/80 text-indigo-800 border-indigo-100/50',
               accentColor: 'text-indigo-950',
               seasonNature: t.seasonSummerNature || 'Cool & Soft'
             },
-            { 
-              key: 'Autumn', 
-              bgClass: 'from-[#FBF1E6] via-[#FCFAF0] to-[#FCE7D9]', 
-              glowClass: 'bg-amber-400/12', 
+            {
+              key: 'Autumn',
+              bgClass: 'from-[#FBF1E6] via-[#FCFAF0] to-[#FCE7D9]',
+              glowClass: 'bg-amber-400/12',
               tagBg: 'bg-orange-50/80 text-orange-800 border-orange-100/50',
               accentColor: 'text-orange-950',
               seasonNature: t.seasonAutumnNature || 'Warm & Muted'
             },
-            { 
-              key: 'Winter', 
-              bgClass: 'from-[#E1ECFD] via-[#F0F5FE] to-[#E5EDFC]', 
-              glowClass: 'bg-blue-400/10', 
+            {
+              key: 'Winter',
+              bgClass: 'from-[#E1ECFD] via-[#F0F5FE] to-[#E5EDFC]',
+              glowClass: 'bg-blue-400/10',
               tagBg: 'bg-blue-50/80 text-blue-800 border-blue-100/50',
               accentColor: 'text-blue-950',
               seasonNature: t.seasonWinterNature || 'Cool & Brilliant'
@@ -790,8 +645,8 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
             const seasonArchetypes = (archetypes.color_archetypes as any)[season.key] || {};
 
             return (
-              <div 
-                key={season.key} 
+              <div
+                key={season.key}
                 className={`w-full bg-gradient-to-r ${season.bgClass} animate-gradient-bg py-16 sm:py-24 relative overflow-hidden`}
               >
                 {/* 16Personalities style large faint backdrop watermark name - positioned physically higher so it is readable and not fully blocked */}
@@ -805,11 +660,11 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                 <div className="max-w-5xl mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-3 gap-y-16 gap-x-10 sm:gap-x-12 pt-16 sm:pt-20">
                   {Object.entries(seasonArchetypes).map(([fullName, data]: [string, any]) => {
                     const nicknameLower = data.nickname.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_');
-                    
+
                     const parts = fullName.split(' ');
-                    const subPart = parts[0]; 
-                    const seasonPart = parts[1] || ''; 
-                    
+                    const subPart = parts[0];
+                    const seasonPart = parts[1] || '';
+
                     const subTypeMap: Record<string, string> = {
                       'Bright': t.subTypeBright || 'Bright',
                       'True': t.subTypeTrue || 'True',
@@ -826,20 +681,20 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                     const localizedFullName = `${subTypeMap[subPart] || subPart} ${seasonMap[seasonPart] || seasonPart}`;
 
                     return (
-                      <div 
-                        key={fullName} 
+                      <div
+                        key={fullName}
                         className="transition-all duration-300 group flex flex-col items-center text-center h-full focus:outline-none select-none relative z-10"
                       >
                         {/* Elegant Mascot Frame - crop transparent spacing & zoom */}
                         <div className="w-28 h-28 sm:w-32 sm:h-32 mx-auto relative flex items-end justify-center mb-5">
                           {/* Ambient radial color glow background of standard premium layouts */}
                           <div className={`absolute inset-2 rounded-full blur-2xl opacity-80 scale-90 ${season.glowClass} transition-transform duration-500 group-hover:scale-110`} />
-                          
+
                           {/* Radial floor pedestal shadow under floating character */}
                           <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-16 h-2 bg-black/[0.08] blur-[5px] rounded-full transition-all duration-500 group-hover:w-20 group-hover:opacity-45" />
 
                           {/* Mascot with float on hover */}
-                          <img 
+                          <img
                             src={`/mascot/${nicknameLower}.png`}
                             alt={data.nickname}
                             className="w-36 h-36 object-contain max-w-none relative z-10 select-none pointer-events-none scale-[1.35] transform transition-all duration-500 group-hover:scale-[1.45] group-hover:-translate-y-3"
@@ -849,7 +704,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                             }}
                           />
                         </div>
-                        
+
                         {/* Text Information block with balanced typography */}
                         <div className="space-y-2 pointer-events-none">
                           <div className="space-y-1">
@@ -860,7 +715,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
                               {data.nickname}
                             </h4>
                           </div>
-                          
+
                           <p className="text-xs text-gray-650 font-semibold leading-relaxed max-w-[240px] mx-auto line-clamp-3">
                             {data.description}
                           </p>
@@ -876,9 +731,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
       </div>
 
       {/* 5. Bottom Secondary Call to Action Card with colorful aura gradient */}
-      <div className="relative text-center pt-8 max-w-2xl mx-auto space-y-6 px-4 z-10">
+      <div className="relative text-center pt-8 max-w-2xl mx-auto space-y-6 px-4 pb-15 z-10">
         <div className="absolute -inset-1 rounded-[3rem] bg-gradient-to-r from-brand-primary via-pink-400 to-brand-secondary opacity-30 blur-2xl -z-10" />
-        
+
         <div className="bg-white/90 backdrop-blur-xl border border-black/5 p-8 sm:p-10 rounded-[2.5rem] shadow-xl space-y-4">
           <h3 className="text-xl sm:text-2xl md:text-3xl font-display font-black text-gray-950">
             {t.uncoverChemistryQuery}
@@ -887,7 +742,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onStart, onGlowMeUp, o
             {t.uncoverChemistrySub}
           </p>
           <div className="pt-2">
-            <motion.button 
+            <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={onStart}

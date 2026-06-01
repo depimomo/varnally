@@ -302,8 +302,8 @@ export default function App() {
             const img = new Image();
             img.onload = () => {
               const canvas = document.createElement('canvas');
-              const MAX_WIDTH = 150;
-              const MAX_HEIGHT = 150;
+              const MAX_WIDTH = 320;
+              const MAX_HEIGHT = 320;
               let width = img.width;
               let height = img.height;
 
@@ -323,7 +323,7 @@ export default function App() {
               canvas.height = height;
               const ctx = canvas.getContext('2d');
               ctx?.drawImage(img, 0, 0, width, height);
-              resolve(canvas.toDataURL('image/jpeg', 0.7));
+              resolve(canvas.toDataURL('image/jpeg', 0.85));
             };
             img.src = e.target?.result as string;
           };
@@ -331,7 +331,7 @@ export default function App() {
         });
       };
 
-      const compressImageUrl = (url: string, maxDim: number = 350, quality: number = 0.70): Promise<string> => {
+      const compressImageUrl = (url: string, maxDim: number = 1000, quality: number = 0.88): Promise<string> => {
         return new Promise((resolve) => {
           const img = new Image();
           img.crossOrigin = "anonymous";
@@ -374,10 +374,10 @@ export default function App() {
         return;
       }
 
-      // Dynamic lightweight photo persistence (under 30KB) using canvas compression
+      // Dynamic high-resolution photo persistence for desktop screens using high-quality canvas compression
       let finalCleanedUrl: string | undefined = undefined;
       if (previewUrl) {
-        finalCleanedUrl = await compressImageUrl(previewUrl, 350, 0.70);
+        finalCleanedUrl = await compressImageUrl(previewUrl, 1000, 0.88);
       }
 
       const newAnalysis: Analysis = {
