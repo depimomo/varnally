@@ -9,6 +9,41 @@ const ai = new GoogleGenAI({
   }
 });
 
+async function generateContentWithRetry(params: any, retries = 3, delay = 800): Promise<GenerateContentResponse> {
+  let lastError: any = null;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await ai.models.generateContent(params);
+    } catch (err: any) {
+      lastError = err;
+      const errMsg = err?.message || String(err || "");
+      const isUnavailable = 
+        errMsg.includes("503") || 
+        errMsg.toLowerCase().includes("unavailable") || 
+        errMsg.toLowerCase().includes("high demand") || 
+        errMsg.toLowerCase().includes("overloaded") || 
+        errMsg.toLowerCase().includes("rate limit") ||
+        (err?.status && String(err.status).includes("503")) ||
+        (err?.code && String(err.code).includes("503"));
+
+      if (isUnavailable && attempt < retries) {
+        console.warn(`Gemini API returned 503/UNAVAILABLE or heavy load error on attempt ${attempt}. Retrying in ${delay}ms... Details:`, errMsg);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay *= 1.8; // Exponential backoff
+        continue;
+      }
+      
+      if (isUnavailable) {
+        throw new Error(
+          "The AI model is currently experiencing high demand. This is a temporary spike; please wait a few seconds and try analyze again."
+        );
+      }
+      throw err;
+    }
+  }
+  throw lastError || new Error("Failed to contact Gemini after multiple retries due to high demand.");
+}
+
 const SYSTEM_PROMPT = `
 You are an expert personal color analyst and a precise facial geometrician. 
 Your task is to analyze a photo of a person's bare face, determine their seasonal color palette, and accurately classify their face shape.
@@ -57,7 +92,7 @@ export async function analyzeColor(imageBuffer: ArrayBuffer, mimeType: string) {
     )
   );
 
-  const response: GenerateContentResponse = await ai.models.generateContent({
+  const response: GenerateContentResponse = await generateContentWithRetry({
     model: "gemini-3.5-flash",
     contents: [
       {
@@ -167,7 +202,7 @@ export async function regenerateIdPhoto(imageBuffer: ArrayBuffer, mimeType: stri
     )
   );
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model: 'gemini-2.5-flash-image',
     contents: [
       {
@@ -256,7 +291,7 @@ Output MUST be a valid JSON object matching this schema exactly. Do not output a
 }
 `;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model: "gemini-3.5-flash",
     contents: [
       {
@@ -348,7 +383,7 @@ Instructions:
 3. Keep the application flawless and professional like a high-end cosmetic advertisement try-on.
 4. Output ONLY the edited, regenerated face image.`;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model: 'gemini-2.5-flash-image',
     contents: [
       {
@@ -447,7 +482,7 @@ Your output MUST be valid JSON according to this schema:
     });
   });
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model: "gemini-3.5-flash",
     contents: [{ parts }],
     config: {

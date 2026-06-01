@@ -6,16 +6,12 @@ import {
   UploadCloud,
   CheckCircle2,
   XCircle,
-  Eye,
-  Heart,
   Palette,
   Trash2,
   Info,
   RefreshCw,
   Gauge,
-  HelpCircle,
   X,
-  ChevronRight,
   EyeOff
 } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
@@ -570,8 +566,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                   onDrop={handleDrop}
                   onClick={triggerFileSelect}
                   className={`aspect-[4/3] rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all duration-300 relative select-none ${dragActive
-                      ? 'border-brand-primary bg-brand-primary/5 scale-98'
-                      : 'border-neutral-200 hover:border-brand-primary hover:bg-neutral-50/50'
+                    ? 'border-brand-primary bg-brand-primary/5 scale-98'
+                    : 'border-neutral-200 hover:border-brand-primary hover:bg-neutral-50/50'
                     }`}
                 >
                   <div className="w-12 h-12 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center justify-center text-neutral-400 group-hover:bg-white mb-4 animate-bounce">
@@ -739,8 +735,8 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
               >
                 {/* Result header banner */}
                 <div className={`p-6 sm:p-8 rounded-[2.2rem] border flex flex-col gap-4 shadow-sm relative overflow-hidden ${result.matchFound
-                    ? 'bg-emerald-500/5 border-emerald-500/10'
-                    : 'bg-rose-500/5 border-rose-500/10'
+                  ? 'bg-emerald-500/5 border-emerald-500/10'
+                  : 'bg-rose-500/5 border-rose-500/10'
                   }`}>
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-white/10 to-transparent pointer-events-none" />
 
@@ -927,9 +923,11 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                       <h4 className="text-xs font-black uppercase tracking-wider text-rose-800 font-mono">
                         Simulation Error
                       </h4>
-                      <p className="text-xs text-rose-600 font-semibold leading-relaxed">
-                        {visualizationError}
-                      </p>
+                      <p className="text-xs text-rose-600 font-semibold leading-relaxed">{"Quota exceeded, please use AI Studio version:"}<a
+                        href="https://tiny.cc/varnally"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >tiny.cc/varnally</a></p>
                     </div>
                     <button
                       onClick={() => setVisualizingMatch(null)}

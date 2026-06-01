@@ -5,11 +5,9 @@ import {
   Sparkles,
   UploadCloud,
   CheckCircle2,
-  XCircle,
   Trash2,
   Info,
   RefreshCw,
-  HelpCircle,
   Shirt,
   Plus
 } from 'lucide-react';
