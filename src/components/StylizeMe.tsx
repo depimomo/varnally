@@ -767,10 +767,11 @@ export const StylizeMe: React.FC<StylizeMeProps> = ({ pinnedProfile, history, on
                 animate={{ opacity: 1, y: 0 }}
                 className="p-4 bg-red-50 border border-red-100 rounded-2xl text-center"
               >
-                <p className="text-xs text-red-600 font-bold leading-relaxed">{"Quota exceeded, please use AI Studio version:"}<a
+                <p className="text-xs text-red-600 font-bold leading-relaxed">{"Quota exceeded, please use AI Studio version: "}<a
                   href="https://tiny.cc/varnally"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="text-blue-600"
                 >tiny.cc/varnally</a></p>
               </motion.div>
             )}

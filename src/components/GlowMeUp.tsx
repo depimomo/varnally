@@ -923,10 +923,11 @@ export const GlowMeUp: React.FC<GlowMeUpProps> = ({ pinnedProfile, history, onBa
                       <h4 className="text-xs font-black uppercase tracking-wider text-rose-800 font-mono">
                         Simulation Error
                       </h4>
-                      <p className="text-xs text-rose-600 font-semibold leading-relaxed">{"Quota exceeded, please use AI Studio version:"}<a
+                      <p className="text-xs text-rose-600 font-semibold leading-relaxed">{"Quota exceeded, please use AI Studio version: "}<a
                         href="https://tiny.cc/varnally"
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="text-blue-600"
                       >tiny.cc/varnally</a></p>
                     </div>
                     <button
